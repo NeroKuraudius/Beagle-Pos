@@ -25,6 +25,6 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(routes)
 
-app.listen(PORT, () => console.log(`App execute on port${PORT}.`))
+app.listen(PORT, () => console.log(`App execute on port:${PORT}.`))
 
 module.exports = app

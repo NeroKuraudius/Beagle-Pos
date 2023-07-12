@@ -21,6 +21,8 @@ app.use(express.static('public'))
 
 app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: false }))
 
+app.use(express.urlencoded({ extended: true }))
+
 app.use(routes)
 
 app.listen(PORT, () => console.log(`App execute on port${PORT}.`))

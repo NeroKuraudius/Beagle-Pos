@@ -1,4 +1,4 @@
-if (process.env.NODE_ENV !== 'production'){
+if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
@@ -14,11 +14,15 @@ const routes = require('./routes')
 const app = express()
 const PORT = process.env.PORT || 3000
 
-app.engine('hbs',exphbs.engine({extname:'.hbs',defaultLayout:'main'}))
-app.set('view engine','hbs')
+app.engine('hbs', exphbs.engine({ extname: '.hbs', defaultLayout: 'main' }))
+app.set('view engine', 'hbs')
+
+app.use(express.static('public'))
+
+app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: false }))
 
 app.use(routes)
 
-app.listen(PORT,()=>console.log(`App execute on port${PORT}.`))
+app.listen(PORT, () => console.log(`App execute on port${PORT}.`))
 
 module.exports = app

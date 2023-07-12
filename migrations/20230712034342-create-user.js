@@ -19,7 +19,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       role: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        defaultValue:'staff'
       },
       shift_id: {
         type: Sequelize.INTEGER

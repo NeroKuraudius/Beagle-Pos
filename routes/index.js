@@ -2,15 +2,12 @@ const express = require('express')
 const router = express.Router()
 const passport = require('../config/passport')
 const { authenticated } = require('../middleware/auth')
+const userController = require('../contorllers/users')
 const operateController = require('../contorllers/operates')
 
 
-router.get('/signin', (req, res) => {
-  res.render('login')
-})
-router.post('/signin', passport.authenticate('staffLogin', { failureMessage: true, failureRedirect: '/signin' }), (req, res => {
-  return res.redirerct('/operate')
-}))
+router.get('/signin', userController.signinPage)
+router.post('/signin', passport.authenticate('staffLogin', { failureMessage: true, failureRedirect: '/signin' }), userController.signin)
 
 router.get('/operate', authenticated, operateController.getHomePage)
 

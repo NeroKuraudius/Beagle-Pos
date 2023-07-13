@@ -7,11 +7,12 @@ const userController = require('../contorllers/users')
 const operateController = require('../contorllers/operates')
 
 // 管理員路由
-router.use('/owner',owner)
+router.use('/owner', owner)
 
-
+// 前台登入
 router.get('/signin', userController.signinPage)
 router.post('/signin', passport.authenticate('staffLogin', { failureMessage: true, failureRedirect: '/signin' }), userController.signin)
+router.post('/signout', userController.signout)
 
 router.get('/operate', authenticated, operateController.getHomePage)
 

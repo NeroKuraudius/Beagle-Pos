@@ -1,7 +1,7 @@
 const passport = require('passport')
-const localPassport = require('passport-local')
+const localPassport = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
-const User = require('../models/user')
+const { User } = require('../models')
 
 // 前台登入
 passport.use('staffLogin', new localPassport({
@@ -9,6 +9,7 @@ passport.use('staffLogin', new localPassport({
   passwordField: 'password',
   passReqToCallback: true
 }, async (req, res, next, cb) => {
+  const { account, password } = req.body
   try {
     const user = await User.findOne({ where: { account } })
     if (!user) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤!'))
@@ -29,6 +30,7 @@ passport.use('ownerLogin', new localPassport({
   passwordField: 'password',
   passReqToCallback: true
 }, async (req, res, next, cb) => {
+  const { account, password } = req.body
   try {
     const user = await User.findOne({ where: { account } })
     if (!user) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤!'))
@@ -49,7 +51,7 @@ passport.serializeUser((user, cb) => {
 })
 passport.deserializeUser(async (id, cb) => {
   try {
-    const user = await User.findById(id)
+    const user = await User.findByPk(id)
     return cb(null, user.toJSON())
   } catch (err) {
     cb(err)

@@ -2,12 +2,12 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/user')
 
-const staffController = {
+const userController = {
   // 登入
-  signinPage:(req,res,next)=>{
+  signinPage:(req,res)=>{
     return res.render('login')
   },
-  signin:async(req,res,next)=>{
+  signin:(req,res)=>{
     return res.redirect('/operate')
   }
 }

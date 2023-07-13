@@ -3,7 +3,7 @@ const getUser = req => {
 }
 
 const ensureAuthenticated = req => {
-  return req.isAuthemticated()
+  return req.isAuthenticated()
 }
 
 module.exports = { getUser, ensureAuthenticated }

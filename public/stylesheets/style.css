@@ -71,7 +71,7 @@ body {
 
 .go-back, .go-front{
   float:right;
-  font-size: larger;
+  font-size: large;
   font-weight: 600;
   color:darkseagreen;
 }

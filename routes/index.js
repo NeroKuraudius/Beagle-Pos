@@ -2,8 +2,12 @@ const express = require('express')
 const router = express.Router()
 const passport = require('../config/passport')
 const { authenticated } = require('../middleware/auth')
+const owner = require('./modules/owner')
 const userController = require('../contorllers/users')
 const operateController = require('../contorllers/operates')
+
+// 管理員路由
+router.use('/owner',owner)
 
 
 router.get('/signin', userController.signinPage)

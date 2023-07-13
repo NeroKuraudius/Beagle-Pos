@@ -1,15 +1,17 @@
 body {
   min-height: 100vh; /* vh=view height 使用者螢幕高度 */
   display: flex;
-  align-items: center;
+  align-items:start;
   justify-content: center;
-  background: url('alphaPos-bg.jpg') no-repeat center center;
+  background: linear-gradient(rgba(219, 219, 219, 0.4), rgba(219, 219, 219, 0.4)),url('https://images.pexels.com/photos/406014/pexels-photo-406014.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') no-repeat center center;
   background-size: cover;
 }
+
 
 .container {
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 3px;
+  z-index: 2;
 }
 
 .card {
@@ -65,4 +67,11 @@ body {
 .alert{
   font-size: x-large;
   vertical-align: middle;
+}
+
+.go-back, .go-front{
+  float:right;
+  font-size: larger;
+  font-weight: 600;
+  color:darkseagreen;
 }

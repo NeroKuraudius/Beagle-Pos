@@ -10,63 +10,14 @@
   <div class="col-md-8 p-4" data-order-panel>
     <section class="menu mb-4">
       <div class="card-deck mb-3">
+        {{#each drinks}}
         <div class="card text-center">
           <label class="card-body px-2">
-            <h5 class="card-title">Black Tea</h5>
-            <input type="radio" name="drink" value="Black Tea">
+            <h5 class="card-title">{{drinks.name}} ${{drinks.price}}</h5>
+            <input type="radio" name="drink" value="{{drinks.name}}" data-id="{{drinks.id}}">
           </label>
         </div>
-
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">Oolong Tea</h5>
-            <input type="radio" name="drink" value="Oolong Tea">
-          </label>
-        </div>
-
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">Baozong Tea</h5>
-            <input type="radio" name="drink" value="Baozong Tea">
-          </label>
-        </div>
-
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">Green Tea</h5>
-            <input type="radio" name="drink" value="Green Tea">
-          </label>
-        </div>
-      </div>
-
-      <div class="card-deck">
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">Bubble Milk Tea</h5>
-            <input type="radio" name="drink" value="Bubble Milk Tea">
-          </label>
-        </div>
-
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">Black Tea Latte</h5>
-            <input type="radio" name="drink" value="Black Tea Latte">
-          </label>
-        </div>
-
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">Lemon Green</h5>
-            <input type="radio" name="drink" value="Lemon Green Tea">
-          </label>
-        </div>
-
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">Matcha Latte</h5>
-            <input type="radio" name="drink" value="Matcha Latte">
-          </label>
-        </div>
+        {{/each}}
       </div>
     </section>
 
@@ -75,20 +26,20 @@
 
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="No Ice" />No
+          <input type="radio" name="ice" value="No Ice" />去冰
         </label>
         <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="light Ice" />Light
+          <input type="radio" name="ice" value="light Ice" />微冰
         </label>
 
         <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="Less Ice" />Less
+          <input type="radio" name="ice" value="Less Ice" />少冰
         </label>
         <label class="btn btn-outline-primary active">
-          <input type="radio" name="ice" value="Regular Ice" checked="checked" />Regular
+          <input type="radio" name="ice" value="Regular Ice" checked="checked" />正常
         </label>
         <label class="btn btn-outline-danger">
-          <input type="radio" name="ice" value="Hot" />Hot
+          <input type="radio" name="ice" value="Hot" />熱飲
         </label>
       </div>
     </section>
@@ -97,25 +48,25 @@
       <label class="d-block text-light">Sugar</label>
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="No Sugar" />No
+          <input type="radio" name="sugar" value="No Sugar" />無糖
         </label>
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="Light Sugar" />Light
+          <input type="radio" name="sugar" value="Light Sugar" />微糖
         </label>
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="Half Sugar" />Half
+          <input type="radio" name="sugar" value="Half Sugar" />半糖
         </label>
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="Less Sugar" />Less
+          <input type="radio" name="sugar" value="Less Sugar" />少糖
         </label>
         <label class="btn btn-outline-info active">
-          <input type="radio" name="sugar" value="Regular Sugar" checked="checked" />Regular
+          <input type="radio" name="sugar" value="Regular Sugar" checked="checked" />正常
         </label>
       </div>
     </section>
 
     <div class="text-right">
-      <div class="btn btn-light" style="min-width:120px;" data-alpha-pos="add-drink">Add</div>
+      <div class="btn btn-light" style="min-width:120px;" data-alpha-pos="add-drink">新增</div>
     </div>
   </div>
 </div>

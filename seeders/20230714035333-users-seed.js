@@ -36,13 +36,12 @@ module.exports =  {
     } catch (err) {
       console.error('Users seed error:', err)
     }
-
   },
 
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Users', {})
-      console.log('Users table removed.')
+      console.log('Users seed removed.')
     } catch (err) {
       console.error('Error on removing users table:', err)
     }

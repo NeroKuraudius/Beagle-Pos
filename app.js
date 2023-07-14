@@ -11,14 +11,16 @@ const flash = require('connect-flash')
 
 // routes
 const routes = require('./routes')
-const helpers = require('./helpers/auth-helpers')
+const hbsHelpers = require('./helpers/handlebars-helpers')
+const authHelpers = require('./helpers/auth-helpers')
 const passport = require('./config/passport')
+
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
 // set templates
-app.engine('hbs', exphbs.engine({ extname: '.hbs', defaultLayout: 'main' }))
+app.engine('hbs', exphbs.engine({ helpers:hbsHelpers ,extname: '.hbs', defaultLayout: 'main' }))
 app.set('view engine', 'hbs')
 
 // import CSS
@@ -40,7 +42,7 @@ app.use(methodOverride('_method'))
 app.use((req, res, next) => {
   res.locals.danger_msg = req.flash('danger_msg')
   res.locals.success_msg = req.flash('success_msg')
-  res.locals.loginUser = helpers.getUser(req)
+  res.locals.loginUser = authHelpers.getUser(req)
   next()
 })
 

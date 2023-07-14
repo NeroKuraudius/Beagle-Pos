@@ -75,3 +75,8 @@ body {
   font-weight: 600;
   color:darkseagreen;
 }
+
+.drinks-pagination{
+  display:flex;
+  justify-content:center
+}

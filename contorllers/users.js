@@ -6,7 +6,7 @@ const userController = {
     return res.render('front-login')
   },
   signin: (req, res) => {
-    return res.redirect('/operate')
+    return res.redirect('/drinks')
   },
   signout: (req, res, next) => {
     if (req.user.role === 'staff') {

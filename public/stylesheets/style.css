@@ -17,7 +17,7 @@ body {
 
 .card {
   margin-top: 3px;
-  border: 1px solid azure;
+  border: 2px solid azure;
   color: azure;
   background-color: transparent;
 }
@@ -87,7 +87,14 @@ body {
   justify-content: center;
 }
 
-.nav-tabs .nav-link {
+.category-tabs .nav-link {
   list-style-type: none;
   color: azure;
+}
+
+.category-tabs :hover {
+  color: #333;
+  background-color: azure;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px
 }

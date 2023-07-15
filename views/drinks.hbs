@@ -9,20 +9,31 @@
   <!--   點單區   -->
   <div class="col-md-8 p-4" data-order-panel>
     <section class="menu mb-4">
+      <ul class="navbar nav-tabs" style="list-style-type: none;color:azure">
+        <li class="nav-item">
+          <a class="nav-link {{#ifCond categoryId ''}}active{{/ifCond}}" href="?categoryId=">全部</a>
+        </li>
+        {{#each categories}}
+        <li class="nav-item">
+          <a class="nav-link {{#ifCond ../categoryId this.id}}active{{/ifCond}}" href="?categoryId={{this.id}}">{{this.name}}</a>
+        </li>
+        {{/each}}
+      </ul>
+
       <div class="card-deck mb-3">
         {{#each drinks}}
         <div class="card text-center">
           <label class="card-body px-2">
-            <h5 class="card-title">{{drinks.name}} ${{drinks.price}}</h5>
-            <input type="radio" name="drink" value="{{drinks.name}}" data-id="{{drinks.id}}">
+            <h5 class="card-title">{{this.name}} ${{this.price}}</h5>
+            <input type="radio" name="drink" value="{{this.name}}" data-id="{{this.id}}">
           </label>
         </div>
         {{/each}}
       </div>
-      <nav class="drinks-pagination mt-3" aria-label="page navigation">
+      {{!-- <nav class="drinks-pagination mt-3" aria-label="page navigation">
         <ul class="pagination">
           <li class="page-item {{#ifCond pagination.currentPage 1}}disabled{{/ifCond}}">
-            <a class="page-link" href="/drinks?page={{pagination.prev}}{{!--&categoryId={{categoryId}}--}}"
+            <a class="page-link" href="/drinks?page={{pagination.prev}}&categoryId={{categoryId}}"
               aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
@@ -32,18 +43,17 @@
           <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
           {{else}}
           <li class="page-item">
-            <a class="page-link" href="/drinks?page={{this}}{{!--&categoryId={{../categoryId}}--}}">{{this}}</a>
+            <a class="page-link" href="/drinks?page={{this}}&categoryId={{../categoryId}}">{{this}}</a>
           </li>
           {{/ifCond}}
           {{/each}}
           <li class="page-item {{#ifCond pagination.currentPage pagination.totalPage}}disabled{{/ifCond}}">
-            <a class="page-link" href="/drinks?page={{pagination.next}}{{!--&categoryId={{categoryId}}--}}"
-              aria-label="Next">
+            <a class="page-link" href="/drinks?page={{pagination.next}}&categoryId={{categoryId}}" aria-label="Next">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
         </ul>
-      </nav>
+      </nav> --}}
     </section>
 
     <section class="ice mb-4">

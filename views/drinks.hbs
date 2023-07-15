@@ -17,11 +17,12 @@
         </li>
         {{#each categories}}
         <li class="nav-item">
-          <a class="nav-link {{#ifCond ../categoryId this.id}}active{{/ifCond}}" href="?categoryId={{this.id}}">{{this.name}}</a>
+          <a class="nav-link {{#ifCond ../categoryId this.id}}active{{/ifCond}}"
+            href="?categoryId={{this.id}}">{{this.name}}</a>
         </li>
         {{/each}}
       </ul>
-      
+
       {{!-- 飲料區 --}}
       <div class="card-deck mb-3">
         {{#each drinks}}
@@ -38,8 +39,7 @@
       <nav class="drinks-pagination mt-5" aria-label="page navigation">
         <ul class="pagination">
           <li class="page-item {{#ifCond pagination.current 1}}disabled{{/ifCond}}">
-            <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.prev}}"
-              aria-label="Previous">
+            <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.prev}}" aria-label="Previous">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
@@ -62,45 +62,43 @@
     </section>
 
     <section class="ice mb-4">
-      <label class="d-block text-light">Ice</label>
-
+      <label class="d-block text-light">冰塊</label>
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="No Ice" />去冰
+          <input type="radio" name="ice" value="去冰" />去冰
         </label>
         <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="light Ice" />微冰
+          <input type="radio" name="ice" value="微冰" />微冰
         </label>
-
         <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="Less Ice" />少冰
+          <input type="radio" name="ice" value="少冰" />少冰
         </label>
         <label class="btn btn-outline-primary active">
-          <input type="radio" name="ice" value="Regular Ice" checked="checked" />正常
+          <input type="radio" name="ice" value="正常" checked />正常
         </label>
         <label class="btn btn-outline-danger">
-          <input type="radio" name="ice" value="Hot" />熱飲
+          <input type="radio" name="ice" value="熱飲" />熱飲
         </label>
       </div>
     </section>
 
     <section class="sugar mb-5">
-      <label class="d-block text-light">Sugar</label>
+      <label class="d-block text-light">甜度</label>
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="No Sugar" />無糖
+          <input type="radio" name="sugar" value="無糖" />無糖
         </label>
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="Light Sugar" />微糖
+          <input type="radio" name="sugar" value="微糖" />微糖
         </label>
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="Half Sugar" />半糖
+          <input type="radio" name="sugar" value="半糖" />半糖
         </label>
         <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="Less Sugar" />少糖
+          <input type="radio" name="sugar" value="少糖" />少糖
         </label>
         <label class="btn btn-outline-info active">
-          <input type="radio" name="sugar" value="Regular Sugar" checked="checked" />正常
+          <input type="radio" name="sugar" value="正常" checked />正常
         </label>
       </div>
     </section>
@@ -110,3 +108,4 @@
     </div>
   </div>
 </div>
+<script defer src="/javascripts/drinks.js"></script>

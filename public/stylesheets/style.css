@@ -71,6 +71,7 @@ body {
 
 .alert {
   font-size: x-large;
+  font-weight: bold;
   vertical-align: middle;
 }
 

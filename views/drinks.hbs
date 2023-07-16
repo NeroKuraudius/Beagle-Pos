@@ -3,7 +3,7 @@
   <div class="col-md-4 p-4" data-order-lists>
 
     <div class="text-right">
-      <button class="btn btn-light" style="min-width:120px;" data-alpha-pos="checkout">Checkout</button>
+      <button class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="checkout">Checkout</button>
     </div>
   </div>
   <!--   點單區   -->
@@ -92,19 +92,35 @@
       </div>
     </section>
 
-    {{!-- <section class="sugar mb-5">
-      <label class="d-block text-light">甜度</label>
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        {{#each sugars}}
-        <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
-          <input type="radio" name="sugar" value="{{this.name}}" {{#ifCond this.name '正常'
-            }}checked{{/ifCond}} />{{this.name}}
-        </label>
-        {{/each}}
+    <section class="topping mb-4" style="display:flex;justify-content:left">
+      <div class="toppings10 me-5">
+        <label class="d-block text-light">配料(+$10)</label>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          {{#each toppings}}
+          {{#ifCond this.price 10}}
+          <label class="btn btn-outline-warning">
+            <input type="checkbox" name="sugar" value="{{this.name}}" />{{this.name}}
+          </label>
+          {{/ifCond}}
+          {{/each}}
+        </div>
       </div>
-    </section> --}}
 
-    <div class="text-right">
+      <div class="toppings15">
+        <label class="d-block text-light">配料(+$15)</label>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          {{#each toppings}}
+          {{#ifCond this.price 15}}
+          <label class="btn btn-outline-warning">
+            <input type="checkbox" name="sugar" value="{{this.name}}" />{{this.name}}
+          </label>
+          {{/ifCond}}
+          {{/each}}
+        </div>
+      </div>
+    </section>
+
+    <div class="text-right mb-3">
       <div class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="add-drink">新增</div>
     </div>
   </div>

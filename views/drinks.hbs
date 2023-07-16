@@ -61,43 +61,48 @@
       </nav>
     </section>
 
-    <section class="ice mb-4">
-      <label class="d-block text-light">冰塊</label>
-      <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        {{#each ices}}
-        {{#ifCond this.name '熱飲'}}
-        <label class="btn btn-outline-danger">
-          <input type="radio" name="ice" value="{{this.name}}" />{{this.name}}
-        </label>
-        {{else}}
-        <label class="btn btn-outline-primary {{#ifCond this.name '正常'}}active{{/ifCond}}">
-          <input type="radio" name="ice" value="{{this.name}}" {{#ifCond this.name '正常'}}checked{{/ifCond}}/>{{this.name}}
-        </label>
-        {{/ifCond}}
-        {{/each}}
+    <section class="ice&sugar mb-4" style="display:flex;justify-content:space-between">
+      <div>
+        <label class="d-block text-light">冰塊</label>
+        <div class="btn-group btn-group-toggle mb-2" data-toggle="buttons">
+          {{#each ices}}
+          {{#ifCond this.name '熱飲'}}
+          <label class="btn btn-outline-danger">
+            <input type="radio" name="ice" value="{{this.name}}" />{{this.name}}
+          </label>
+          {{else}}
+          <label class="btn btn-outline-primary {{#ifCond this.name '正常'}}active{{/ifCond}}">
+            <input type="radio" name="ice" value="{{this.name}}" {{#ifCond this.name '正常'
+              }}checked{{/ifCond}} />{{this.name}}
+          </label>
+          {{/ifCond}}
+          {{/each}}
+        </div>
+      </div>
+      <div>
+        <label class="d-block text-light">甜度</label>
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+          {{#each sugars}}
+          <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
+            <input type="radio" name="sugar" value="{{this.name}}" {{#ifCond this.name '正常'
+              }}checked{{/ifCond}} />{{this.name}}
+          </label>
+          {{/each}}
+        </div>
       </div>
     </section>
 
-    <section class="sugar mb-5">
+    {{!-- <section class="sugar mb-5">
       <label class="d-block text-light">甜度</label>
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="無糖" />無糖
+        {{#each sugars}}
+        <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
+          <input type="radio" name="sugar" value="{{this.name}}" {{#ifCond this.name '正常'
+            }}checked{{/ifCond}} />{{this.name}}
         </label>
-        <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="微糖" />微糖
-        </label>
-        <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="半糖" />半糖
-        </label>
-        <label class="btn btn-outline-info">
-          <input type="radio" name="sugar" value="少糖" />少糖
-        </label>
-        <label class="btn btn-outline-info active">
-          <input type="radio" name="sugar" value="正常" checked />正常
-        </label>
+        {{/each}}
       </div>
-    </section>
+    </section> --}}
 
     <div class="text-right">
       <div class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="add-drink">新增</div>

@@ -29,7 +29,7 @@
         <div class="card text-center">
           <label class="card-body px-2">
             <h5 class="card-title">{{this.name}} ${{this.price}}</h5>
-            <input type="radio" name="drink" value="{{this.name}}" data-id="{{this.id}}">
+            <input type="radio" name="drink" value="{{this.id}}">
           </label>
         </div>
         {{/each}}
@@ -68,11 +68,11 @@
           {{#each ices}}
           {{#ifCond this.name '熱飲'}}
           <label class="btn btn-outline-danger">
-            <input type="radio" name="ice" value="{{this.name}}" />{{this.name}}
+            <input type="radio" name="ice" value="{{this.id}}" />{{this.name}}
           </label>
           {{else}}
           <label class="btn btn-outline-primary {{#ifCond this.name '正常'}}active{{/ifCond}}">
-            <input type="radio" name="ice" value="{{this.name}}" {{#ifCond this.name '正常'
+            <input type="radio" name="ice" value="{{this.id}}" {{#ifCond this.name '正常'
               }}checked{{/ifCond}} />{{this.name}}
           </label>
           {{/ifCond}}
@@ -84,7 +84,7 @@
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
           {{#each sugars}}
           <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
-            <input type="radio" name="sugar" value="{{this.name}}" {{#ifCond this.name '正常'
+            <input type="radio" name="sugar" value="{{this.id}}" {{#ifCond this.name '正常'
               }}checked{{/ifCond}} />{{this.name}}
           </label>
           {{/each}}

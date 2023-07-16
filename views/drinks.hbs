@@ -64,21 +64,17 @@
     <section class="ice mb-4">
       <label class="d-block text-light">冰塊</label>
       <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="去冰" />去冰
-        </label>
-        <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="微冰" />微冰
-        </label>
-        <label class="btn btn-outline-primary">
-          <input type="radio" name="ice" value="少冰" />少冰
-        </label>
-        <label class="btn btn-outline-primary active">
-          <input type="radio" name="ice" value="正常" checked />正常
-        </label>
+        {{#each ices}}
+        {{#ifCond this.name '熱飲'}}
         <label class="btn btn-outline-danger">
-          <input type="radio" name="ice" value="熱飲" />熱飲
+          <input type="radio" name="ice" value="{{this.name}}" />{{this.name}}
         </label>
+        {{else}}
+        <label class="btn btn-outline-primary {{#ifCond this.name '正常'}}active{{/ifCond}}">
+          <input type="radio" name="ice" value="{{this.name}}" {{#ifCond this.name '正常'}}checked{{/ifCond}}/>{{this.name}}
+        </label>
+        {{/ifCond}}
+        {{/each}}
       </div>
     </section>
 

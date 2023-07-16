@@ -1,4 +1,4 @@
-const { Category, Drink } = require('../models')
+const { Category, Drink, Ice } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 
 const drinkController = {
@@ -11,6 +11,7 @@ const drinkController = {
     const categoryId = parseInt(req.query.categoryId) || ''
     try {
       const categories = await Category.findAll({ raw: true, nest: true })
+      const ices = await Ice.findAll({ raw: true, nest: true })
       const drinks = await Drink.findAndCountAll({
         raw: true,
         nest: true,
@@ -20,7 +21,7 @@ const drinkController = {
       })
       const pagination = getPagination(limit, page, drinks.count)
 
-      return res.render('drinks', { categoryId, categories, drinks: drinks.rows, pagination })
+      return res.render('drinks', { categoryId, categories, ices,drinks: drinks.rows, pagination })
     } catch (err) {
       console.error(`Data search error: ${err}`)
     }

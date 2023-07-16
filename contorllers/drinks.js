@@ -35,6 +35,9 @@ const drinkController = {
     } catch (err) {
       console.error(`Data search error: ${err}`)
     }
+  },
+  addDrink: async (req, res, next) => {
+
   }
 }
 

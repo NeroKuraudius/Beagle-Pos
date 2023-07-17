@@ -5,5 +5,6 @@ const drinkController = require('../../contorllers/drinks')
 
 router.get('/', authenticated, drinkController.getDrinks)
 router.post('/', authenticated, drinkController.addDrink)
+router.delete('/:id',authenticated,drinkController.deleteDrink)
 
 module.exports = router

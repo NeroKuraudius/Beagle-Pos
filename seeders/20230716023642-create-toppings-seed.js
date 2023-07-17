@@ -52,7 +52,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Toppings', {})
-      console.log('Toppings seed deleted successfully!')
+      console.log('Toppings seed removed.!')
     } catch (err) {
       console.error(`Toppings seed delete error: ${err}`)
     }

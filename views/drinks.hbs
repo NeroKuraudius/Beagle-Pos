@@ -5,9 +5,12 @@
     {{#each consumesList}}
     <div class="card mb-3">
       <div class="card-body pt-3 pr-3">
-        <div class="text-right">
-          <span data-alpha-pos="delete-drink">×</span>
-        </div>
+        <form action="/drinks/{{this.id}}?_method=DELETE" method="POST">
+          <div class="text-right">
+            <button class="btn" type="submit" id="drinkDelete" style="color:azure">×</button>
+          </div>
+        </form>
+
         <h6 class="card-title mb-1">{{this.drinkName}}</h6>
         <div class="card-text">{{this.sugarName}},{{this.iceName}}</div>
         {{#each this.allToppings}}
@@ -15,7 +18,7 @@
         {{/each}}
       </div>
       <div class="card-footer text-right py-2">
-        <div class="card-text">$ <span data-drink-price>{{this.totalPrice}}</span></div>
+        <div class="card-text">$ <span>{{this.totalPrice}}</span></div>
       </div>
     </div>
     {{/each}}

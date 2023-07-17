@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Topping.belongsToMany(models.Consume,{
+      Topping.belongsToMany(models.Consume, {
         through: models.Customization,
         foreignKey: 'toppingId',
         as: 'addConsumes'

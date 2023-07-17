@@ -25,26 +25,28 @@ const drinkController = {
 
       const consumes = await Consume.findAll({
         include: [
-          { model: Drink },
+          { model: Drink, attribute: ['name'] },
           { model: Ice },
           { model: Sugar },
-          { model: Topping, as: 'addToppings' },
+          { model: Topping, as: 'addToppings' }
         ]
       })
       const consumesList = consumes.map(consume => {
         const { Drink, Ice, Sugar, addToppings, ...consumeData } = consume.toJSON()
-        let totalPrice = 0
-        if (addToppings.length !== 0){
-          
-        }
+
+        const toppingsNameList = addToppings.map(topping => { return topping.name })
+        let toppingsPrice = 0
+        const toppingsPriceList = addToppings.map(topping => { return topping.price })
+        toppingsPriceList.forEach(price => toppingsPrice += price);
+
         consumeData.drinkName = Drink.name
         consumeData.iceName = Ice.name
         consumeData.sugarName = Sugar.name
-        consumeData
+        consumeData.allToppings = toppingsNameList
+        consumeData.totalPrice = toppingsPrice + Drink.price
+        return consumeData
       })
-
-
-
+      console.log(consumesList)
       return res.render('drinks', {
         categoryId,
         categories,
@@ -70,9 +72,9 @@ const drinkController = {
     try {
       const drinkPrice = await Drink.findByPk(drink)
       const newConsume = await Consume.create({
-        drink_name: drink,
-        drink_ice: ice,
-        drink_sugar: sugar,
+        drinkName: drink,
+        drinkIce: ice,
+        drinkSugar: sugar,
         drink_price: drinkPrice.toJSON().price
       })
 

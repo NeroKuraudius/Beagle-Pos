@@ -10,12 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Customization.belongsTo(models.Consume, {
+        foreignKey: 'consumeId'
+      })
+      Customization.belongsTo(models.Topping, {
+        foreignKey: 'toppingId'
+      })
     }
   }
   Customization.init({
     consume_id: DataTypes.INTEGER,
-    topping_id: DataTypes.INTEGER
+    topping_id: DataTypes.INTEGER,
+    topping_price: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Customization',

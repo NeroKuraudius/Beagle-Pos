@@ -13,7 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       Consume.belongsTo(models.Drink, { foreignKey: 'drinkName' })
       Consume.belongsTo(models.Ice, { foreignKey: 'drinkIce' })
       Consume.belongsTo(models.Sugar, { foreignKey: 'drinkSugar' })
-      Consume.
       Consume.belongsToMany(models.Topping, {
         through: models.Customization,
         foreignKey: 'consumeId',

@@ -1,129 +1,142 @@
+{{> messages}}
 <div class="row">
   <!--     訂單區 -->
   <div class="col-md-4 p-4" data-order-lists>
-
-    <div class="text-right">
-      <button class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="checkout">Checkout</button>
+    {{#each consumesList}}
+    <div class="card mb-3">
+      <div class="card-body pt-3 pr-3">
+        <div class="text-right">
+          <span data-alpha-pos="delete-drink">×</span>
+        </div>
+        <h6 class="card-title mb-1">${{this.Drink.name}}</h6>
+        <div class="card-text">${{this.Ice.name}}</div>
+        <div class="card-text">${{this.Sugar.name}}</div>
+      </div>
+      <div class="card-footer text-right py-2">
+        <div class="card-text text-muted">$ <span data-drink-price>${{this.Drink.price}}</span></div>
+      </div>
+      {{/each}}
+      <div class="text-right">
+        <button class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="checkout">Checkout</button>
+      </div>
     </div>
-  </div>
-  <!--   點單區   -->
-  <div class="col-md-8 p-4" data-order-panel>
-    <section class="menu">
-
-      {{!-- 飲料類別 --}}
-      <ul class="navbar nav-tabs category-tabs">
-        <li class="nav-item">
-          <a class="nav-link {{#ifCond categoryId ''}}active{{/ifCond}}" href="?categoryId=">全部</a>
-        </li>
-        {{#each categories}}
-        <li class="nav-item">
-          <a class="nav-link {{#ifCond ../categoryId this.id}}active{{/ifCond}}"
-            href="?categoryId={{this.id}}">{{this.name}}</a>
-        </li>
-        {{/each}}
-      </ul>
-
-      {{!-- 飲料區 --}}
-      <div class="card-deck mb-3">
-        {{#each drinks}}
-        <div class="card text-center">
-          <label class="card-body px-2">
-            <h5 class="card-title">{{this.name}} ${{this.price}}</h5>
-            <input type="radio" name="drink" value="{{this.id}}">
-          </label>
-        </div>
-        {{/each}}
-      </div>
-
-      {{!-- 分頁器 --}}
-      <nav class="drinks-pagination mt-5" aria-label="page navigation">
-        <ul class="pagination">
-          <li class="page-item {{#ifCond pagination.current 1}}disabled{{/ifCond}}">
-            <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.prev}}" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          {{#each pagination.pages}}
-          {{#ifCond this ../pagination.current}}
-          <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
-          {{else}}
-          <li class="page-item">
-            <a class="page-link" href="?categoryId={{../categoryId}}&page={{this}}">{{this}}</a>
-          </li>
-          {{/ifCond}}
-          {{/each}}
-          <li class="page-item {{#ifCond pagination.current pagination.totalPage}}disabled{{/ifCond}}">
-            <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.next}}" aria-label="Next">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </section>
-
-    <section class="ice&sugar mb-4" style="display:flex;justify-content:space-between">
-      <div>
-        <label class="d-block text-light">冰塊</label>
-        <div class="btn-group btn-group-toggle mb-2" data-toggle="buttons">
-          {{#each ices}}
-          {{#ifCond this.name '熱飲'}}
-          <label class="btn btn-outline-danger">
-            <input type="radio" name="ice" value="{{this.id}}" />{{this.name}}
-          </label>
-          {{else}}
-          <label class="btn btn-outline-primary {{#ifCond this.name '正常'}}active{{/ifCond}}">
-            <input type="radio" name="ice" value="{{this.id}}" {{#ifCond this.name '正常'
-              }}checked{{/ifCond}} />{{this.name}}
-          </label>
-          {{/ifCond}}
-          {{/each}}
-        </div>
-      </div>
-      <div>
-        <label class="d-block text-light">甜度</label>
-        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-          {{#each sugars}}
-          <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
-            <input type="radio" name="sugar" value="{{this.id}}" {{#ifCond this.name '正常'
-              }}checked{{/ifCond}} />{{this.name}}
-          </label>
-          {{/each}}
-        </div>
-      </div>
-    </section>
-
-    <section class="topping mb-4" style="display:flex;justify-content:left">
-      <div class="toppings10 me-5">
-        <label class="d-block text-light">配料(+$10)</label>
-        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-          {{#each toppings}}
-          {{#ifCond this.price 10}}
-          <label class="btn btn-outline-warning">
-            <input type="checkbox" name="sugar" value="{{this.name}}" />{{this.name}}
-          </label>
-          {{/ifCond}}
-          {{/each}}
-        </div>
-      </div>
-
-      <div class="toppings15">
-        <label class="d-block text-light">配料(+$15)</label>
-        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-          {{#each toppings}}
-          {{#ifCond this.price 15}}
-          <label class="btn btn-outline-warning">
-            <input type="checkbox" name="sugar" value="{{this.name}}" />{{this.name}}
-          </label>
-          {{/ifCond}}
-          {{/each}}
-        </div>
-      </div>
-    </section>
-
-    <div class="text-right mb-3">
+    <!--   點單區   -->
+    <div class="col-md-8 p-4" data-order-panel>
       <form action="/drinks" method="POST">
-        <a class="btn btn-outline-light" type="submit" style="min-width:120px;">新增</a>
+        <section class="menu">
+          {{!-- 飲料類別 --}}
+          <ul class="navbar nav-tabs category-tabs">
+            <li class="nav-item">
+              <a class="nav-link {{#ifCond categoryId ''}}active{{/ifCond}}" href="?categoryId=">全部</a>
+            </li>
+            {{#each categories}}
+            <li class="nav-item">
+              <a class="nav-link {{#ifCond ../categoryId this.id}}active{{/ifCond}}"
+                href="?categoryId={{this.id}}">{{this.name}}</a>
+            </li>
+            {{/each}}
+          </ul>
+
+          {{!-- 飲料區 --}}
+          <div class="card-deck mb-3">
+            {{#each drinks}}
+            <div class="card text-center">
+              <label class="card-body px-2">
+                <h5 class="card-title">{{this.name}} ${{this.price}}</h5>
+                <input type="radio" name="drink" value="{{this.id}}">
+              </label>
+            </div>
+            {{/each}}
+          </div>
+
+          {{!-- 分頁器 --}}
+          <nav class="drinks-pagination mt-5" aria-label="page navigation">
+            <ul class="pagination">
+              <li class="page-item {{#ifCond pagination.current 1}}disabled{{/ifCond}}">
+                <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.prev}}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {{#each pagination.pages}}
+              {{#ifCond this ../pagination.current}}
+              <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
+              {{else}}
+              <li class="page-item">
+                <a class="page-link" href="?categoryId={{../categoryId}}&page={{this}}">{{this}}</a>
+              </li>
+              {{/ifCond}}
+              {{/each}}
+              <li class="page-item {{#ifCond pagination.current pagination.totalPage}}disabled{{/ifCond}}">
+                <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.next}}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </section>
+
+        <section class="ice&sugar mb-4" style="display:flex;justify-content:space-between">
+          <div>
+            <label class="d-block text-light">冰塊</label>
+            <div class="btn-group btn-group-toggle mb-2" data-toggle="buttons">
+              {{#each ices}}
+              {{#ifCond this.name '熱飲'}}
+              <label class="btn btn-outline-danger">
+                <input type="radio" name="ice" value="{{this.id}}" />{{this.name}}
+              </label>
+              {{else}}
+              <label class="btn btn-outline-primary {{#ifCond this.name '正常'}}active{{/ifCond}}">
+                <input type="radio" name="ice" value="{{this.id}}" {{#ifCond this.name '正常'
+                  }}checked{{/ifCond}} />{{this.name}}
+              </label>
+              {{/ifCond}}
+              {{/each}}
+            </div>
+          </div>
+          <div>
+            <label class="d-block text-light">甜度</label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {{#each sugars}}
+              <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
+                <input type="radio" name="sugar" value="{{this.id}}" {{#ifCond this.name '正常'
+                  }}checked{{/ifCond}} />{{this.name}}
+              </label>
+              {{/each}}
+            </div>
+          </div>
+        </section>
+
+        <section class="topping mb-4" style="display:flex;justify-content:left">
+          <div class="topping10 me-5">
+            <label class="d-block text-light">配料(+$10)</label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {{#each toppings}}
+              {{#ifCond this.price 10}}
+              <label class="btn btn-outline-warning">
+                <input type="checkbox" name="topping" value="{{this.id}}" />{{this.name}}
+              </label>
+              {{/ifCond}}
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="topping15">
+            <label class="d-block text-light">配料(+$15)</label>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              {{#each toppings}}
+              {{#ifCond this.price 15}}
+              <label class="btn btn-outline-warning">
+                <input type="checkbox" name="topping" value="{{this.id}}" />{{this.name}}
+              </label>
+              {{/ifCond}}
+              {{/each}}
+            </div>
+          </div>
+        </section>
+
+        <div class="text-right mb-3">
+          <button class="btn btn-outline-light" type="submit" style="min-width: 120px;">新增</button>
+        </div>
       </form>
     </div>
   </div>
-</div>

@@ -17,7 +17,7 @@ module.exports = {
         updated_at: new Date()
       },
       {
-        name: '蜂蜜棟',
+        name: '蜂蜜凍',
         price: 10,
         created_at: new Date(),
         updated_at: new Date()

@@ -2,7 +2,7 @@
 const bcrypt = require('bcryptjs')
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports =  {
+module.exports = {
   async up(queryInterface, Sequelize) {
     try {
       const users = [
@@ -11,6 +11,7 @@ module.exports =  {
           account: 'nerodrinkshop',
           password: await bcrypt.hash('20230712', 12),
           role: 'owner',
+          shift_id: 3,
           created_at: new Date(),
           updated_at: new Date()
         },
@@ -19,6 +20,7 @@ module.exports =  {
           account: 'superstar',
           password: await bcrypt.hash('hoshimachi', 12),
           role: 'staff',
+          shift_id: 1,
           created_at: new Date(),
           updated_at: new Date()
         },
@@ -27,6 +29,7 @@ module.exports =  {
           account: 'toprichman',
           password: await bcrypt.hash('greencar', 12),
           role: 'staff',
+          shift_id: 2,
           created_at: new Date(),
           updated_at: new Date()
         }

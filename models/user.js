@@ -10,14 +10,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      User.belongsTo(models.Shift, { foreignKey: 'userId' })
+      User.belongsTo(models.Shift, { foreignKey: 'shiftId' })
     }
   }
   User.init({
     name: DataTypes.STRING,
     account: DataTypes.STRING,
     password: DataTypes.STRING,
-    role: DataTypes.STRING
+    role: DataTypes.STRING,
+    shift_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'User',

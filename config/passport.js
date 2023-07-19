@@ -20,7 +20,7 @@ passport.use('staffLogin', new localPassport({
 
     return cb(null, user)
   } catch (err) {
-    cb(err)
+    cb(`Passport authenticated error: ${err}`)
   }
 }
 ))
@@ -41,7 +41,7 @@ passport.use('ownerLogin', new localPassport({
 
     return cb(null, user)
   } catch (err) {
-    cb(err)
+    cb(`Passport authenticated error: ${err}`)
   }
 }
 ))

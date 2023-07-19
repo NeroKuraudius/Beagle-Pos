@@ -16,6 +16,7 @@ const drinkController = {
       const sugars = await Sugar.findAll({ raw: true, nest: true })
       const toppings = await Topping.findAll({ raw: true, nest: true })
       const consumes = await Consume.findAll({
+        where: { is_checked: false },
         include: [
           { model: Drink, attribute: ['name'] },
           { model: Ice },
@@ -114,7 +115,7 @@ const drinkController = {
       }
       const customization = await Customization.findAll({ where: { consumeId: id } })
       if (consume && customization) {
-        await consume.destroy()
+        await consume.update()
         await Customization.destroy({ where: { consumeId: id } })
       } else {
         await consume.destroy()
@@ -123,6 +124,10 @@ const drinkController = {
     } catch (err) {
       console.error(`Error occurred on drinkController.deleteDrink: ${err}`)
     }
+  },
+  checkoutDrinks: async (req, res) => {
+
+
   }
 
 }

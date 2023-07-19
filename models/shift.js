@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Shift.hasMany(models.User, { foreignKey: 'userId' })
+      Shift.hasMany(models.User, { foreignKey: 'shiftId' })
     }
   }
   Shift.init({

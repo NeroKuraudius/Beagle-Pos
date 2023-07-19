@@ -22,10 +22,11 @@
       </div>
     </div>
     {{/each}}
-    <div class="text-right">
-      <button class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="checkout">Checkout</button>
-    </div>
-
+    <form class="checkout-button" action="/drinks/checkout" method="POST">
+      <div class="text-right">
+        <button class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="checkout">Checkout</button>
+      </div>
+    </form>
   </div>
   <!--   點單區   -->
   <div class="col-md-8 p-4" data-order-panel>

@@ -11,6 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       User.belongsTo(models.Shift, { foreignKey: 'shiftId' })
+      User.hasMany(models.Consume, { foreignKey: 'userId' })
+      User.hasMany(models.Order, { foreignKey: 'userId' })
     }
   }
   User.init({

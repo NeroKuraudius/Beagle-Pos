@@ -1,7 +1,7 @@
 {{> messages}}
 <div class="row">
   <!--     訂單區 -->
-  <div class="col-md-4 p-4" data-order-lists>
+  <div class="col-md-4 p-4">
     {{#each consumesList}}
     <div class="card mb-3">
       <div class="card-body pt-3 pr-3">
@@ -23,13 +23,17 @@
     </div>
     {{/each}}
     <form class="checkout-button" action="/drinks/checkout" method="POST">
-      <div class="text-right">
-        <button class="btn btn-outline-light" style="min-width:120px;" data-alpha-pos="checkout">Checkout</button>
+      <div class="card orderTotalPrice mb-3">
+        <label style="display:block" for="orderTotalPrice">總金額：
+          <input type="text" class="orderTotalPriceValue" name="orderTotalPrice" size="4" value="{{orderTotalPrice}}"
+          readonly>
+        </label>
+        <button class="btn btn-outline-light" type="submit" style="min-width:120px;">結帳</button>
       </div>
     </form>
   </div>
   <!--   點單區   -->
-  <div class="col-md-8 p-4" data-order-panel>
+  <div class="col-md-8 p-4">
     <form action="/drinks" method="POST">
       <section class="menu">
         {{!-- 飲料類別 --}}

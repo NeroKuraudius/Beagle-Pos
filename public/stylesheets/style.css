@@ -100,7 +100,28 @@ body {
   border-top-right-radius: 5px
 }
 
-.card-footer{
+.card-footer {
   background: grey;
   color: azure;
+}
+
+.orderTotalPrice {
+  display: flex;
+  justify-content: space-around;
+  font-size: large;
+  font-weight: bold;
+  color: azure;
+  border: none;
+  float: right;
+}
+
+.orderTotalPriceValue {
+  font-size: large;
+  font-weight: bold;
+  color: azure;
+  background-color: transparent;
+  border: none;
+  border-radius: 3px;
+  float: right;
+  text-align: right;
 }

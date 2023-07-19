@@ -1,4 +1,4 @@
-const { Category, Drink, Ice, Sugar, Topping, Consume, Customization } = require('../models')
+const { Category, Drink, Ice, Sugar, Topping, Consume, Customization, Order, User } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 
 const drinkController = {
@@ -16,7 +16,7 @@ const drinkController = {
       const sugars = await Sugar.findAll({ raw: true, nest: true })
       const toppings = await Topping.findAll({ raw: true, nest: true })
       const consumes = await Consume.findAll({
-        where: { is_checked: false },
+        where: { is_checked: false, user_id: req.user.id },
         include: [
           { model: Drink, attribute: ['name'] },
           { model: Ice },
@@ -49,6 +49,8 @@ const drinkController = {
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData
       })
+      let orderTotalPrice = 0
+      consumesList.forEach(consume => orderTotalPrice += consume.totalPrice)
 
       return res.render('drinks', {
         categoryId,
@@ -58,7 +60,8 @@ const drinkController = {
         toppings,
         drinks: drinks.rows,
         pagination,
-        consumesList
+        consumesList,
+        orderTotalPrice
       })
     } catch (err) {
       console.error(`Data search error: ${err}`)
@@ -78,7 +81,8 @@ const drinkController = {
         drinkName: drink,
         drinkIce: ice,
         drinkSugar: sugar,
-        drink_price: consumeDrink.toJSON().price
+        drink_price: consumeDrink.toJSON().price,
+        user_id: req.user.id
       })
 
       const consumeId = await newConsume.toJSON().id
@@ -115,7 +119,6 @@ const drinkController = {
       }
       const customization = await Customization.findAll({ where: { consumeId: id } })
       if (consume && customization) {
-        await consume.update()
         await Customization.destroy({ where: { consumeId: id } })
       } else {
         await consume.destroy()
@@ -126,7 +129,28 @@ const drinkController = {
     }
   },
   checkoutDrinks: async (req, res) => {
+    const userId = req.user.id
+    try {
+      const consumes = await Consume.findAll({
+        raw: true,
+        nest: true,
+        where: { is_checked: false },
+      })
+      const user = await User.findByPk(userId)
+      await Order.create({
+        user_id: userId,
+        shift_id: user.toJSON().shift_id,
+        start_consume: consumes[0].id,
+        end_consume: consumes.slice(-1)[0].id,
+        quantity: consumes.length,
+        total_price: req.body.orderTotalPrice
+      })
+      // 把Consume.is_checked=false改為true，用MySQL語法直接改
 
+      return res.redirect('/drinks')
+    } catch (err) {
+      console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
+    }
 
   }
 

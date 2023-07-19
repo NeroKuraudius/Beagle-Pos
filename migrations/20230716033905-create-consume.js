@@ -13,11 +13,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      drink_ice:{
+      drink_ice: {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      drink_sugar:{
+      drink_sugar: {
         allowNull: false,
         type: Sequelize.INTEGER
       },

@@ -1,0 +1,21 @@
+<div class="modal fade" id="front-setting-{{loginUser.id}}" tabindex="-1" aria-labelledby="settingModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-size:x-large;color:azure">Hi, {{loginUser.name}}</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="btn-group-vertical settingButtonGroup mt-2" >
+          <button class="btn btn-outline-light" style="font-size:larger;font-weight:bold">查看訂單</button>
+          <button class="btn btn-outline-light" style="font-size:larger;font-weight:bold">結帳交班</button>
+          <form class="signout-button mt-2" action="/signout" method="POST" style="text-align:center">
+            <button class="btn btn-outline-light" type="submit" style="font-size:larger;font-weight:bold">操作登出</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

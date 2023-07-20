@@ -16,21 +16,26 @@
 </head>
 
 <body>
+  {{!-- setting madol --}}
+  {{> front-setting-modal}}
   <div class="container m-5">
-    <h2 class="text-center text-light pt-4">
+    <h2 class="text-center text-light pt-4 ms-5">
       Beagle Pos System
       {{#if loginUser}}
-      <form action="/signout" method="POST" style="float:right">
-        <button class="btn" type="submit">
-          <i class="fa-solid fa-gears fa-2x" style="color:#f4f4f4"></i>
+      <div style="float:right">
+        <button class="btn modalButton" type="button" data-toggle="modal" data-target="#front-setting-{{loginUser.id}}">
+          <i class="fa-solid fa-gears fa-2x" style="color:azure"></i>
         </button>
-      </form>
+      </div>
+      {{/if}}
     </h2>
-    {{/if}}
+    {{!-- setting madol --}}
+    {{> front-setting-modal}}
 
     {{{body}}}
   </div>
 
+  <script defer src="/javascripts/drinks.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
@@ -40,7 +45,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
-  <script src="/javascripts/drinks.js"></script>
 </body>
 
 </html>

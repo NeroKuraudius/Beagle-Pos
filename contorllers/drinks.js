@@ -8,7 +8,6 @@ const drinkController = {
     const limit = 5
     const page = parseInt(req.query.page) || 1
     const offset = getOffset(limit, page)
-
     const categoryId = parseInt(req.query.categoryId) || ''
     try {
       // 引用資料庫
@@ -62,7 +61,7 @@ const drinkController = {
         drinks: drinks.rows,
         pagination,
         consumesList,
-        orderTotalPrice
+        orderTotalPrice,
       })
     } catch (err) {
       console.error(`Data search error: ${err}`)
@@ -132,33 +131,31 @@ const drinkController = {
   checkoutDrinks: async (req, res) => {
     const userId = req.user.id
     try {
-      if (confirm('確認結帳嗎?')) {
-        const consumes = await Consume.findAll({
-          raw: true,
-          nest: true,
-          where: { is_checked: false },
-        })
-        const user = await User.findByPk(userId)
-        await Order.create({
-          user_id: userId,
-          shift_id: user.toJSON().shift_id,
-          start_consume: consumes[0].id,
-          end_consume: consumes.slice(-1)[0].id,
-          quantity: consumes.length,
-          total_price: req.body.orderTotalPrice
-        })
-        const consumesIdList = consumes.map(consume => { return consume.id })
-        await Consume.update({ is_checked: true }, { where: { id: consumesIdList } })
-        return res.redirect('/drinks')
-      } else {
+      const consumes = await Consume.findAll({
+        raw: true,
+        nest: true,
+        where: { is_checked: false },
+      })
+      if (consumes.length === 0) {
+        req.flash('danger_msg', '未選取任何餐點')
         return res.redirect('/drinks')
       }
+      const user = await User.findByPk(userId)
+      await Order.create({
+        user_id: userId,
+        shift_id: user.toJSON().shift_id,
+        start_consume: consumes[0].id,
+        end_consume: consumes.slice(-1)[0].id,
+        quantity: consumes.length,
+        total_price: req.body.orderTotalPrice
+      })
+      const consumesIdList = consumes.map(consume => { return consume.id })
+      await Consume.update({ is_checked: true }, { where: { id: consumesIdList } })
+      return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
     }
-
   }
-
 }
 
 module.exports = drinkController

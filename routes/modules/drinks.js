@@ -3,9 +3,19 @@ const router = express.Router()
 const { authenticated } = require('../../middleware/auth')
 const drinkController = require('../../contorllers/drinks')
 
+// 查看目前為止的訂單
+router.get('/consumes', authenticated, drinkController.getConsumes)
+
+// 首頁
 router.get('/', authenticated, drinkController.getDrinks)
-router.post('/checkout',authenticated,drinkController.checkoutDrinks)
+
+// 結帳
+router.post('/checkout', authenticated, drinkController.checkoutDrinks)
+
+// 新增訂單
 router.post('/', authenticated, drinkController.addDrink)
-router.delete('/:id',authenticated,drinkController.deleteDrink)
+
+// 刪除訂單
+router.delete('/:id', authenticated, drinkController.deleteDrink)
 
 module.exports = router

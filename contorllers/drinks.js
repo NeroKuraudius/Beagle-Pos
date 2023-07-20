@@ -155,6 +155,13 @@ const drinkController = {
     } catch (err) {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
     }
+  },
+  getConsumes: async (req, res) => {
+    try {
+
+    } catch (err) {
+      console.error(`Error occurred on drinkController.getConsumes: ${err}`)
+    }
   }
 }
 

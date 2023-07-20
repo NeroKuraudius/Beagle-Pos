@@ -11,10 +11,9 @@ body {
 .container {
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 3px;
-  z-index: 2;
 }
 
-.card {
+.order-area {
   margin-top: 3px;
   border: 2px solid azure;
   color: azure;
@@ -26,13 +25,18 @@ body {
   font-size: 18px;
 }
 
+.consume-card {
+  border: 2px solid azure;
+  color: azure;
+  background-color: transparent;
+}
+
 .menu .card-body {
   cursor: pointer;
 }
 
-
 .menu .card:hover {
-  box-shadow: 0px 0px 8px 1px rgba(200, 125, 55, 1);
+  box-shadow: 0px 0px 8px 1px moccasin
 }
 
 .row {
@@ -111,6 +115,7 @@ body {
   justify-content: space-around;
   font-size: large;
   font-weight: bold;
+  background-color: transparent;
   color: azure;
   border: none;
   float: right;
@@ -130,6 +135,11 @@ body {
 .modal {
   margin: 0 auto;
   width: 300px;
+  z-index: 5;
+}
+
+.modal-header{
+  color:azure;
 }
 
 .modal-content {
@@ -139,13 +149,23 @@ body {
 }
 
 .modal-backdrop {
-  z-index: -3;
+  z-index: 1;
 }
 
-.settingButtonGroup {
+.setting-button-group {
   font-size: larger;
+  color: azure;
   width: 100%;
   height: 80%;
-  display: flex;
-  justify-content: space-around;
+}
+
+.setting-button-form {
+  margin: 0 auto;
+  width: 80%;
+}
+
+.setting-button {
+  font-size: larger;
+  font-weight: bold;
+  justify-content: center
 }

@@ -3,14 +3,13 @@
   <!--     訂單區 -->
   <div class="col-md-4 p-4">
     {{#each consumesList}}
-    <div class="card mb-3">
+    <div class="card mb-3 consume-card">
       <div class="card-body pt-3 pr-3">
         <form action="/drinks/{{this.id}}?_method=DELETE" method="POST">
           <div class="text-right">
             <button class="btn" type="submit" id="drinkDelete" style="color:azure">×</button>
           </div>
         </form>
-
         <h6 class="card-title mb-1">{{this.drinkName}}</h6>
         <div class="card-text">{{this.sugarName}},{{this.iceName}}</div>
         {{#each this.allToppings}}
@@ -53,7 +52,7 @@
         {{!-- 飲料區 --}}
         <div class="card-deck mb-3">
           {{#each drinks}}
-          <div class="card text-center">
+          <div class="card text-center order-area">
             <label class="card-body px-2">
               <h5 class="card-title">{{this.name}} ${{this.price}}</h5>
               <input type="radio" name="drink" value="{{this.id}}">

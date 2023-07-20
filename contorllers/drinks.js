@@ -1,5 +1,6 @@
 const { Category, Drink, Ice, Sugar, Topping, Consume, Customization, Order, User } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
+const sequelize = require('sequelize')
 
 const drinkController = {
   // 前台操作首頁
@@ -74,7 +75,6 @@ const drinkController = {
       req.flash('danger_msg', '請選擇飲品')
       return res.redirect('/drinks')
     }
-
     try {
       const consumeDrink = await Drink.findByPk(drink)
       const newConsume = await Consume.create({
@@ -119,6 +119,7 @@ const drinkController = {
       }
       const customization = await Customization.findAll({ where: { consumeId: id } })
       if (consume && customization) {
+        await consume.destroy()
         await Customization.destroy({ where: { consumeId: id } })
       } else {
         await consume.destroy()
@@ -131,23 +132,27 @@ const drinkController = {
   checkoutDrinks: async (req, res) => {
     const userId = req.user.id
     try {
-      const consumes = await Consume.findAll({
-        raw: true,
-        nest: true,
-        where: { is_checked: false },
-      })
-      const user = await User.findByPk(userId)
-      await Order.create({
-        user_id: userId,
-        shift_id: user.toJSON().shift_id,
-        start_consume: consumes[0].id,
-        end_consume: consumes.slice(-1)[0].id,
-        quantity: consumes.length,
-        total_price: req.body.orderTotalPrice
-      })
-      // 把Consume.is_checked=false改為true，用MySQL語法直接改
-
-      return res.redirect('/drinks')
+      if (confirm('確認結帳嗎?')) {
+        const consumes = await Consume.findAll({
+          raw: true,
+          nest: true,
+          where: { is_checked: false },
+        })
+        const user = await User.findByPk(userId)
+        await Order.create({
+          user_id: userId,
+          shift_id: user.toJSON().shift_id,
+          start_consume: consumes[0].id,
+          end_consume: consumes.slice(-1)[0].id,
+          quantity: consumes.length,
+          total_price: req.body.orderTotalPrice
+        })
+        const consumesIdList = consumes.map(consume => { return consume.id })
+        await Consume.update({ is_checked: true }, { where: { id: consumesIdList } })
+        return res.redirect('/drinks')
+      } else {
+        return res.redirect('/drinks')
+      }
     } catch (err) {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
     }

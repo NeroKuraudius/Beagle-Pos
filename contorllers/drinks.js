@@ -1,6 +1,5 @@
 const { Category, Drink, Ice, Sugar, Topping, Consume, Customization, Order, User, Shift } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
-const sequelize = require('sequelize')
 
 const drinkController = {
   // 前台操作首頁
@@ -15,6 +14,13 @@ const drinkController = {
       const ices = await Ice.findAll({ raw: true, nest: true })
       const sugars = await Sugar.findAll({ raw: true, nest: true })
       const toppings = await Topping.findAll({ raw: true, nest: true })
+      const drinks = await Drink.findAndCountAll({
+        raw: true,
+        nest: true,
+        where: { ...categoryId ? { categoryId } : {} },
+        limit,
+        offset
+      })
       const consumes = await Consume.findAll({
         where: { is_checked: false, user_id: req.user.id },
         include: [
@@ -24,13 +30,7 @@ const drinkController = {
           { model: Topping, as: 'addToppings' }
         ]
       })
-      const drinks = await Drink.findAndCountAll({
-        raw: true,
-        nest: true,
-        where: { ...categoryId ? { categoryId } : {} },
-        limit,
-        offset
-      })
+
       // 創建分頁器
       const pagination = getPagination(limit, page, drinks.count)
       // 創造訂單列表
@@ -49,6 +49,7 @@ const drinkController = {
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData
       })
+      // 計算訂單總價
       let orderTotalPrice = 0
       consumesList.forEach(consume => orderTotalPrice += consume.totalPrice)
 
@@ -154,32 +155,8 @@ const drinkController = {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
     }
   },
-  getConsumes: async (req, res) => {
-    const { id } = req.user
-    const today = new Date().toJSON().slice(0, 10)
-    try {
-      const orders = await Order.findAll({
-        raw: true,
-        nest: true,
-        where: { user_id: id, is_handover: false },
-        order: [['created_at', 'DESC']],
-        include: [
-          {
-            model: Consume,
-            include: [
-              { model: Topping, as: 'addToppings' }
-            ]
-          }
-        ]
-      })
-      
-      return res.json({
-        status: 'success',
-        data: { today, orders }
-      })
-    } catch (err) {
-      console.error(`Error occurred on drinkController.getConsumes: ${err}`)
-    }
+  getOrders: async (req, res) => {
+
   }
 }
 

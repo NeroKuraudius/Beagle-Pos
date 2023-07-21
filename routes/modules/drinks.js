@@ -3,8 +3,8 @@ const router = express.Router()
 const { authenticated } = require('../../middleware/auth')
 const drinkController = require('../../contorllers/drinks')
 
-// 查看目前為止的訂單
-router.get('/consumes', authenticated, drinkController.getConsumes)
+
+router.get('/orders', authenticated, drinkController.getOrders)
 
 // 首頁
 router.get('/', authenticated, drinkController.getDrinks)

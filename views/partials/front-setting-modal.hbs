@@ -1,5 +1,5 @@
-<div class="modal fade" id="front-setting-{{loginUser.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
-  aria-hidden="true">
+<div class="modal fade setting-modal" id="front-setting-{{loginUser.id}}" tabindex="-1"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -11,13 +11,13 @@
       <div class="modal-body">
         <div class="btn-group-vertical setting-button-group mt-2">
           <form class="setting-button-form mt-3" action="/drinks/consumes" method="GET">
-            <button class="btn btn-outline-light setting-button" id="orders-query-{{loginUser.id}}" type="submit">查看訂單</button>
+            <button class="btn setting-button" id="orders-query-{{loginUser.id}}" type="submit">查看訂單</button>
           </form>
           <form class="setting-button-form mt-3">
-            <button class="btn btn-outline-light setting-button">結帳交班</button>
+            <button class="btn setting-button">結帳交班</button>
           </form>
           <form class="setting-button-form mt-3" action="/signout" method="POST">
-            <button class="btn btn-outline-light setting-button" type="submit">帳號登出</button>
+            <button class="btn setting-button" type="submit">帳號登出</button>
           </form>
         </div>
       </div>

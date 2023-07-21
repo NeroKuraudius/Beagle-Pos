@@ -138,13 +138,13 @@ body {
   z-index: 5;
 }
 
-.modal-header{
-  color:azure;
+.modal-header {
+  color: #806c53
 }
 
 .modal-content {
   height: 300px;
-  background-color: rgb(185, 181, 181);
+  background-color: azure;
   border-radius: 8px;
 }
 
@@ -165,7 +165,17 @@ body {
 }
 
 .setting-button {
+  color: #806c53;
+  border-color: #806c53;
+  background-color: azure;
   font-size: larger;
   font-weight: bold;
   justify-content: center
+}
+
+.setting-button:hover {
+  color: azure;
+  border-color: #806c53;
+  background-color: #806c53 !important;
+  background-image: none;
 }

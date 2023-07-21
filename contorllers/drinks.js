@@ -141,16 +141,14 @@ const drinkController = {
         return res.redirect('/drinks')
       }
       const user = await User.findByPk(userId)
-      await Order.create({
+      const newOrder = await Order.create({
         user_id: userId,
         shift_id: user.toJSON().shift_id,
-        start_consume: consumes[0].id,
-        end_consume: consumes.slice(-1)[0].id,
         quantity: consumes.length,
         total_price: req.body.orderTotalPrice
       })
       const consumesIdList = consumes.map(consume => { return consume.id })
-      await Consume.update({ is_checked: true }, { where: { id: consumesIdList } })
+      await Consume.update({ is_checked: true, order_id: newOrder.toJSON().id }, { where: { id: consumesIdList } })
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
@@ -164,33 +162,17 @@ const drinkController = {
         raw: true,
         nest: true,
         where: { user_id: id, is_handover: false },
-        order: [['created_at', 'DESC']]
+        order: [['created_at', 'DESC']],
+        include: [
+          {
+            model: Consume,
+            include: [
+              { model: Topping, as: 'addToppings' }
+            ]
+          }
+        ]
       })
-      console.log(orders)
-      const user = await User.findOne({
-        where: { id },
-        
-      })
-      // const ordersList = orders.map(async (order) => {
-      //   const { ...ordersData } = order.toJSON()
-      //   const { start_consume, end_consume } = ordersData
-
-      // const user = await User.findOne({
-      //   where: { id },
-      //   attributes: ['id'],
-      //   include: Shift,
-      // include: [
-      //   [
-      //     sequelize.literal(
-      //       `(SELECT * FROM Consume WHERE Consume.id BETWEEN ${start_consume} and ${end_consume}`
-      //     ),
-      //     'consumes'
-      //   ]
-      // ]
-      // })
-      // ordersData.userData = user.toJSON()
-      //   return ordersData
-      // })
+      
       return res.json({
         status: 'success',
         data: { today, orders }

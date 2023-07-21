@@ -17,14 +17,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      start_consume: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
-      end_consume: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
       quantity: {
         allowNull: false,
         type: Sequelize.INTEGER
@@ -32,6 +24,11 @@ module.exports = {
       total_price: {
         allowNull: false,
         type: Sequelize.INTEGER
+      },
+      is_handover: {
+        allowNull: false,
+        defaultValue: false,
+        type: Sequelize.BOOLEAN
       },
       created_at: {
         allowNull: false,

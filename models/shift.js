@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Shift',
-    tableName: 'Shift',
+    tableName: 'Shifts',
     underscored: true,
   });
   return Shift;

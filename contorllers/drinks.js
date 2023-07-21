@@ -1,4 +1,4 @@
-const { Category, Drink, Ice, Sugar, Topping, Consume, Customization, Order, User } = require('../models')
+const { Category, Drink, Ice, Sugar, Topping, Consume, Customization, Order, User, Shift } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 const sequelize = require('sequelize')
 
@@ -157,8 +157,44 @@ const drinkController = {
     }
   },
   getConsumes: async (req, res) => {
+    const { id } = req.user
+    const today = new Date().toJSON().slice(0, 10)
     try {
+      const orders = await Order.findAll({
+        raw: true,
+        nest: true,
+        where: { user_id: id, is_handover: false },
+        order: [['created_at', 'DESC']]
+      })
+      console.log(orders)
+      const user = await User.findOne({
+        where: { id },
+        
+      })
+      // const ordersList = orders.map(async (order) => {
+      //   const { ...ordersData } = order.toJSON()
+      //   const { start_consume, end_consume } = ordersData
 
+      // const user = await User.findOne({
+      //   where: { id },
+      //   attributes: ['id'],
+      //   include: Shift,
+      // include: [
+      //   [
+      //     sequelize.literal(
+      //       `(SELECT * FROM Consume WHERE Consume.id BETWEEN ${start_consume} and ${end_consume}`
+      //     ),
+      //     'consumes'
+      //   ]
+      // ]
+      // })
+      // ordersData.userData = user.toJSON()
+      //   return ordersData
+      // })
+      return res.json({
+        status: 'success',
+        data: { today, orders }
+      })
     } catch (err) {
       console.error(`Error occurred on drinkController.getConsumes: ${err}`)
     }

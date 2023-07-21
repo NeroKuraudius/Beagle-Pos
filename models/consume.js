@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Consume.belongsTo(models.Ice, { foreignKey: 'drinkIce' })
       Consume.belongsTo(models.Sugar, { foreignKey: 'drinkSugar' })
       Consume.belongsTo(models.User, { foreignKey: 'userId' })
+      Consume.belongsTo(models.Order, { foreignKey: 'orderId' })
       Consume.hasMany(models.Customization, { foreignKey: 'consumeId' })
       Consume.belongsToMany(models.Topping, {
         through: models.Customization,
@@ -28,7 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     drink_sugar: DataTypes.INTEGER,
     drink_price: DataTypes.INTEGER,
     is_checked: DataTypes.BOOLEAN,
-    user_id: DataTypes.INTEGER
+    user_id: DataTypes.INTEGER,
+    order_id: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Consume',

@@ -4,6 +4,10 @@ const { authenticated } = require('../../middleware/auth')
 const drinkController = require('../../contorllers/drinks')
 
 
+// 點選單筆訂單查看詳細
+router.get('/orders/:id',authenticated, drinkController.getConsumes)
+
+// 查看訂單頁
 router.get('/orders', authenticated, drinkController.getOrders)
 
 // 首頁

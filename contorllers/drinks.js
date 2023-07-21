@@ -156,6 +156,22 @@ const drinkController = {
     }
   },
   getOrders: async (req, res) => {
+    try {
+      const user = await User.findOne({
+        where: { id: req.user.id },
+        include: Shift
+      })
+      const orders = await Order.findAll({
+        raw: true,
+        nest: true
+        // , where: { is_handover: true }
+      })
+      return res.render('orders', { user: user.toJSON(), orders })
+    } catch (err) {
+      console.error(`Error occurred on drinkController.getOrders: ${err}`)
+    }
+  },
+  getConsumes: async (req, res) => {
 
   }
 }

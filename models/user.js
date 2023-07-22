@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsTo(models.Shift, { foreignKey: 'shiftId' })
       User.hasMany(models.Consume, { foreignKey: 'userId' })
       User.hasMany(models.Order, { foreignKey: 'userId' })
+      User.hasMany(models.Income, { foreignKey: 'userId' })
     }
   }
   User.init({

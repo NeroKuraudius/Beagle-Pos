@@ -13,8 +13,8 @@
           <form class="setting-button-form mt-3" action="/drinks/orders/0" method="GET">
             <button class="btn setting-button" type="submit">查看訂單</button>
           </form>
-          <form class="setting-button-form mt-3">
-            <button class="btn setting-button">結帳交班</button>
+          <form class="setting-button-form mt-3" action="/drinks/shift" method="POST">
+            <button class="btn setting-button" type="submit" onclick="return confirm('確定要交班嗎?')">結帳交班</button>
           </form>
           <form class="setting-button-form mt-3" action="/signout" method="POST">
             <button class="btn setting-button" type="submit">帳號登出</button>

@@ -4,13 +4,13 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     try {
-      await queryInterface.addColumn('Consumes', 'is_checked',
+      await queryInterface.addColumn('Consumes', 'order_id',
         {
           allowNull: false,
-          type: Sequelize.BOOLEAN,
-          defaultValue: false
+          type: Sequelize.INTEGER,
+          defaultValue: 0
         })
-      console.log('Succeed in adding column isChecked!')
+      console.log('Succeed in adding column orderId!')
     } catch (err) {
       console.error(`Fail to adding column: ${err}`)
     }
@@ -18,8 +18,8 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     try {
-      await queryInterface.removeColumn('Consumes', 'is_checked')
-      console.log('Succeed in removing column isChecked!')
+      await queryInterface.removeColumn('Consumes', 'order_id')
+      console.log('Succeed in removing column orderId!')
     } catch (err) {
       console.error(`Fail to removing column: ${err}`)
     }

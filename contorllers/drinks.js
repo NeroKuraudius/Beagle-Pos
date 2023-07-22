@@ -206,6 +206,13 @@ const drinkController = {
     } catch (err) {
       console.error(`Error occurred on drinkController.getOrders: ${err}`)
     }
+  },
+  shiftChange:async(req,res)=>{
+    try{
+
+    }catch(err){
+      console.error(`Error occurred on drinkController.shiftChange: ${err}`)
+    }
   }
 }
 

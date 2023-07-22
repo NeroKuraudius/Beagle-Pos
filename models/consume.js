@@ -28,7 +28,6 @@ module.exports = (sequelize, DataTypes) => {
     drink_ice: DataTypes.INTEGER,
     drink_sugar: DataTypes.INTEGER,
     drink_price: DataTypes.INTEGER,
-    is_checked: DataTypes.BOOLEAN,
     user_id: DataTypes.INTEGER,
     order_id: DataTypes.INTEGER
   }, {

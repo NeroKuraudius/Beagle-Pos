@@ -27,8 +27,10 @@
           <input type="text" class="orderTotalPriceValue" name="orderTotalPrice" size="4" value="{{orderTotalPrice}}"
             readonly>
         </label>
-        <button class="btn btn-outline-light mb-3" id="checkoutButton" type="submit"
-          style="min-width:120px;">結帳</button>
+        <button class="btn btn-outline-light mb-3" id="checkoutConfirmButton" type="submit"
+          onclick="return confirm('確定要結帳嗎?')" style="min-width:120px;">結帳</button>
+        <button class="btn" id="checkoutButton" type="submit"
+          style="min-width:120px;" hidden></button>
       </div>
     </form>
   </div>

@@ -1,4 +1,5 @@
-const { Category, Drink, Ice, Sugar, Topping, Consume, Customization, Order, User, Shift } = require('../models')
+const { Category, Drink, Ice, Sugar, Topping,
+  Consume, Customization, Order, User, Shift, Income } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 
 const drinkController = {
@@ -22,7 +23,7 @@ const drinkController = {
         offset
       })
       const consumes = await Consume.findAll({
-        where: { is_checked: false, user_id: req.user.id },
+        where: { order_id: 0, user_id: req.user.id },
         include: [
           { model: Drink },
           { model: Ice },
@@ -135,7 +136,7 @@ const drinkController = {
       const consumes = await Consume.findAll({
         raw: true,
         nest: true,
-        where: { is_checked: false },
+        where: { order_id: 0 },
       })
       if (consumes.length === 0) {
         req.flash('danger_msg', '未選取任何餐點')
@@ -149,7 +150,7 @@ const drinkController = {
         total_price: req.body.orderTotalPrice
       })
       const consumesIdList = consumes.map(consume => { return consume.id })
-      await Consume.update({ is_checked: true, order_id: newOrder.toJSON().id }, { where: { id: consumesIdList } })
+      await Consume.update({ order_id: newOrder.toJSON().id }, { where: { id: consumesIdList } })
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
@@ -166,8 +167,8 @@ const drinkController = {
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { is_handover: false },
-        order:[['created_at','DESC']]
+        where: { income_id: 0 },
+        order: [['created_at', 'DESC']]
       })
       let totalQuantity = 0
       let totalPrice = 0
@@ -207,10 +208,28 @@ const drinkController = {
       console.error(`Error occurred on drinkController.getOrders: ${err}`)
     }
   },
-  shiftChange:async(req,res)=>{
-    try{
-
-    }catch(err){
+  shiftChange: async (req, res) => {
+    try {
+      const orders = await Order.findAll({
+        raw: true,
+        nest: true,
+        where: { income_id: 0 }
+      })
+      let totalNum = 0
+      let totalIncome = 0
+      const ordersIdList = []
+      orders.forEach(order => {
+        totalNum += order.quantity
+        totalIncome += order.total_price
+        ordersIdList.shift(order.id)
+      })
+      const newIncome = await Income.create({
+        quantity: totalNum,
+        income: totalIncome,
+        user_id: req.user.id
+      })
+      await Order.update({ income_id: newIncome.toJSON().id }, { where: { id: ordersIdList } })
+    } catch (err) {
       console.error(`Error occurred on drinkController.shiftChange: ${err}`)
     }
   }

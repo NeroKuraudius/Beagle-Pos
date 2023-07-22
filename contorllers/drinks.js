@@ -221,14 +221,18 @@ const drinkController = {
       orders.forEach(order => {
         totalNum += order.quantity
         totalIncome += order.total_price
-        ordersIdList.shift(order.id)
+        ordersIdList.push(order.id)
       })
       const newIncome = await Income.create({
         quantity: totalNum,
         income: totalIncome,
         user_id: req.user.id
       })
+      console.log(newIncome.toJSON())
+      console.log(ordersIdList)
       await Order.update({ income_id: newIncome.toJSON().id }, { where: { id: ordersIdList } })
+      req.flash('success_msg', '交班成功!')
+      return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.shiftChange: ${err}`)
     }

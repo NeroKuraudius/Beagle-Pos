@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const shifts = [
       {
-        name: '日班',
+        name: '早班',
         created_at: new Date(),
         updated_at: new Date()
       },

@@ -3,6 +3,9 @@
   <!--     訂單區 -->
   <div class="col-md-4 p-3">
     <h5 style="color:azure">訂單查詢—{{user.Shift.name}}人員: {{user.name}}</h5>
+    {{#ifCond orders.length 0 }}
+    <h4 class="text-center my-5" style="color:azure;font-weight:bold">尚無資料</h4>
+    {{/ifCond}}
     {{#each orders}}
     <a href="/drinks/orders/{{this.id}}" style="text-decoration:none">
       <div class="card my-3 consume-card">

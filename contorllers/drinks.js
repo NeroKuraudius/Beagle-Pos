@@ -24,7 +24,7 @@ const drinkController = {
       const consumes = await Consume.findAll({
         where: { is_checked: false, user_id: req.user.id },
         include: [
-          { model: Drink, attribute: ['name'] },
+          { model: Drink },
           { model: Ice },
           { model: Sugar },
           { model: Topping, as: 'addToppings' }
@@ -156,6 +156,8 @@ const drinkController = {
     }
   },
   getOrders: async (req, res) => {
+    const { id } = req.params
+    const backPage = true
     try {
       const user = await User.findOne({
         where: { id: req.user.id },
@@ -163,16 +165,47 @@ const drinkController = {
       })
       const orders = await Order.findAll({
         raw: true,
-        nest: true
-        // , where: { is_handover: true }
+        nest: true,
+        where: { is_handover: false },
+        order:[['created_at','DESC']]
       })
-      return res.render('orders', { user: user.toJSON(), orders })
+      let totalQuantity = 0
+      let totalPrice = 0
+      orders.forEach(order => {
+        totalQuantity += order.quantity
+        totalPrice += order.total_price
+      })
+      if (id === 0) return res.render('orders', { user: user.toJSON(), orders, totalQuantity, totalPrice })
+
+      const consumes = await Consume.findAll({
+        where: { order_id: id },
+        include: [
+          { model: Drink },
+          { model: Ice },
+          { model: Sugar },
+          { model: Topping, as: 'addToppings' }
+        ]
+      })
+      const consumesList = consumes.map(consume => {
+        const { Drink, Ice, Sugar, addToppings, ...consumeData } = consume.toJSON()
+
+        const toppingsNameList = addToppings.map(topping => { return topping.name })
+        const toppingsPriceList = addToppings.map(topping => { return topping.price })
+        let toppingsPrice = 0
+        toppingsPriceList.forEach(price => toppingsPrice += price);
+
+        consumeData.drinkName = Drink.name
+        consumeData.iceName = Ice.name
+        consumeData.sugarName = Sugar.name
+        consumeData.allToppings = toppingsNameList
+        consumeData.totalPrice = toppingsPrice + Drink.price
+        return consumeData
+      })
+
+      return res.render('orders', { backPage, user: user.toJSON(), orders, totalQuantity, totalPrice, consumesList })
     } catch (err) {
       console.error(`Error occurred on drinkController.getOrders: ${err}`)
     }
-  },
-  getConsumes: async (req, res) => {
-
   }
 }
 

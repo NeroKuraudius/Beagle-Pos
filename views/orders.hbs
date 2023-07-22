@@ -1,136 +1,29 @@
 {{> messages}}
 <div class="row">
   <!--     訂單區 -->
-  <div class="col-md-4 p-4">
-    <h5 style="color:azure">{{user.Shift.name}}人員: {{user.name}}</h5>
+  <div class="col-md-4 p-3">
+    <h5 style="color:azure">訂單查詢—{{user.Shift.name}}人員: {{user.name}}</h5>
     {{#each orders}}
     <a href="/drinks/orders/{{this.id}}" style="text-decoration:none">
       <div class="card my-3 consume-card">
         <div class="card-body pt-3 pr-3">
-          <div class="card-text mb-1">消費數量: {{this.quantity}}</div>
-          <div class="card-text">消費金額: {{this.total_price}}</div>
+          <div class="card-text mb-1">消費數量: {{this.quantity}} 杯</div>
+          <div class="card-text">消費金額: {{this.total_price}} 元</div>
         </div>
         <div class="card-footer text-right py-2">
-          <div class="card-text"><span>訂單時間:{{catchTime this.createdAt }}</span></div>
+          <div class="card-text"><span>訂單時間: {{catchTime this.createdAt }}</span></div>
         </div>
       </div>
     </a>
     {{/each}}
-    <form class="checkout-button" action="/drinks/checkout" method="POST">
-      <div class="card orderTotalPrice mb-3">
-        <label style="display:block" for="orderTotalPrice">總金額：
-          <input type="text" class="orderTotalPriceValue" name="orderTotalPrice" size="4" value="{{orderTotalPrice}}"
-            readonly>
-        </label>
-        <button class="btn btn-outline-light mb-3" id="checkoutButton" type="submit"
-          style="min-width:120px;">結帳</button>
-      </div>
-    </form>
+    <div class="card orderTotalPrice pb-3">
+      <span>總單數: {{totalQuantity}} 筆</span>
+      <span>總金額: {{totalPrice}} 元</span>
+    </div>
   </div>
+
   <!--   點單區   -->
-  <div class="col-md-8 p-4">
-    <form action="/drinks" method="POST">
-      <section class="menu">
-        {{!-- 飲料區 --}}
-        <div class="card-deck mb-3">
-
-          <div class="card text-center order-area">
-            <label class="card-body px-2">
-              <h5 class="card-title"></h5>
-              <input type="radio" name="drink" value="">
-            </label>
-          </div>
-
-        </div>
-
-        {{!-- 分頁器 --}}
-        {{!-- <nav class="drinks-pagination mt-5" aria-label="page navigation">
-          <ul class="pagination">
-            <li class="page-item {{#ifCond pagination.current 1}}disabled{{/ifCond}}">
-              <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.prev}}" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            {{#each pagination.pages}}
-            {{#ifCond this ../pagination.current}}
-            <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
-            {{else}}
-            <li class="page-item">
-              <a class="page-link" href="?categoryId={{../categoryId}}&page={{this}}">{{this}}</a>
-            </li>
-            {{/ifCond}}
-            {{/each}}
-            <li class="page-item {{#ifCond pagination.current pagination.totalPage}}disabled{{/ifCond}}">
-              <a class="page-link" href="?categoryId={{categoryId}}&page={{pagination.next}}" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav> --}}
-      </section>
-
-      {{!-- <section class="ice&sugar mb-4" style="display:flex;justify-content:space-between">
-        <div>
-          <label class="d-block text-light">冰塊</label>
-          <div class="btn-group btn-group-toggle mb-2" data-toggle="buttons">
-            {{#each ices}}
-            {{#ifCond this.name '熱飲'}}
-            <label class="btn btn-outline-danger">
-              <input type="radio" name="ice" value="{{this.id}}" />{{this.name}}
-            </label>
-            {{else}}
-            <label class="btn btn-outline-primary {{#ifCond this.name '正常'}}active{{/ifCond}}">
-              <input type="radio" name="ice" value="{{this.id}}" {{#ifCond this.name '正常'
-                }}checked{{/ifCond}} />{{this.name}}
-            </label>
-            {{/ifCond}}
-            {{/each}}
-          </div>
-        </div>
-        <div>
-          <label class="d-block text-light">甜度</label>
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            {{#each sugars}}
-            <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
-              <input type="radio" name="sugar" value="{{this.id}}" {{#ifCond this.name '正常'
-                }}checked{{/ifCond}} />{{this.name}}
-            </label>
-            {{/each}}
-          </div>
-        </div>
-      </section>
-
-      <section class="topping mb-4" style="display:flex;justify-content:left">
-        <div class="topping10 me-5">
-          <label class="d-block text-light">配料(+$10)</label>
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            {{#each toppings}}
-            {{#ifCond this.price 10}}
-            <label class="btn btn-outline-warning">
-              <input type="checkbox" name="topping" value="{{this.id}}" />{{this.name}}
-            </label>
-            {{/ifCond}}
-            {{/each}}
-          </div>
-        </div>
-
-        <div class="topping15">
-          <label class="d-block text-light">配料(+$15)</label>
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            {{#each toppings}}
-            {{#ifCond this.price 15}}
-            <label class="btn btn-outline-warning">
-              <input type="checkbox" name="topping" value="{{this.id}}" />{{this.name}}
-            </label>
-            {{/ifCond}}
-            {{/each}}
-          </div>
-        </div>
-      </section> --}}
-
-      <div class="text-right mb-3">
-        <button class="btn btn-outline-light" type="submit" style="min-width: 120px;">新增</button>
-      </div>
-    </form>
+  <div class="col-md-8 query-consumes p-3">
+    {{> orders-query}}
   </div>
 </div>

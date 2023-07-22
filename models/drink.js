@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Drink.belongsTo(models.Category, { foreignKey: 'categoryId' })
+      Drink.hasMany(models.Consume, { foreignKey: 'drinkName' })
     }
   }
   Drink.init({

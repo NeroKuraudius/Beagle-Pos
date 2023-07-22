@@ -48,6 +48,11 @@ body {
   overflow-y: auto;
 }
 
+.query-consumes {
+  max-height: 580px;
+  overflow-y: auto;
+}
+
 [data-alpha-pos="delete-drink"] {
   display: inline-block;
   text-align: center;
@@ -175,6 +180,16 @@ body {
 .setting-button:hover {
   color: azure;
   border-color: #806c53;
-  background-color: #806c53 ;
+  background-color: #806c53;
   background-image: none;
+}
+
+.consume-content{
+  display: flex;
+  justify-content: left;
+  border: 2px solid azure;
+  color: azure;
+  background-color: transparent;
+  max-width: 100%;
+  width:100%;
 }

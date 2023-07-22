@@ -21,10 +21,6 @@ body {
   max-width: 103px;
 }
 
-/* .card-title {
-  font-size: 18px;
-} */
-
 .consume-card {
   border: 2px solid azure;
   color: azure;
@@ -53,12 +49,17 @@ body {
   overflow-y: auto;
 }
 
+.col-md-9 {
+  max-height: 580px;
+  overflow-y: auto;
+}
+
 [data-alpha-pos="delete-drink"] {
   display: inline-block;
   text-align: center;
   color: #999;
-  cursor: pointer;
   /* 改變滑鼠形狀 pointer:手指 */
+  cursor: pointer;
   width: 20px;
   height: 20px;
   font-size: 20px;
@@ -184,12 +185,42 @@ body {
   background-image: none;
 }
 
-.consume-content{
+.consume-content {
   display: flex;
   justify-content: left;
   border: 2px solid azure;
   color: azure;
   background-color: transparent;
   max-width: 100%;
-  width:100%;
+  width: 100%;
+}
+
+.back-manage {
+  margin: 1rem 0 0 0;
+  max-width: 80%;
+  height:50px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 46px;
+  font-size: larger;
+  border: 2px solid azure;
+  border-radius: 5px;
+  color: azure;
+  background-color: transparent;
+}
+
+.back-manage:hover {
+  text-decoration: none;
+  font-weight: bold;
+  border: 2px solid azure;
+  color: black;
+  background-color: azure;
+}
+
+.back-manage.active {
+  text-decoration: none;
+  font-weight: bold;
+  border: 2px solid azure;
+  color: black;
+  background-color: azure;
 }

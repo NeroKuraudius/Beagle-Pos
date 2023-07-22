@@ -228,8 +228,6 @@ const drinkController = {
         income: totalIncome,
         user_id: req.user.id
       })
-      console.log(newIncome.toJSON())
-      console.log(ordersIdList)
       await Order.update({ income_id: newIncome.toJSON().id }, { where: { id: ordersIdList } })
       req.flash('success_msg', '交班成功!')
       return res.redirect('/drinks')

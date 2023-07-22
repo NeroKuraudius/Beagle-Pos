@@ -1,17 +1,17 @@
 <div class="text-center mb-4">
   {{> messages}}
-  <h1 class="loginTitle m-3">使用者登入</h1>
+  <h3 class="loginTitle mt-3">使用者登入</h3>
 </div>
 <form class="form-signin mb-4" action="/signin" method="POST">
   <div class="form-row mb-3">
     <label class="form-label" for="account">帳號</label>
-    <input class="form-control" id="account" type="text" name="account" class="form-control" placeholder="請輸入帳號" required
-      autofocus>
+    <input class="form-control" id="account" type="text" name="account" class="form-control" placeholder="請輸入帳號"
+      required autofocus>
   </div>
   <div class="form-row mb-4">
     <label class="form-label" for="password">密碼</label>
-    <input class="form-control" id="password" type="password" name="password" class="form-control"
-      placeholder="請輸入密碼" required>
+    <input class="form-control" id="password" type="password" name="password" class="form-control" placeholder="請輸入密碼"
+      required>
   </div>
   <button class="btn btn-info btn-block mt-2" type="submit">登入</button>
   <a class="go-back m-3" href="/owner/signin">前往後台</a>

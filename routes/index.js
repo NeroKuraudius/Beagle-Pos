@@ -12,9 +12,11 @@ router.use('/drinks',drinks)
 // 管理員路由
 router.use('/owner', owner)
 
-// 前台登入
+// 前臺登入
 router.get('/signin', userController.signinPage)
 router.post('/signin', passport.authenticate('staffLogin', { failureMessage: true, failureRedirect: '/signin' }), userController.signin)
+
+// 前後臺登出
 router.post('/signout', userController.signout)
 
 router.get('', (req, res) => res.redirect('/drinks'))

@@ -1,0 +1,54 @@
+{{> messages}}
+<div class="row">
+  <!--     選單 -->
+  <div class="col-md-3 p-3">
+    {{> owner-tabs router="income"}}
+  </div>
+
+  <!--   選單內容   -->
+  <div class="col-md-9 pt-3" style="display:flex">
+    <section class="col-md-4">
+      {{!-- incomes --}}
+      <div class="card-deck mb-3" style="width:100%;display:inline-block;">
+        {{#each incomes}}
+        <a class="mb-2" href="/owner/incomes/{{this.id}}" style="text-decoration:none">
+          <div class="card text-left consume-content my-1 ps-2">
+            <h5 class="pt-2">{{catchDate this.createdAt}}</h5>
+            <h6>{{this.User.Shift.name}}人員: {{this.User.name}}</h6>
+            <span class="mb-1">訂單數量: {{this.quantity}} 筆</span>
+            <span class="mb-1">總收入額: {{this.income}} 元</span>
+          </div>
+        </a>
+        {{/each}}
+      </div>
+    </section>
+
+    {{!-- orders --}}
+    <section class="col-md-4">
+      <div class="card-deck mb-3" style="width:100%;display:inline-block;">
+        {{#each orders}}
+        <a class="mb-2" href="/owner/incomes/{{this.income_id}}/{{this.id}}" style="text-decoration:none">
+          <div class="card text-left consume-content my-1 ps-2">
+            <h5 class="pt-2">{{catchTime this.createdAt}}</h5>
+            <span class="mb-2">銷售數量: {{this.quantity}} 杯</span>
+            <span class="mb-2">訂單金額: {{this.total_price}} 元</span>
+          </div>
+        </a>
+        {{/each}}
+      </div>
+    </section>
+
+    {{!-- consumes --}}
+    <section class="col-md-4">
+      <div class="card-deck mb-3" style="width:100%;display:inline-block;">
+        {{#each consumes}}
+        <div class="card text-left consume-content my-2 ps-2">
+          <h5 class="pt-2">{{this.drinkName}}</h5>
+          <span>{{this.sugarName}}, {{this.iceName}}</span>
+          <span class="mb-2">{{#each this.allToppings}}+{{this}} {{/each}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,48 @@
+{{> messages}}
+<div class="row">
+  <!--     選單 -->
+  <div class="col-md-3 p-3">
+    {{> owner-tabs router="staff"}}
+  </div>
+
+  <!--   選單內容   -->
+  <div class="col-md-9 pt-3" style="display:flex">
+    <section class="col-md-6">
+      <div>
+        <table class="table-hover staff-table">
+          <thead>
+            <tr style="text-align:center">
+              <th scope="col" style="width:15%">編號</th>
+              <th scope="col" style="width:20%">姓名</th>
+              <th scope="col" style="width:15%">班別</th>
+              <th scope="col" style="width:25%">輪替</th>
+              <th scope="col" style="width:25%"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each users}}
+            <tr class="staff-col">
+              <th scope="row">{{this.id}}</th>
+              <td>{{this.name}}</td>
+              <td>{{this.Shift.name}}</td>
+              <td>
+                <form action="/owner/staffs/{{this.id}}?_method=PUT" method="POST" style="display: inline;">
+                  <button class="btn own-staff-shift-change" type="submit">輪班</button>
+                </form>
+              </td>
+              <td>
+                <form action="/owner/staffs/{{this.id}}/edit" method="GET" style="display: inline;">
+                  <button class="btn staff-edit" type="submit">資料修改</button>
+                </form>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="col-md-4">
+
+    </section>
+  </div>
+</div>

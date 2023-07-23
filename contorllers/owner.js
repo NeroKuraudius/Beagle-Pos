@@ -93,7 +93,36 @@ const ownerController = {
     }
   },
   getStaffs: async (req, res) => {
+    try {
+      const users = await User.findAll({
+        raw: true,
+        nest: true,
+        where: { role: 'staff' },
+        include: [Shift]
+      })
+      return res.render('owner/staffs', { users })
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.getStaffs: ${err}`)
+    }
+  },
+  putStaffs: async (req, res) => {
+    const { Uid } = req.params
+    try {
+      const user = await User.findByPk(Uid)
+      if (!user) {
+        req.flash('danger_msg', '查無該員工資料')
+        return res.redirect('/owner/staffs')
+      }
 
+      if (user.toJSON().shift_id === 1) {
+        await user.update({ shift_id: 2 })
+      } else {
+        await user.update({ shift_id: 1 })
+      }
+      return res.redirect('/owner/staffs')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.putStaffs: ${err}`)
+    }
   },
   getBeverages: async (req, res) => {
 

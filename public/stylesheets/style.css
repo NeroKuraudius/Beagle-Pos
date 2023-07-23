@@ -198,29 +198,69 @@ body {
 .back-manage {
   margin: 1rem 0 0 0;
   max-width: 80%;
-  height:50px;
+  height: 50px;
   text-decoration: none;
   text-align: center;
   line-height: 46px;
   font-size: larger;
-  border: 2px solid azure;
+  border: 2px solid aliceblue;
   border-radius: 5px;
-  color: azure;
+  color: aliceblue;
   background-color: transparent;
 }
 
 .back-manage:hover {
   text-decoration: none;
   font-weight: bold;
-  border: 2px solid azure;
+  border: 2px solid aliceblue;
   color: black;
-  background-color: azure;
+  background-color: aliceblue;
 }
 
 .back-manage.active {
   text-decoration: none;
   font-weight: bold;
-  border: 2px solid azure;
+  border: 2px solid aliceblue;
+  color: black;
+  background-color: aliceblue;
+}
+
+.staff-table {
+  font-size: large;
+  color: azure;
+  background-color: transparent;
+}
+
+.staff-col {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.own-staff-shift-change {
+  color: azure;
+  /* border: 1px solid azure;
+  border-radius: 5px; */
+}
+
+.own-staff-shift-change:hover {
+  font-weight: bold;
   color: black;
   background-color: azure;
+  border: 1px solid azure;
+  border-radius: 5px;
+}
+
+.staff-edit {
+  font-size: 16px;
+  text-decoration: none;
+  color: azure;
+}
+
+.staff-edit:hover {
+  text-decoration: none;
+  color: black;
+  background-color: azure;
+  border: 1px solid azure;
+  border-radius: 5px;
+  font-weight:bold;
 }

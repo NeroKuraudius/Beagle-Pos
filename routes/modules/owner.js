@@ -14,6 +14,7 @@ router.get('/incomes/:Iid', authenticatedOwner, ownerController.getOrders)
 router.get('/incomes', authenticatedOwner, ownerController.getIncomes)
 
 // 後臺管理人員
+router.put('/staffs/:Uid',authenticatedOwner, ownerController.putStaffs)
 router.get('/staffs', authenticatedOwner, ownerController.getStaffs)
 
 // 後臺管理餐點

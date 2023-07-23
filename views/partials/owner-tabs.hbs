@@ -1,16 +1,12 @@
-<h5 class="ps-3" style="color:azure">後臺系統—人員: {{admin.name}}</h5>
+<h5 class="ps-3" style="color:aliceblue">後臺系統—人員: {{admin.name}}</h5>
 
 <div class="nav flex-column nav-pills ps-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
   <a class="nav-tabs back-manage {{#ifCond router 'income'}}active{{/ifCond}}" id="v-pills-income-tab"
-    href="/owner/incomes" data-toggle="pill" data-target="#v-pills-income" type="button" role="tab"
-    aria-controls="v-pills-income" aria-selected="true">訂單管理</a>
+    href="/owner/incomes" type="button" role="tab" aria-controls="v-pills-income" aria-selected="true">訂單管理</a>
   <a class="nav-tabs back-manage {{#ifCond router 'staff'}}active{{/ifCond}}" id="v-pills-staff-tab"
-    href="/owner/staffs" data-toggle="pill" data-target="#v-pills-staff" type="button" role="tab"
-    aria-controls="v-pills-staff" aria-selected="false">人員管理</a>
+    href="/owner/staffs" type="button" role="tab" aria-controls="v-pills-staff" aria-selected="false">人員管理</a>
   <a class="nav-tabs back-manage {{#ifCond router 'beverage'}}active{{/ifCond}}" id="v-pills-beverage-tab"
-    href="/owner/beverages" data-toggle="pill" data-target="#v-pills-beverage" type="button" role="tab"
-    aria-controls="v-pills-beverage" aria-selected="false">餐點管理</a>
+    href="/owner/beverages" type="button" role="tab" aria-controls="v-pills-beverage" aria-selected="false">餐點管理</a>
   <a class="nav-tabs back-manage {{#ifCond router 'category'}}active{{/ifCond}}" id="v-pills-category-tab"
-    href="/owner/categories" data-toggle="pill" data-target="#v-pills-category" type="button" role="tab"
-    aria-controls="v-pills-category" aria-selected="false">類別管理</a>
+    href="/owner/categories" type="button" role="tab" aria-controls="v-pills-category" aria-selected="false">類別管理</a>
 </div>

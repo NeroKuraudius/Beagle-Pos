@@ -1,3 +1,10 @@
+{{#if error.length}}
+<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" style="text-align: center;">
+  {{ error }}
+  <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+</div>
+{{/if}}
+
 {{#if danger_msg}}
 <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert" style="text-align: center;">
   {{ danger_msg }}

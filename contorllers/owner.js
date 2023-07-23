@@ -120,6 +120,7 @@ const ownerController = {
       } else {
         await user.update({ shift_id: 1 })
       }
+      req.flash('success_msg', '班別轉換成功')
       return res.redirect('/owner/staffs')
     } catch (err) {
       console.error(`Error occupied on ownerControll.putStaffs: ${err}`)
@@ -164,6 +165,53 @@ const ownerController = {
       return res.redirect(`/owner/staffs/${id}/edit`)
     } catch (err) {
       console.error(`Error occupied on ownerControll.patchStaffData: ${err}`)
+    }
+  },
+  deleteStaff: async (req, res) => {
+    const id = parseInt(req.params.Uid)
+    try {
+      const user = await User.findByPk(id)
+      if (!user) {
+        req.flash('danger_msg', '查無該員工資料')
+        return res.redirect('/owner/staffs')
+      }
+      const name = user.toJSON() + '(已離職)'
+      await user.update({ role: 'quitted', name })
+      req.flash('success_msg', '已移除該員工')
+      return res.redirect('/owner/staffs')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.deleteStaff: ${err}`)
+    }
+  },
+  createStaff: async (req, res) => {
+    const { name, phone, account, password, checkPassword, shift_id } = req.body
+    if (!name || !phone || !account) {
+      req.flash('danger_msg', '所有欄位皆為必填')
+      return res.redirect(`/owner/staffs/${id}/edit`)
+    }
+    if (password !== checkPassword) {
+      req.flash('danger_msg', '兩次輸入的密碼不相符')
+      return res.redirect(`/owner/staffs/${id}/edit`)
+    }
+    try {
+      const userdAccount = await User.findOne({ where: { account } })
+      const error = []
+      if (userdAccount) {
+        const users = await User.findAll({
+          raw: true,
+          nest: true,
+          where: { role: 'staff' },
+          include: [Shift]
+        })
+        error.push('該帳號已被使用')
+        return res.render('owner/staffs', { error,users, name, phone, account, password, checkPassword, shift_id })
+      }
+      const hash = await bcrypt.hash(password, 12)
+      await User.create({ name, phone, account, shift_id, password: hash, role: 'staff' })
+      req.flash('success_msg', '資料建立成功')
+      return res.redirect('/owner/staffs')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.createStaff: ${err}`)
     }
   },
   getBeverages: async (req, res) => {

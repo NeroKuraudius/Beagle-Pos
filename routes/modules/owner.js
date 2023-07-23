@@ -14,9 +14,11 @@ router.get('/incomes/:Iid', authenticatedOwner, ownerController.getOrders)
 router.get('/incomes', authenticatedOwner, ownerController.getIncomes)
 
 // 後臺管理人員
+router.post('/staffs/create', authenticatedOwner, ownerController.createStaff)
 router.get('/staffs/:Uid/edit', authenticatedOwner, ownerController.getStaffData)
 router.patch('/staffs/:Uid/edit', authenticatedOwner, ownerController.patchStaffData)
 router.put('/staffs/:Uid', authenticatedOwner, ownerController.putStaffs)
+router.delete('/staffs/:Uid', authenticatedOwner, ownerController.deleteStaff)
 router.get('/staffs', authenticatedOwner, ownerController.getStaffs)
 
 // 後臺管理餐點

@@ -1,5 +1,3 @@
-const User = require('../models/user')
-
 const userController = {
   // 登入
   signinPage: (req, res) => {

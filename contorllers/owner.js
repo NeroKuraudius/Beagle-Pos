@@ -95,13 +95,14 @@ const ownerController = {
   },
   getStaffs: async (req, res) => {
     try {
+      const admin = await User.findByPk(req.user.id)
       const users = await User.findAll({
         raw: true,
         nest: true,
         where: { role: 'staff' },
         include: [Shift]
       })
-      return res.render('owner/staffs', { users })
+      return res.render('owner/staffs', { users, admin: admin.toJSON() })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getStaffs: ${err}`)
     }
@@ -129,6 +130,7 @@ const ownerController = {
   getStaffData: async (req, res) => {
     const id = parseInt(req.params.Uid)
     try {
+      const admin = await User.findByPk(req.user.id)
       const users = await User.findAll({
         raw: true,
         nest: true,
@@ -136,7 +138,7 @@ const ownerController = {
         include: [Shift]
       })
       const staff = await User.findByPk(id)
-      return res.render('owner/staffs', { users, staff: staff.toJSON() })
+      return res.render('owner/staffs', { users, staff: staff.toJSON(), admin: admin.toJSON() })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getStaffData: ${err}`)
     }
@@ -204,7 +206,8 @@ const ownerController = {
           include: [Shift]
         })
         error.push('該帳號已被使用')
-        return res.render('owner/staffs', { error,users, name, phone, account, password, checkPassword, shift_id })
+        const admin = await User.findByPk(req.user.id)
+        return res.render('owner/staffs', { error, users, name, phone, account, password, checkPassword, shift_id, admin: admin.toJSON() })
       }
       const hash = await bcrypt.hash(password, 12)
       await User.create({ name, phone, account, shift_id, password: hash, role: 'staff' })
@@ -215,7 +218,15 @@ const ownerController = {
     }
   },
   getBeverages: async (req, res) => {
-
+    try {
+      const admin = await User.findByPk(req.user.id)
+      const drinks = await Drink.findAll({
+        raw: true, nest: true
+      })
+      return res.render('owner/beverages', { admin: admin.toJSON(), drinks })
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.getBeverages: ${err}`)
+    }
   },
   getCategories: async (req, res) => {
 

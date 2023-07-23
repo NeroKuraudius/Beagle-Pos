@@ -8,6 +8,7 @@ module.exports = {
       const users = [
         {
           name: 'Nero',
+          phone: '0988888888',
           account: 'nerodrinkshop',
           password: await bcrypt.hash('20230712', 12),
           role: 'owner',
@@ -17,6 +18,7 @@ module.exports = {
         },
         {
           name: 'Stella',
+          phone: '09xx1xx3xx',
           account: 'superstar',
           password: await bcrypt.hash('hoshimachi', 12),
           role: 'staff',
@@ -26,8 +28,29 @@ module.exports = {
         },
         {
           name: 'Musk',
+          phone: '0953xxxxxx',
           account: 'toprichman',
           password: await bcrypt.hash('greencar', 12),
+          role: 'staff',
+          shift_id: 2,
+          created_at: new Date(),
+          updated_at: new Date()
+        },
+        {
+          name: 'Albert',
+          phone: '0901010101',
+          account: 'einstein',
+          password: await bcrypt.hash('relativity', 12),
+          role: 'staff',
+          shift_id: 2,
+          created_at: new Date(),
+          updated_at: new Date()
+        },
+        {
+          name: 'Tony',
+          phone: '0917613595',
+          account: 'stark',
+          password: await bcrypt.hash('iamironman', 12),
           role: 'staff',
           shift_id: 2,
           created_at: new Date(),

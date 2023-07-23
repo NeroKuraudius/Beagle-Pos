@@ -1,5 +1,6 @@
 const { User, Shift, Income, Order, Consume,
   Drink, Ice, Sugar, Topping } = require('../models')
+const bcrypt = require('bcryptjs')
 
 const ownerController = {
   signinPage: (req, res) => {
@@ -25,7 +26,7 @@ const ownerController = {
     }
   },
   getOrders: async (req, res) => {
-    const { Iid } = req.params
+    const income_id = parseInt(req.params.Iid)
     try {
       const admin = await User.findByPk(req.user.id)
       const incomes = await Income.findAll({
@@ -39,7 +40,7 @@ const ownerController = {
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { income_id: Iid }
+        where: { income_id }
       })
       return res.render('owner/incomes', { admin: admin.toJSON(), incomes, orders })
     } catch (err) {
@@ -61,10 +62,10 @@ const ownerController = {
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { income_id: Iid }
+        where: { income_id: parseInt(Iid) }
       })
       const consumes = await Consume.findAll({
-        where: { order_id: Oid },
+        where: { order_id: parseInt(Oid) },
         include: [
           { model: Drink },
           { model: Ice },
@@ -106,9 +107,9 @@ const ownerController = {
     }
   },
   putStaffs: async (req, res) => {
-    const { Uid } = req.params
+    const id = parseInt(req.params.Uid)
     try {
-      const user = await User.findByPk(Uid)
+      const user = await User.findByPk(id)
       if (!user) {
         req.flash('danger_msg', '查無該員工資料')
         return res.redirect('/owner/staffs')
@@ -125,7 +126,7 @@ const ownerController = {
     }
   },
   getStaffData: async (req, res) => {
-    const { Uid } = req.params
+    const id = parseInt(req.params.Uid)
     try {
       const users = await User.findAll({
         raw: true,
@@ -133,10 +134,36 @@ const ownerController = {
         where: { role: 'staff' },
         include: [Shift]
       })
-      const staff = await User.findByPk(Uid)
+      const staff = await User.findByPk(id)
       return res.render('owner/staffs', { users, staff: staff.toJSON() })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getStaffData: ${err}`)
+    }
+  },
+  patchStaffData: async (req, res) => {
+    const id = parseInt(req.params.Uid)
+    const { name, phone, account, password, checkPassword } = req.body
+    if (!name || !phone || !account) {
+      req.flash('danger_msg', '所有欄位皆為必填')
+      return res.redirect(`/owner/staffs/${id}/edit`)
+    }
+    if (password !== checkPassword) {
+      req.flash('danger_msg', '兩次輸入的密碼不相符')
+      return res.redirect(`/owner/staffs/${id}/edit`)
+    }
+    try {
+      const usedAccount = await User.findOne({ where: { account } })
+      const editingUser = await User.findByPk(id)
+      if (usedAccount && (usedAccount.toJSON().id !== editingUser.toJSON().id)) {
+        req.flash('danger_msg', '該帳號已被使用')
+        return res.redirect(`/owner/staffs/${id}/edit`)
+      }
+      const hash = await bcrypt.hash(password, 12)
+      await User.update({ name, phone, account, password: hash }, { where: { id } })
+      req.flash('success_msg', '資料更新成功')
+      return res.redirect(`/owner/staffs/${id}/edit`)
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.patchStaffData: ${err}`)
     }
   },
   getBeverages: async (req, res) => {

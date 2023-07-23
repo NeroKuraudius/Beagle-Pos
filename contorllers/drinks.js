@@ -73,7 +73,7 @@ const drinkController = {
     const { drink, ice, sugar, topping } = req.body
     // 飲品不得為空
     if (!drink) {
-      req.flash('danger_msg', '請選擇飲品')
+      req.flash('danger_msg', '未選取任何餐點')
       return res.redirect('/drinks')
     }
     try {
@@ -229,7 +229,7 @@ const drinkController = {
         user_id: req.user.id
       })
       await Order.update({ income_id: newIncome.toJSON().id }, { where: { id: ordersIdList } })
-      req.flash('success_msg', '交班成功!')
+      req.flash('success_msg', '交班成功')
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.shiftChange: ${err}`)

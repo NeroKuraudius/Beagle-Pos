@@ -7,16 +7,17 @@
 
   <!--   選單內容   -->
   <div class="col-md-9 pt-3" style="display:flex">
-    <section class="col-md-6">
+    <section class="col-md-6" style="border:1px solid lightgreen">
       <div>
         <table class="table-hover staff-table">
           <thead>
             <tr style="text-align:center">
-              <th scope="col" style="width:15%">編號</th>
+              <th scope="col" style="width:10%">編號</th>
               <th scope="col" style="width:20%">姓名</th>
-              <th scope="col" style="width:15%">班別</th>
+              <th scope="col" style="width:10%">班別</th>
               <th scope="col" style="width:25%">輪替</th>
               <th scope="col" style="width:25%"></th>
+              <th scope="col" style="width:10%"></th>
             </tr>
           </thead>
           <tbody>
@@ -35,57 +36,66 @@
                   <button class="btn staff-edit" type="submit">資料修改</button>
                 </form>
             </tr>
-            {{/each}}
+            <td>
+              <form action="/owner/staffs/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+                <button class="btn staff-edit" type="submit" onclick="return confirm('確定移除該員工嗎?')">
+                  <i class="fa-solid fa-user-xmark" style="color:red"></i>
+                </button>
+              </form>
+              </tr>
+              {{/each}}
           </tbody>
         </table>
       </div>
     </section>
 
-    <section class="col-md-5" style="border:2px solid pink ">
-      {{#if staff}}
+    {{#if staff}}
+    <div class="vr" style="width:2px;color:aliceblue"></div>
+    <section class="col-md-5" style="border:1px solid lightgreen">
       <div>
-        <h4>個人資料</h4>
+        <h4 style="color:azure;text-align:center;font-weight:bold">個人資料</h4>
       </div>
       <div class="staff-setting">
-        <form action="/owner/staffs/{{ staff.id }}/edit?_method=PATCH" method="POST" novalidate>
+        <span>*為必填欄位</span>
+        <form action="/owner/staffs/{{ staff.id }}/edit?_method=PATCH" method="POST">
           {{!-- Name --}}
           <div class="staff-data">
-            <label for="name" class="form-label me-5">姓名</label>
+            <label for="name" class="form-label me-5">姓名*</label>
             <input type="text" id="name" name="name" size="20" maxlength="20" placeholder="請輸入名稱" class="form-input"
               value="{{ staff.name }}" required>
           </div>
 
           {{!-- Phone --}}
           <div class="staff-data">
-            <label for="phone" class="form-label me-5">帳號</label>
-            <input type="text" id="phone" name="phone" size="20" maxlength="10" placeholder="請輸入聯絡電話" class="form-input"
+            <label for="phone" class="form-label me-5">電話*</label>
+            <input type="text" id="phone" name="phone" size="20" maxlength="15" placeholder="請輸入聯絡電話" class="form-input"
               value="{{ staff.phone }}" required>
           </div>
 
           {{!-- Account --}}
           <div class="staff-data">
-            <label for="account" class="form-label me-5">帳號</label>
+            <label for="account" class="form-label me-5">帳號*</label>
             <input type="text" id="account" name="account" size="20" maxlength="20" placeholder="請輸入帳號"
               class="form-input" value="{{ staff.account }}" required>
           </div>
 
           {{!-- Password --}}
           <div class="staff-data">
-            <label for="password" class="form-label me-5">密碼</label>
+            <label for="password" class="form-label me-5">密碼*</label>
             <input type="password" id="password" name="password" size="20" maxlength="25" placeholder="請輸入密碼"
               class="form-input" required>
           </div>
 
           {{!-- Confirm Password --}}
           <div class="staff-data">
-            <label for="checkPassword" class="form-label me-3">密碼確認</label>
+            <label for="checkPassword" class="form-label me-3">密碼確認*</label>
             <input type="password" id="checkPassword" name="checkPassword" size="20" maxlength="25"
               placeholder="請再次輸入密碼" class="form-input" required>
           </div>
 
           {{!-- button --}}
           <div class="btn-submit-wrapper">
-            <button type="submit" class="btn btn-info btn-submit-setting" id="submit">儲存</button>
+            <button type="submit" class="btn btn-submit-setting my-2" id="submit">儲存</button>
           </div>
         </form>
       </div>

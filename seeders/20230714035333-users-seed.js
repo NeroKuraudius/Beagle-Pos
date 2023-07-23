@@ -52,7 +52,7 @@ module.exports = {
           account: 'stark',
           password: await bcrypt.hash('iamironman', 12),
           role: 'staff',
-          shift_id: 2,
+          shift_id: 1,
           created_at: new Date(),
           updated_at: new Date()
         }

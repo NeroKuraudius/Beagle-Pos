@@ -12,11 +12,11 @@ passport.use('staffLogin', new localPassport({
   const { account, password } = req.body
   try {
     const user = await User.findOne({ where: { account } })
-    if (!user) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤!'))
-    if (user.role !== 'staff') return cb(null, false, req.flash('danger_msg', '帳號不存在!'))
+    if (!user) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤'))
+    if (user.role !== 'staff') return cb(null, false, req.flash('danger_msg', '帳號不存在'))
 
     const passwordMatch = await bcrypt.compare(password, user.password)
-    if (!passwordMatch) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤!'))
+    if (!passwordMatch) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤'))
 
     return cb(null, user)
   } catch (err) {
@@ -33,11 +33,11 @@ passport.use('ownerLogin', new localPassport({
   const { account, password } = req.body
   try {
     const user = await User.findOne({ where: { account } })
-    if (!user) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤!'))
-    if (user.role !== 'owner') return cb(null, false, req.flash('danger_msg', '帳號不存在!'))
+    if (!user) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤'))
+    if (user.role !== 'owner') return cb(null, false, req.flash('danger_msg', '帳號不存在'))
 
     const passwordMatch = await bcrypt.compare(password, user.password)
-    if (!passwordMatch) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤!'))
+    if (!passwordMatch) return cb(null, false, req.flash('danger_msg', '帳號或密碼錯誤'))
 
     return cb(null, user)
   } catch (err) {

@@ -124,6 +124,21 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.putStaffs: ${err}`)
     }
   },
+  getStaffData: async (req, res) => {
+    const { Uid } = req.params
+    try {
+      const users = await User.findAll({
+        raw: true,
+        nest: true,
+        where: { role: 'staff' },
+        include: [Shift]
+      })
+      const staff = await User.findByPk(Uid)
+      return res.render('owner/staffs', { users, staff: staff.toJSON() })
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.getStaffData: ${err}`)
+    }
+  },
   getBeverages: async (req, res) => {
 
   },

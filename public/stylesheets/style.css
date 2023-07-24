@@ -272,6 +272,13 @@ body {
   border-radius: 5px;
 }
 
+.btn-submit-setting:hover{
+  color: black;
+  border: 2px solid azure;
+  background-color: azure;
+  border-radius: 5px;
+}
+
 .beverages-table{
   overflow-y: auto;
 }

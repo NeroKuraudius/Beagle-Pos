@@ -254,20 +254,20 @@ const ownerController = {
   },
   patchBeverageData: async (req, res) => {
     const id = parseInt(req.params.Did)
-    const { catagory_id, name, price } = req.body
-    console.log(req.body)
-    if (!catagory_id || !name || !price) {
+    const { category_id, name, price } = req.body
+
+    if (!category_id || !name || !price) {
       req.flash('danger_msg', '所有欄位皆為必填')
       return res.redirect(`/owner/beverages/${id}`)
     }
     try {
-      // const drink = await Drink.findByPk(id)
-      // if (!drink) {
-      //   req.flash('danger_msg', '查無該項餐點')
-      //   return res.redirect(`/owner/beverages/${id}`)
-      // }
-      // await drink.update({ catagory_id, name, price })
-      return res.redirect(`/owner/beverages/${id}`)
+      const drink = await Drink.findByPk(id)
+      if (!drink) {
+        req.flash('danger_msg', '查無該項餐點')
+        return res.redirect(`/owner/beverages/${id}`)
+      }
+      await drink.update({ category_id, name, price })
+      return res.redirect('/owner/beverages')
     } catch (err) {
       console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
     }

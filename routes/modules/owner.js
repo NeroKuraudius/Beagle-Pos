@@ -22,10 +22,10 @@ router.delete('/staffs/:Uid', authenticatedOwner, ownerController.deleteStaff)
 router.get('/staffs', authenticatedOwner, ownerController.getStaffs)
 
 // 後臺管理餐點
-router.post('/beverages/create',authenticatedOwner, ownerController.getBeverageData)
-router.get('/beverages/:Did',authenticatedOwner, ownerController.getBeverageData)
-router.patch('/beverages/:Did',authenticatedOwner, ownerController.patchBeverageData)
-router.delete('/beverages/:Did',authenticatedOwner, ownerController.deleteBeverage)
+router.post('/beverages/create', authenticatedOwner, ownerController.createBeverage)
+router.get('/beverages/:Did', authenticatedOwner, ownerController.getBeverageData)
+router.patch('/beverages/:Did', authenticatedOwner, ownerController.patchBeverageData)
+router.delete('/beverages/:Did', authenticatedOwner, ownerController.deleteBeverage)
 router.get('/beverages', authenticatedOwner, ownerController.getBeverages)
 
 // 後臺管理類別

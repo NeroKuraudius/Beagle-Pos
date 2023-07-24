@@ -220,13 +220,14 @@ const ownerController = {
   getBeverages: async (req, res) => {
     try {
       const admin = await User.findByPk(req.user.id)
+      const categories = await Category.findAll({ raw: true, nest: true })
       const drinks = await Drink.findAll({
         raw: true,
         nest: true,
         include: [Category],
         order: [['category_id']]
       })
-      return res.render('owner/beverages', { admin: admin.toJSON(), drinks })
+      return res.render('owner/beverages', { admin: admin.toJSON(), drinks, categories })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getBeverages: ${err}`)
     }
@@ -255,7 +256,6 @@ const ownerController = {
   patchBeverageData: async (req, res) => {
     const id = parseInt(req.params.Did)
     const { category_id, name, price } = req.body
-
     if (!category_id || !name || !price) {
       req.flash('danger_msg', '所有欄位皆為必填')
       return res.redirect(`/owner/beverages/${id}`)
@@ -270,6 +270,34 @@ const ownerController = {
       return res.redirect('/owner/beverages')
     } catch (err) {
       console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
+    }
+  },
+  createBeverage: async (req, res) => {
+    const { category_id, name, price } = req.body
+    if (!category_id || !name || !price) {
+      req.flash('danger_msg', '所有欄位皆為必填')
+      return res.redirect(`/owner/beverages`)
+    }
+    try {
+      const error = []
+      const exsistedBeverage = await Drink.findOne({ where: { name } })
+      if (exsistedBeverage) {
+        error.push('該餐點已登錄')
+        const admin = await User.findByPk(req.user.id)
+        const drinks = await Drink.findAll({
+          raw: true,
+          nest: true,
+          include: [Category],
+          order: [['category_id']]
+        })
+        const categories = await Category.findAll({ raw: true, nest: true })
+        return res.render('owner/beverages', { category_id, name, price, admin: admin.toJSON(), drinks, categories })
+      }
+      await Drink.create({ category_id, name, price })
+      req.flash('success_msg', '餐點新增成功')
+      return res.redirect('/owner/beverages')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.createBeverage: ${err}`)
     }
   },
   deleteBeverage: async (req, res) => {

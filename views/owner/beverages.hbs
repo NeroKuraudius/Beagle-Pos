@@ -97,9 +97,9 @@
             <div class="dropdown">
               <label for="category_id" class="form-label me-5">類別*</label>
               <select name="category_id" id="category_id">
+                <option class="default-value" selected hidden>請選擇類別</option>
                 {{#each categories}}
-                <option class="category-option {{#ifCond this.id ../drink.category_id}}active{{/ifCond}}"
-                  value="{{this.id}}">{{this.name}}</option>
+                <option class="category-option" value="{{this.id}}">{{this.name}}</option>
                 {{/each}}
               </select>
             </div>
@@ -107,18 +107,19 @@
 
           <div class="beverage-data my-3">
             <label for="name" class="form-label me-5">名稱*</label>
-            <input type="text" id="name" name="name" size="20" maxlength="10" placeholder="請輸入名稱" class="form-input"
+            <input type="text" id="name" name="name" size="20" maxlength="10" placeholder="請輸入餐點名稱" class="form-input"
               value="{{drink.name}}" required>
           </div>
 
           <div class="beverage-data my-3">
             <label for="price" class="form-label me-5">價格*</label>
-            <input type="number" id="price" name="price" size="20" maxlength="3" placeholder="請輸入聯絡電話"
-              class="form-input" value="{{drink.price}}" required>
+            <input type="number" id="price" name="price" max="100" placeholder="請輸入價格" class="form-input"
+              value="{{drink.price}}" required>
           </div>
 
           <div class="btn-submit-wrapper">
-            <button type="submit" class="btn btn-submit-setting my-2" id="submit">儲存</button>
+            <button type="submit" class="btn btn-submit-setting my-2" id="submit">新增
+            </button>
           </div>
         </form>
       </div>

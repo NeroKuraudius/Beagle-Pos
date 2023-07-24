@@ -237,7 +237,7 @@ const ownerController = {
     try {
       const drink = await Drink.findByPk(id)
       if (!drink) {
-        req.flash('danger_msg', '查無該項餐點')
+        req.flash('danger_msg', '找不到該餐點相關資料')
         return res.redirect('/owner/beverages')
       }
       const admin = await User.findByPk(req.user.id)
@@ -263,7 +263,7 @@ const ownerController = {
     try {
       const drink = await Drink.findByPk(id)
       if (!drink) {
-        req.flash('danger_msg', '查無該項餐點')
+        req.flash('danger_msg', '找不到該餐點相關資料')
         return res.redirect(`/owner/beverages/${id}`)
       }
       await drink.update({ category_id, name, price })
@@ -291,7 +291,7 @@ const ownerController = {
           order: [['category_id']]
         })
         const categories = await Category.findAll({ raw: true, nest: true })
-        return res.render('owner/beverages', { category_id, name, price, admin: admin.toJSON(), drinks, categories })
+        return res.render('owner/beverages', { category_id, name, price, admin: admin.toJSON(), drinks, categories, error })
       }
       await Drink.create({ category_id, name, price })
       req.flash('success_msg', '餐點新增成功')
@@ -301,7 +301,19 @@ const ownerController = {
     }
   },
   deleteBeverage: async (req, res) => {
-
+    const id = parseInt(req.params.Did)
+    try {
+      const drink = await Drink.findByPk(id)
+      if (!drink) {
+        req.flash('danger_msg', '找不到該餐點相關資料')
+        return res.redirect('/owner/beverages')
+      }
+      await drink.destroy()
+      req.flash('success_msg', '餐點刪除成功')
+      return res.redirect('/owner/beverages')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.deleteBeverage: ${err}`)
+    }
   },
   getCategories: async (req, res) => {
 

@@ -271,3 +271,7 @@ body {
   border: 2px solid azure;
   border-radius: 5px;
 }
+
+.beverages-table{
+  overflow-y: auto;
+}

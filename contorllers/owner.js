@@ -223,8 +223,8 @@ const ownerController = {
       const drinks = await Drink.findAll({
         raw: true,
         nest: true,
-        include: [Shift],
-        order: [['shift_id']]
+        include: [Category],
+        order: [['category_id']]
       })
       return res.render('owner/beverages', { admin: admin.toJSON(), drinks })
     } catch (err) {
@@ -243,8 +243,8 @@ const ownerController = {
       const drinks = await Drink.findAll({
         raw: true,
         nest: true,
-        include: [Shift],
-        order: [['shift_id']]
+        include: [Category],
+        order: [['category_id']]
       })
       const categories = await Category.findAll({ raw: true, nest: true })
       return res.render('owner/beverages', { admin: admin.toJSON(), drink: drink.toJSON(), drinks, categories })
@@ -254,18 +254,20 @@ const ownerController = {
   },
   patchBeverageData: async (req, res) => {
     const id = parseInt(req.params.Did)
-    const { catagory, name, price } = req.body
-    if (!catagory || !name || !price) {
+    const { catagory_id, name, price } = req.body
+    console.log(req.body)
+    if (!catagory_id || !name || !price) {
       req.flash('danger_msg', '所有欄位皆為必填')
       return res.redirect(`/owner/beverages/${id}`)
     }
     try {
-      const drink = await Drink.findByPk(id)
-      if(!drink){
-        req.flash('danger_msg', '查無該項餐點')
-        return res.redirect(`/owner/beverages/${id}`)
-      }
-      
+      // const drink = await Drink.findByPk(id)
+      // if (!drink) {
+      //   req.flash('danger_msg', '查無該項餐點')
+      //   return res.redirect(`/owner/beverages/${id}`)
+      // }
+      // await drink.update({ catagory_id, name, price })
+      return res.redirect(`/owner/beverages/${id}`)
     } catch (err) {
       console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
     }

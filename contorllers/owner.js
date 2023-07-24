@@ -1,5 +1,5 @@
 const { User, Shift, Income, Order, Consume,
-  Drink, Ice, Sugar, Topping } = require('../models')
+  Drink, Ice, Sugar, Topping, Category } = require('../models')
 const bcrypt = require('bcryptjs')
 
 const ownerController = {
@@ -148,23 +148,23 @@ const ownerController = {
     const { name, phone, account, password, checkPassword } = req.body
     if (!name || !phone || !account) {
       req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/staffs/${id}/edit`)
+      return res.redirect(`/owner/staffs/${id}`)
     }
     if (password !== checkPassword) {
       req.flash('danger_msg', '兩次輸入的密碼不相符')
-      return res.redirect(`/owner/staffs/${id}/edit`)
+      return res.redirect(`/owner/staffs/${id}`)
     }
     try {
       const usedAccount = await User.findOne({ where: { account } })
       const editingUser = await User.findByPk(id)
       if (usedAccount && (usedAccount.toJSON().id !== editingUser.toJSON().id)) {
         req.flash('danger_msg', '該帳號已被使用')
-        return res.redirect(`/owner/staffs/${id}/edit`)
+        return res.redirect(`/owner/staffs/${id}`)
       }
       const hash = await bcrypt.hash(password, 12)
       await User.update({ name, phone, account, password: hash }, { where: { id } })
       req.flash('success_msg', '資料更新成功')
-      return res.redirect(`/owner/staffs/${id}/edit`)
+      return res.redirect(`/owner/staffs/${id}`)
     } catch (err) {
       console.error(`Error occupied on ownerControll.patchStaffData: ${err}`)
     }
@@ -189,11 +189,11 @@ const ownerController = {
     const { name, phone, account, password, checkPassword, shift_id } = req.body
     if (!name || !phone || !account) {
       req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/staffs/${id}/edit`)
+      return res.redirect(`/owner/staffs/${id}`)
     }
     if (password !== checkPassword) {
       req.flash('danger_msg', '兩次輸入的密碼不相符')
-      return res.redirect(`/owner/staffs/${id}/edit`)
+      return res.redirect(`/owner/staffs/${id}`)
     }
     try {
       const userdAccount = await User.findOne({ where: { account } })
@@ -221,12 +221,57 @@ const ownerController = {
     try {
       const admin = await User.findByPk(req.user.id)
       const drinks = await Drink.findAll({
-        raw: true, nest: true
+        raw: true,
+        nest: true,
+        include: [Shift],
+        order: [['shift_id']]
       })
       return res.render('owner/beverages', { admin: admin.toJSON(), drinks })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getBeverages: ${err}`)
     }
+  },
+  getBeverageData: async (req, res) => {
+    const id = parseInt(req.params.Did)
+    try {
+      const drink = await Drink.findByPk(id)
+      if (!drink) {
+        req.flash('danger_msg', '查無該項餐點')
+        return res.redirect('/owner/beverages')
+      }
+      const admin = await User.findByPk(req.user.id)
+      const drinks = await Drink.findAll({
+        raw: true,
+        nest: true,
+        include: [Shift],
+        order: [['shift_id']]
+      })
+      const categories = await Category.findAll({ raw: true, nest: true })
+      return res.render('owner/beverages', { admin: admin.toJSON(), drink: drink.toJSON(), drinks, categories })
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.getBeverageData: ${err}`)
+    }
+  },
+  patchBeverageData: async (req, res) => {
+    const id = parseInt(req.params.Did)
+    const { catagory, name, price } = req.body
+    if (!catagory || !name || !price) {
+      req.flash('danger_msg', '所有欄位皆為必填')
+      return res.redirect(`/owner/beverages/${id}`)
+    }
+    try {
+      const drink = await Drink.findByPk(id)
+      if(!drink){
+        req.flash('danger_msg', '查無該項餐點')
+        return res.redirect(`/owner/beverages/${id}`)
+      }
+      
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
+    }
+  },
+  deleteBeverage: async (req, res) => {
+
   },
   getCategories: async (req, res) => {
 

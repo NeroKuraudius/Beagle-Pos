@@ -1,0 +1,143 @@
+{{> messages}}
+<div class="row">
+  <!--     選單 -->
+  <div class="col-md-3 p-3">
+    {{> owner-tabs router="beverage"}}
+  </div>
+
+  <!--   選單內容   -->
+  <div class="col-md-9 pt-3" style="display:flex">
+    <section class="col-md-6">
+      <div>
+        <table class="table-hover staff-table">
+          <thead>
+            <tr style="text-align:center">
+              <th scope="col" style="width:25%">類別</th>
+              <th scope="col" style="width:25%">名稱</th>
+              <th scope="col" style="width:15%">價格</th>
+              <th scope="col" style="width:20%"></th>
+              <th scope="col" style="width:15%"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each drinks}}
+            <tr class="staff-col">
+              <th scope="row">{{this.Shift.name}}</th>
+              <td>{{this.name}}</td>
+              <td>{{this.price}}</td>
+              <td>
+                <form action="/owner/beverages/{{this.id}}" method="GET" style="display: inline;">
+                  <button class="btn staff-edit" type="submit">餐點修改</button>
+                </form>
+              </td>
+              <td>
+                <form action="/owner/beverages/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+                  <button class="btn" type="submit" onclick="return confirm('確定移除該餐點嗎?')">
+                    <i class="fa-solid fa-filter-circle-xmark" style="color:lightcoral"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+
+    <div class="vr" style="width:2px;color:aliceblue"></div>
+    <section class="col-md-5 mb-3">
+      {{#if drink}}
+      {{!-- 修改餐點 --}}
+      <div>
+        <h3 style="color:azure;text-align:center;font-weight:bold">餐點資料</h3>
+      </div>
+      <div class="beverages-setting">
+        <span>*為必填欄位</span>
+        <form action="/owner/beverages/{{ drink.id }}?_method=PATCH" method="POST">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
+              類別*
+            </button>
+            <div class="dropdown-menu" name="category" aria-labelledby="dropdownMenu2">
+              {{#each categories}}
+              <span class="dropdown-item" type="text" name="category" value="{{this.id}}">{{this.name}}</span>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="beverage-data">
+            <label for="name" class="form-label me-5">名稱*</label>
+            <input type="text" id="name" name="name" size="20" maxlength="10" placeholder="請輸入名稱" class="form-input"
+              value="{{ drink.name }}" required>
+          </div>
+
+          <div class="beverage-data">
+            <label for="price" class="form-label me-5">價格*</label>
+            <input type="number" id="price" name="price" size="20" maxlength="3" placeholder="請輸入聯絡電話"
+              class="form-input" value="{{ drink.price }}" required>
+          </div>
+        </form>
+      </div>
+      {{else}}
+      {{!-- 新增資料 --}}
+      <div>
+        <h3 style="color:azure;text-align:center;font-weight:bold">新增員工</h3>
+      </div>
+      <div class="staff-setting">
+        <span>*為必填欄位</span>
+        <form action="/owner/staffs/create" method="POST">
+          <div class="staff-data">
+            <label for="name" class="form-label me-5">姓名*</label>
+            <input type="text" id="name" name="name" size="20" maxlength="20" placeholder="請輸入名稱" class="form-input"
+              value="{{name}}" required>
+          </div>
+
+          <div class="staff-data">
+            <label for="phone" class="form-label me-5">電話*</label>
+            <input type="text" id="phone" name="phone" size="20" maxlength="15" placeholder="請輸入聯絡電話" class="form-input"
+              value="{{phone}}" required>
+          </div>
+
+          <div class="staff-data" style="display:flex;justify-content:space-between">
+            <label for="shift" class="form-label me-5">班別*</label>
+            <div style="margin-right:5rem;display:flex">
+              <label style="color:azure">
+                <input type="radio" id="shift" name="shift_id" size="20" class="form-input" value="1" required>
+                早班
+              </label>
+              <label class="ms-3" style="color:azure">
+                <input type="radio" id="shift" name="shift_id" size="20" class="form-input" value="2" required>
+                晚班
+              </label>
+            </div>
+          </div>
+
+          <div class="staff-data">
+            <label for="account" class="form-label me-5">帳號*</label>
+            <input type="text" id="account" name="account" size="20" maxlength="20" placeholder="請輸入帳號"
+              class="form-input" value="{{account}}" required>
+          </div>
+
+          <div class="staff-data">
+            <label for="password" class="form-label me-5">密碼*</label>
+            <input type="password" id="password" name="password" size="20" maxlength="25" placeholder="請輸入密碼"
+              class="form-input" value="{{password}}" required>
+          </div>
+
+          <div class="staff-data">
+            <label for="checkPassword" class="form-label me-3">密碼確認*</label>
+            <input type="password" id="checkPassword" name="checkPassword" size="20" maxlength="25"
+              placeholder="請再次輸入密碼" class="form-input" value="{{checkPassword}}" required>
+          </div>
+
+          <div class="btn-submit-wrapper">
+            <button type="submit" class="btn btn-submit-setting my-2" id="submit">新增</button>
+          </div>
+        </form>
+      </div>
+      {{/if}}
+    </section>
+  </div>
+</div>

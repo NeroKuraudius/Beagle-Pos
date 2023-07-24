@@ -16,12 +16,15 @@ router.get('/incomes', authenticatedOwner, ownerController.getIncomes)
 // 後臺管理人員
 router.post('/staffs/create', authenticatedOwner, ownerController.createStaff)
 router.get('/staffs/:Uid/edit', authenticatedOwner, ownerController.getStaffData)
-router.patch('/staffs/:Uid/edit', authenticatedOwner, ownerController.patchStaffData)
+router.patch('/staffs/:Uid', authenticatedOwner, ownerController.patchStaffData)
 router.put('/staffs/:Uid', authenticatedOwner, ownerController.putStaffs)
 router.delete('/staffs/:Uid', authenticatedOwner, ownerController.deleteStaff)
 router.get('/staffs', authenticatedOwner, ownerController.getStaffs)
 
 // 後臺管理餐點
+router.get('/beverages/:Did',authenticatedOwner, ownerController.getBeverageData)
+router.patch('beverages/:Did',authenticatedOwner, ownerController.patchBeverageData)
+router.delete('/beverages/:Did',authenticatedOwner, ownerController.deleteBeverage)
 router.get('/beverages', authenticatedOwner, ownerController.getBeverages)
 
 // 後臺管理類別

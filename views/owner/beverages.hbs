@@ -57,10 +57,10 @@
         <form action="/owner/beverages/{{drink.id}}?_method=PATCH" method="POST">
           <div style="display:flex;justify-content:space-between;margin:3px 0">
             <div class="dropdown">
-              <label for="category_id" class="form-label me-5">類別*</label>
-              <select name="category_id" id="category_id">
+              <label for="categoryId" class="form-label me-5">類別*</label>
+              <select name="categoryId" id="categoryId">
                 {{#each categories}}
-                <option class="category-option {{#ifCond this.id ../drink.category_id}}active{{/ifCond}}"
+                <option class="category-option {{#ifCond this.id ../drink.categoryId}}active{{/ifCond}}"
                   value="{{this.id}}">{{this.name}}</option>
                 {{/each}}
               </select>
@@ -94,8 +94,8 @@
         <form action="/owner/beverages/create" method="POST">
           <div style="display:flex;justify-content:space-between;margin:3px 0">
             <div class="dropdown">
-              <label for="category_id" class="form-label me-5">類別*</label>
-              <select name="category_id" id="category_id">
+              <label for="categoryId" class="form-label me-5">類別*</label>
+              <select name="categoryId" id="categoryId">
                 <option class="default-value" disabled hidden selected>請選擇類別</option>
                 {{#each categories}}
                 <option class="category-option" value="{{this.id}}">{{this.name}}</option>

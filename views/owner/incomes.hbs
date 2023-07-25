@@ -12,7 +12,7 @@
       <div class="card-deck mb-3" style="width:100%;display:inline-block;">
         {{#each incomes}}
         <a class="incomes-cards mb-2" href="/owner/incomes/{{this.id}}" style="text-decoration:none">
-          <div class="card text-left consume-content my-1 ps-2 {{#ifCond ../income_id this.id}}active{{/ifCond}}">
+          <div class="card text-left consume-content my-1 ps-2 {{#ifCond ../incomeId this.id}}active{{/ifCond}}">
             <h5 class="pt-2">{{catchDate this.createdAt}}</h5>
             <h6>{{this.User.Shift.name}}人員: {{this.User.name}}</h6>
             <span class="mb-1">訂單數量: {{this.quantity}} 筆</span>
@@ -27,11 +27,11 @@
     <section class="col-md-4">
       <div class="card-deck mb-3" style="width:100%;display:inline-block;">
         {{#each orders}}
-        <a class="mb-2" href="/owner/incomes/{{this.income_id}}/{{this.id}}" style="text-decoration:none">
-          <div class="card text-left consume-content my-1 ps-2 {{#ifCond ../order_id this.id}}active{{/ifCond}}">
+        <a class="mb-2" href="/owner/incomes/{{this.incomId}}/{{this.id}}" style="text-decoration:none">
+          <div class="card text-left consume-content my-1 ps-2 {{#ifCond ../orderId this.id}}active{{/ifCond}}">
             <h5 class="pt-2">{{catchTime this.createdAt}}</h5>
             <span class="mb-2">銷售數量: {{this.quantity}} 杯</span>
-            <span class="mb-2">訂單金額: {{this.total_price}} 元</span>
+            <span class="mb-2">訂單金額: {{this.totalPrice}} 元</span>
           </div>
         </a>
         {{/each}}

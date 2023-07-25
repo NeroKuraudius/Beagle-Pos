@@ -23,7 +23,7 @@ const drinkController = {
         offset
       })
       const consumes = await Consume.findAll({
-        where: { order_id: 0, user_id: req.user.id },
+        where: { orderId: 0, userId: req.user.id },
         include: [
           { model: Drink },
           { model: Ice },
@@ -77,16 +77,16 @@ const drinkController = {
       return res.redirect('/drinks')
     }
     try {
-      const consumeDrink = await Drink.findByPk(drink)
+      const consumeDrink = await Drink.findByPk(drink, { raw: true })
       const newConsume = await Consume.create({
         drinkName: drink,
         drinkIce: ice,
         drinkSugar: sugar,
-        drink_price: consumeDrink.toJSON().price,
-        user_id: req.user.id
+        drinkPrice: consumeDrink.toJSON().price,
+        userId: req.user.id
       })
 
-      const consumeId = await newConsume.toJSON().id
+      const consumeId = await newConsume.id
       const toppingNum = topping ? topping.length : null
       if (toppingNum > 1) {
         for (let i = 0; i < toppingNum; i++) {
@@ -94,7 +94,7 @@ const drinkController = {
           await Customization.create({
             consumeId,
             toppingId: topping[i],
-            topping_price: customizedToppings.toJSON().price
+            toppingPrice: customizedToppings.toJSON().price
           })
         }
       } else if (toppingNum === 1) {
@@ -102,7 +102,7 @@ const drinkController = {
         await Customization.create({
           consumeId,
           toppingId: topping,
-          topping_price: customizedToppings.toJSON().price
+          toppingPrice: customizedToppings.toJSON().price
         })
       }
       return res.redirect('/drinks')
@@ -136,7 +136,7 @@ const drinkController = {
       const consumes = await Consume.findAll({
         raw: true,
         nest: true,
-        where: { order_id: 0 },
+        where: { orderId: 0 },
       })
       if (consumes.length === 0) {
         req.flash('danger_msg', '未選取任何餐點')
@@ -144,13 +144,13 @@ const drinkController = {
       }
       const user = await User.findByPk(userId)
       const newOrder = await Order.create({
-        user_id: userId,
-        shift_id: user.toJSON().shift_id,
+        userId: userId,
+        shiftId: user.toJSON().shiftId,
         quantity: consumes.length,
-        total_price: req.body.orderTotalPrice
+        totalPrice: req.body.orderTotalPrice
       })
       const consumesIdList = consumes.map(consume => { return consume.id })
-      await Consume.update({ order_id: newOrder.toJSON().id }, { where: { id: consumesIdList } })
+      await Consume.update({ orderId: newOrder.toJSON().id }, { where: { id: consumesIdList } })
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
@@ -158,7 +158,7 @@ const drinkController = {
   },
   getOrders: async (req, res) => {
     const { id } = req.params
-    const backPage = true
+    // const backPage = true
     try {
       const user = await User.findOne({
         where: { id: req.user.id },
@@ -167,14 +167,14 @@ const drinkController = {
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { income_id: 0 },
-        order: [['created_at', 'DESC']]
+        where: { incomeId: 0 },
+        order: [['createdAt', 'DESC']]
       })
       let totalQuantity = 0
       let totalPrice = 0
       orders.forEach(order => {
         totalQuantity += order.quantity
-        totalPrice += order.total_price
+        totalPrice += order.totalPrice
       })
       if (id === 0) return res.render('orders', { user: user.toJSON(), orders, totalQuantity, totalPrice })
 
@@ -203,7 +203,7 @@ const drinkController = {
         return consumeData
       })
 
-      return res.render('orders', { backPage, user: user.toJSON(), orders, totalQuantity, totalPrice, consumesList })
+      return res.render('orders', { user: user.toJSON(), orders, totalQuantity, totalPrice, consumesList })
     } catch (err) {
       console.error(`Error occurred on drinkController.getOrders: ${err}`)
     }
@@ -213,22 +213,22 @@ const drinkController = {
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { income_id: 0 }
+        where: { incomeId: 0 }
       })
       let totalNum = 0
       let totalIncome = 0
       const ordersIdList = []
       orders.forEach(order => {
         totalNum += order.quantity
-        totalIncome += order.total_price
+        totalIncome += order.totalPrice
         ordersIdList.push(order.id)
       })
       const newIncome = await Income.create({
         quantity: totalNum,
         income: totalIncome,
-        user_id: req.user.id
+        userId: req.user.id
       })
-      await Order.update({ income_id: newIncome.toJSON().id }, { where: { id: ordersIdList } })
+      await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList } })
       req.flash('success_msg', '交班成功')
       return res.redirect('/drinks')
     } catch (err) {

@@ -267,7 +267,7 @@ const ownerController = {
       const drink = await Drink.findByPk(id)
       if (!drink) {
         req.flash('danger_msg', '找不到該餐點相關資料')
-        return res.redirect(`/owner/beverages/${id}`)
+        return res.redirect('/owner/beverages')
       }
       await drink.update({ category_id, name, price })
       req.flash('success_msg', '餐點修改成功')
@@ -341,6 +341,31 @@ const ownerController = {
       return res.render('owner/categories', { admin, categories, category: category.toJSON() })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getCategoryData: ${err}`)
+    }
+  },
+  patchCategoryData: async (req, res) => {
+    const id = parseInt(req.params.Cid)
+    const { name } = req.body
+    if (!name) {
+      req.flash('danger_msg', '欄位不得為空')
+      return res.render('owner/categories')
+    }
+    try {
+      const category = await Category.findByPk(id)
+      if (!category) {
+        req.flash('danger_msg', '找不到該類別相關資料')
+        return res.redirect('/owner/categories')
+      }
+      const existedCategory = await Category.findOne({ where: { name } })
+      if (existedCategory && (category.toJSON().id !== existedCategory.toJSON().id)) {
+        req.flash('danger_msg', '該類別資料已建立')
+        return res.redirect(`/owner/categories/${id}`)
+      }
+      await category.update({ name })
+      req.flash('success_msg', '類別資料修改成功')
+      return res.redirect('/owner/categories')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.patchCategoryData: ${err}`)
     }
   }
 }

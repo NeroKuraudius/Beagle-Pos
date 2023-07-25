@@ -29,7 +29,9 @@ router.delete('/beverages/:Did', authenticatedOwner, ownerController.deleteBever
 router.get('/beverages', authenticatedOwner, ownerController.getBeverages)
 
 // 後臺管理類別
+
 router.get('/categories/:Cid',authenticatedOwner, ownerController.getCategoryData)
+router.patch('/categories/:Cid',authenticatedOwner, ownerController.patchCategoryData)
 router.get('/categories', authenticatedOwner, ownerController.getCategories)
 
 module.exports = router

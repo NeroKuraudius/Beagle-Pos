@@ -42,7 +42,7 @@ const ownerController = {
         nest: true,
         where: { income_id }
       })
-      return res.render('owner/incomes', { admin: admin.toJSON(), incomes, orders })
+      return res.render('owner/incomes', { admin: admin.toJSON(), income_id, incomes, orders })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getOrders: ${err}`)
     }
@@ -88,7 +88,10 @@ const ownerController = {
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData
       })
-      return res.render('owner/incomes', { admin: admin.toJSON(), incomes, orders, consumes: consumesList })
+      return res.render('owner/incomes', {
+        admin: admin.toJSON(), incomes, orders,
+        consumes: consumesList, income_id: parseInt(Iid), order_id: parseInt(Oid)
+      })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getConsumes: ${err}`)
     }
@@ -177,7 +180,7 @@ const ownerController = {
         req.flash('danger_msg', '查無該員工資料')
         return res.redirect('/owner/staffs')
       }
-      const name = user.toJSON() + '(已離職)'
+      const name = user.toJSON().name + '(已離職)'
       await user.update({ role: 'quitted', name })
       req.flash('success_msg', '已移除該員工')
       return res.redirect('/owner/staffs')
@@ -267,6 +270,7 @@ const ownerController = {
         return res.redirect(`/owner/beverages/${id}`)
       }
       await drink.update({ category_id, name, price })
+      req.flash('success_msg', '餐點修改成功')
       return res.redirect('/owner/beverages')
     } catch (err) {
       console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
@@ -316,7 +320,12 @@ const ownerController = {
     }
   },
   getCategories: async (req, res) => {
-
+    try {
+      const categories = await Category.findAll({ raw: true, nest: true })
+      return res.render('owner/categories', { categories })
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.getCategories: ${err}`)
+    }
   }
 }
 

@@ -99,8 +99,12 @@ body {
   justify-content: center;
 }
 
-.category-tabs .nav-link {
+.nav-item {
+  text-decoration: none;
   list-style-type: none;
+}
+
+.category-tabs .nav-link {
   color: azure;
 }
 
@@ -195,6 +199,20 @@ body {
   width: 100%;
 }
 
+.consume-content:hover {
+  font-weight: bold;
+  border: 2px solid aliceblue;
+  color: black;
+  background-color: aliceblue;
+}
+
+.consume-content.active{
+  font-weight: bold;
+  border: 2px solid aliceblue;
+  color: black;
+  background-color: aliceblue;
+}
+
 .back-manage {
   margin: 1rem 0 0 0;
   max-width: 80%;
@@ -266,19 +284,19 @@ body {
 
 .btn-submit-setting {
   margin-right: 2rem;
-  float:right;
+  float: right;
   color: azure;
   border: 2px solid azure;
   border-radius: 5px;
 }
 
-.btn-submit-setting:hover{
+.btn-submit-setting:hover {
   color: black;
   border: 2px solid azure;
   background-color: azure;
   border-radius: 5px;
 }
 
-.beverages-table{
+.beverages-table {
   overflow-y: auto;
 }

@@ -17,6 +17,12 @@ module.exports = {
         updated_at: new Date()
       },
       {
+        name: '奶蓋',
+        price: 10,
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      {
         name: '蜂蜜凍',
         price: 10,
         created_at: new Date(),
@@ -39,7 +45,7 @@ module.exports = {
         price: 15,
         created_at: new Date(),
         updated_at: new Date()
-      },
+      }
     ]
     try {
       await queryInterface.bulkInsert('Toppings', toppings, {})

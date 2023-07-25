@@ -63,7 +63,6 @@ module.exports = {
       console.error('Users seed error:', err)
     }
   },
-
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Users', {})

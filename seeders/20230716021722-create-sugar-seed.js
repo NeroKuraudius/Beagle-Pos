@@ -37,7 +37,6 @@ module.exports = {
       console.error(`Sugars seed create error: ${err}`)
     }
   },
-
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Sugars', {})

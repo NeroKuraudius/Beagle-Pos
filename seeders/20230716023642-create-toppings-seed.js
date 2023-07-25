@@ -54,7 +54,6 @@ module.exports = {
       console.error(`Toppings seed creat error: ${err}`)
     }
   },
-
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Toppings', {})

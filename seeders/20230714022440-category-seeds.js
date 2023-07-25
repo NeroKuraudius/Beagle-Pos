@@ -32,7 +32,6 @@ module.exports = {
       console.error(`Categories seed error: ${err}`)
     }
   },
-
   async down (queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Categories', {})

@@ -27,7 +27,6 @@ module.exports = {
       console.error(`Shifts seed creat error: ${err}`)
     }
   },
-
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Shifts', {})

@@ -269,6 +269,20 @@ const ownerController = {
         req.flash('danger_msg', '找不到該餐點相關資料')
         return res.redirect('/owner/beverages')
       }
+      const error = []
+      const exsistedBeverage = await Drink.findOne({ where: { name } })
+      if (!exsistedBeverage && (exsistedBeverage.toJSON().id !== drink.toJSON().id)) {
+        error.push('該餐點已登錄')
+        const admin = await User.findByPk(req.user.id)
+        const drinks = await Drink.findAll({
+          raw: true,
+          nest: true,
+          include: [Category],
+          order: [['category_id']]
+        })
+        const categories = await Category.findAll({ raw: true, nest: true })
+        return res.render('owner/beverages', { category_id, name, price, admin: admin.toJSON(), drinks, categories, error })
+      }
       await drink.update({ category_id, name, price })
       req.flash('success_msg', '餐點修改成功')
       return res.redirect('/owner/beverages')

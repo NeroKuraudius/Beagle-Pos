@@ -15,7 +15,6 @@ const hbsHelpers = require('./helpers/handlebars-helpers')
 const authHelpers = require('./helpers/auth-helpers')
 const passport = require('./config/passport')
 
-
 const app = express()
 const PORT = process.env.PORT || 3000
 

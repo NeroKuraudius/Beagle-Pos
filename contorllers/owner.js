@@ -323,12 +323,26 @@ const ownerController = {
     try {
       const admin = await User.findByPk(req.user.id)
       const categories = await Category.findAll({ raw: true, nest: true })
-      return res.render('owner/categories', { admin,categories })
+      return res.render('owner/categories', { admin, categories })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getCategories: ${err}`)
     }
+  },
+  getCategoryData: async (req, res) => {
+    const id = parseInt(req.params.Cid)
+    try {
+      const category = await Category.findByPk(id)
+      if (!category) {
+        req.flash('danger_msg', '找不到該類別相關資料')
+        return res.redirect('/owner/categories')
+      }
+      const admin = await User.findByPk(req.user.id)
+      const categories = await Category.findAll({ raw: true, nest: true })
+      return res.render('owner/categories', { admin, categories, category: category.toJSON() })
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.getCategoryData: ${err}`)
+    }
   }
 }
-
 
 module.exports = ownerController

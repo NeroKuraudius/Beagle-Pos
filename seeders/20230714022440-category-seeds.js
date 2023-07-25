@@ -35,7 +35,7 @@ module.exports = {
   async down (queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Categories', {})
-      console.log('Categories seed removed.')
+      console.log('Categories seed removed!')
     } catch (err) {
       console.error(`Error on removing categories seed: ${err}`)
     }

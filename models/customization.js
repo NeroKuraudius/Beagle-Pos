@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Customization.init({
-    consume_id: DataTypes.INTEGER,
-    topping_id: DataTypes.INTEGER,
-    topping_price: DataTypes.INTEGER
+    consumeId: DataTypes.INTEGER,
+    toppingId: DataTypes.INTEGER,
+    toppingPrice: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Customization',

@@ -24,12 +24,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Consume.init({
-    drink_name: DataTypes.STRING,
-    drink_ice: DataTypes.INTEGER,
-    drink_sugar: DataTypes.INTEGER,
-    drink_price: DataTypes.INTEGER,
-    user_id: DataTypes.INTEGER,
-    order_id: DataTypes.INTEGER
+    drinkName: DataTypes.STRING,
+    drinkIce: DataTypes.INTEGER,
+    drinkSugar: DataTypes.INTEGER,
+    drinkPrice: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,
+    orderId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Consume',

@@ -30,7 +30,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.bulkDelete('Shifts', {})
-      console.log('Shifts seed removed.!')
+      console.log('Shifts seed removed!')
     } catch (err) {
       console.error(`Shifts seed delete error: ${err}`)
     }

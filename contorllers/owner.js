@@ -367,6 +367,25 @@ const ownerController = {
     } catch (err) {
       console.error(`Error occupied on ownerControll.patchCategoryData: ${err}`)
     }
+  },
+  createCategory: async (req, res) => {
+    const { name } = req.body
+    if (!name) {
+      req.flash('danger_msg', '欄位不得為空')
+      return res.redirect('/owner/categories')
+    }
+    try {
+      const existedCategory = await Category.findOne({ where: { name } })
+      if (existedCategory) {
+        req.flash('danger_msg', '該類別資料已建立')
+        return res.redirect(`/owner/categories`)
+      }
+      await Category.create({ name })
+      req.flash('success_msg', '類別新增成功')
+      return res.redirect('/owner/categories')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.createCategory: ${err}`)
+    }
   }
 }
 

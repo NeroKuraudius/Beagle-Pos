@@ -321,8 +321,9 @@ const ownerController = {
   },
   getCategories: async (req, res) => {
     try {
+      const admin = await User.findByPk(req.user.id)
       const categories = await Category.findAll({ raw: true, nest: true })
-      return res.render('owner/categories', { categories })
+      return res.render('owner/categories', { admin,categories })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getCategories: ${err}`)
     }

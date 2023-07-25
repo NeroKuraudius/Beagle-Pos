@@ -12,27 +12,25 @@
         <table class="table-hover staff-table">
           <thead>
             <tr style="text-align:center">
-              <th scope="col" style="width:25%">類別</th>
+              <th scope="col" style="width:25%">編號</th>
               <th scope="col" style="width:35%">名稱</th>
-              <th scope="col" style="width:15%">價格</th>
-              <th scope="col" style="width:15%"></th>
-              <th scope="col" style="width:10%"></th>
+              <th scope="col" style="width:20%"></th>
+              <th scope="col" style="width:20%"></th>
             </tr>
           </thead>
           <tbody>
-            {{#each drinks}}
+            {{#each categories}}
             <tr class="staff-col">
-              <th scope="row">{{this.Category.name}}</th>
+              <th scope="row">{{this.id}}</th>
               <td>{{this.name}}</td>
-              <td>{{this.price}}</td>
               <td>
-                <form action="/owner/beverages/{{this.id}}" method="GET" style="display: inline;">
+                <form action="/owner/categories/{{this.id}}" method="GET" style="display: inline;">
                   <button class="btn staff-edit" type="submit">餐點修改</button>
                 </form>
               </td>
               <td>
-                <form action="/owner/beverages/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
-                  <button class="btn" type="submit" onclick="return confirm('確定移除該餐點嗎?')">
+                <form action="/owner/categories/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+                  <button class="btn" type="submit" onclick="return confirm('確定移除該類別嗎?')">
                     <i class="fa-solid fa-xmark" style="color:lightcoral"></i>
                   </button>
                 </form>
@@ -47,36 +45,18 @@
 
     <div class="vr" style="width:2px;color:aliceblue"></div>
     <section class="col-md-5 mb-3">
-      {{#if drink}}
-      {{!-- 修改餐點 --}}
+      {{#if category}}
+      {{!-- 修改類別 --}}
       <div>
-        <h3 style="color:azure;text-align:center;font-weight:bold">餐點資料</h3>
+        <h3 style="color:azure;text-align:center;font-weight:bold">類別資料</h3>
       </div>
       <div class="beverages-setting">
         <span>*為必填欄位</span>
-        <form action="/owner/beverages/{{drink.id}}?_method=PATCH" method="POST">
-          <div style="display:flex;justify-content:space-between;margin:3px 0">
-            <div class="dropdown">
-              <label for="category_id" class="form-label me-5">類別*</label>
-              <select name="category_id" id="category_id">
-                {{#each categories}}
-                <option class="category-option {{#ifCond this.id ../drink.category_id}}active{{/ifCond}}"
-                  value="{{this.id}}">{{this.name}}</option>
-                {{/each}}
-              </select>
-            </div>
-          </div>
-
+        <form action="/owner/categories/{{category.id}}?_method=PATCH" method="POST">
           <div class="beverage-data my-3">
             <label for="name" class="form-label me-5">名稱*</label>
-            <input type="text" id="name" name="name" size="20" maxlength="10" placeholder="請輸入名稱" class="form-input"
-              value="{{drink.name}}" required>
-          </div>
-
-          <div class="beverage-data my-3">
-            <label for="price" class="form-label me-5">價格*</label>
-            <input type="number" id="price" name="price" size="20" maxlength="3" placeholder="請輸入聯絡電話"
-              class="form-input" value="{{drink.price}}" required>
+            <input type="text" id="name" name="name" size="20" maxlength="8" placeholder="請輸入類別名稱" class="form-input"
+              value="{{category.name}}" required>
           </div>
 
           <div class="btn-submit-wrapper">
@@ -85,37 +65,18 @@
         </form>
       </div>
       {{else}}
-      {{!-- 新增餐點 --}}
+      {{!-- 新增類別 --}}
       <div>
-        <h3 style="color:azure;text-align:center;font-weight:bold">新增餐點</h3>
+        <h3 style="color:azure;text-align:center;font-weight:bold">新增類別</h3>
       </div>
       <div class="beverages-setting">
         <span>*為必填欄位</span>
-        <form action="/owner/beverages/create" method="POST">
-          <div style="display:flex;justify-content:space-between;margin:3px 0">
-            <div class="dropdown">
-              <label for="category_id" class="form-label me-5">類別*</label>
-              <select name="category_id" id="category_id">
-                <option class="default-value" disabled hidden selected>請選擇類別</option>
-                {{#each categories}}
-                <option class="category-option" value="{{this.id}}">{{this.name}}</option>
-                {{/each}}
-              </select>
-            </div>
-          </div>
-
+        <form action="/owner/categories/create" method="POST">
           <div class="beverage-data my-3">
             <label for="name" class="form-label me-5">名稱*</label>
-            <input type="text" id="name" name="name" size="20" maxlength="10" placeholder="請輸入餐點名稱" class="form-input"
-              value="{{drink.name}}" required>
+            <input type="text" id="name" name="name" size="20" maxlength="8" placeholder="請輸入類別名稱" class="form-input"
+              value="{{category.name}}" required>
           </div>
-
-          <div class="beverage-data my-3">
-            <label for="price" class="form-label me-5">價格*</label>
-            <input type="number" id="price" name="price" max="100" placeholder="請輸入價格" class="form-input"
-              value="{{drink.price}}" required>
-          </div>
-
           <div class="btn-submit-wrapper">
             <button type="submit" class="btn btn-submit-setting my-2" id="submit">新增
             </button>

@@ -110,7 +110,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.getStaffs: ${err}`)
     }
   },
-  putStaffs: async (req, res) => {
+  putStaff: async (req, res) => {
     const id = parseInt(req.params.Uid)
     try {
       const user = await User.findByPk(id)
@@ -127,7 +127,7 @@ const ownerController = {
       req.flash('success_msg', '班別轉換成功')
       return res.redirect('/owner/staffs')
     } catch (err) {
-      console.error(`Error occupied on ownerControll.putStaffs: ${err}`)
+      console.error(`Error occupied on ownerControll.putStaff: ${err}`)
     }
   },
   getStaffData: async (req, res) => {
@@ -385,6 +385,26 @@ const ownerController = {
       return res.redirect('/owner/categories')
     } catch (err) {
       console.error(`Error occupied on ownerControll.createCategory: ${err}`)
+    }
+  },
+  deleteCategory: async (req, res) => {
+    const id = parseInt(req.params.Cid)
+    try {
+      const category = await Category.findByPk(id)
+      if (!category) {
+        req.flash('danger_msg', '找不到該類別相關資料')
+        return res.redirect('/owner/categories')
+      }
+      const drinks = await Drink.findAll({ where: { category_id: id } })
+      if (drinks.length !== 0) {
+        req.flash('danger_msg', '該類別中尚有餐點')
+        return res.redirect('/owner/categories')
+      }
+      await category.destroy()
+      req.flash('ssuccess_msg', '類別刪除成功')
+      return res.redirect('/owner/categories')
+    } catch (err) {
+      console.error(`Error occupied on ownerControll.deleteCategory: ${err}`)
     }
   }
 }

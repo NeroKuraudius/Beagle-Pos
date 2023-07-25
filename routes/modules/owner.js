@@ -17,7 +17,7 @@ router.get('/incomes', authenticatedOwner, ownerController.getIncomes)
 router.post('/staffs/create', authenticatedOwner, ownerController.createStaff)
 router.get('/staffs/:Uid', authenticatedOwner, ownerController.getStaffData)
 router.patch('/staffs/:Uid', authenticatedOwner, ownerController.patchStaffData)
-router.put('/staffs/:Uid', authenticatedOwner, ownerController.putStaffs)
+router.put('/staffs/:Uid', authenticatedOwner, ownerController.putStaff)
 router.delete('/staffs/:Uid', authenticatedOwner, ownerController.deleteStaff)
 router.get('/staffs', authenticatedOwner, ownerController.getStaffs)
 
@@ -32,6 +32,7 @@ router.get('/beverages', authenticatedOwner, ownerController.getBeverages)
 router.post('/categories/create', authenticatedOwner, ownerController.createCategory)
 router.get('/categories/:Cid', authenticatedOwner, ownerController.getCategoryData)
 router.patch('/categories/:Cid', authenticatedOwner, ownerController.patchCategoryData)
+router.delete('/categories/:Cid', authenticatedOwner, ownerController.deleteCategory)
 router.get('/categories', authenticatedOwner, ownerController.getCategories)
 
 module.exports = router

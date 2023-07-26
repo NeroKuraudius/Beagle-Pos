@@ -18,7 +18,7 @@ const drinkController = {
       const drinks = await Drink.findAndCountAll({
         raw: true,
         nest: true,
-        where: { ...categoryId ? { categoryId } : {} },
+        where: { ...categoryId ? { categoryId } : {}, isDeleted: false },
         limit,
         offset
       })
@@ -158,7 +158,6 @@ const drinkController = {
   },
   getOrders: async (req, res) => {
     const { id } = req.params
-    // const backPage = true
     try {
       const user = await User.findOne({
         where: { id: req.user.id },

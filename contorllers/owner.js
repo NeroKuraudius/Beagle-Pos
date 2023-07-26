@@ -175,12 +175,12 @@ const ownerController = {
   deleteStaff: async (req, res) => {
     const id = parseInt(req.params.Uid)
     try {
-      const user = await User.findByPk(id)
+      const user = await User.findByPk(id, { raw: true })
       if (!user) {
         req.flash('danger_msg', '查無該員工資料')
         return res.redirect('/owner/staffs')
       }
-      const name = user.toJSON().name + '(已離職)'
+      const name = user.name + '(已離職)'
       await user.update({ role: 'quitted', name })
       req.flash('success_msg', '已移除該員工')
       return res.redirect('/owner/staffs')
@@ -227,6 +227,7 @@ const ownerController = {
       const drinks = await Drink.findAll({
         raw: true,
         nest: true,
+        where: { isDeleted: false },
         include: [Category],
         order: [['categoryId']]
       })
@@ -326,7 +327,7 @@ const ownerController = {
         req.flash('danger_msg', '找不到該餐點相關資料')
         return res.redirect('/owner/beverages')
       }
-      await drink.destroy()
+      await drink.update({ isDeleted: true })
       req.flash('success_msg', '餐點刪除成功')
       return res.redirect('/owner/beverages')
     } catch (err) {

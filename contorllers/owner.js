@@ -1,6 +1,8 @@
 const { User, Shift, Income, Order, Consume,
   Drink, Ice, Sugar, Topping, Category } = require('../models')
 const bcrypt = require('bcryptjs')
+const { Sequelize } = require('sequelize')
+const sequelize = new Sequelize('pos', 'root', 'password', { host: '127.0.0.1', dialect: 'mysql' })
 
 const ownerController = {
   signinPage: (req, res) => {
@@ -149,7 +151,7 @@ const ownerController = {
   patchStaffData: async (req, res) => {
     const id = parseInt(req.params.Uid)
     const { name, phone, account, password, checkPassword } = req.body
-    if (!name || !phone || !account) {
+    if (!name.trim() || !phone.trim() || !account.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
       return res.redirect(`/owner/staffs/${id}`)
     }
@@ -175,12 +177,12 @@ const ownerController = {
   deleteStaff: async (req, res) => {
     const id = parseInt(req.params.Uid)
     try {
-      const user = await User.findByPk(id, { raw: true })
+      const user = await User.findByPk(id)
       if (!user) {
         req.flash('danger_msg', '查無該員工資料')
         return res.redirect('/owner/staffs')
       }
-      const name = user.name + '(已離職)'
+      const name = user.toJSON().name + '(已離職)'
       await user.update({ role: 'quitted', name })
       req.flash('success_msg', '已移除該員工')
       return res.redirect('/owner/staffs')
@@ -190,9 +192,9 @@ const ownerController = {
   },
   createStaff: async (req, res) => {
     const { name, phone, account, password, checkPassword, shiftId } = req.body
-    if (!name || !phone || !account) {
+    if (!name.trim() || !phone.trim() || !account.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/staffs/${id}`)
+      return res.redirect('/owner/staffs')
     }
     if (password !== checkPassword) {
       req.flash('danger_msg', '兩次輸入的密碼不相符')
@@ -260,29 +262,20 @@ const ownerController = {
   patchBeverageData: async (req, res) => {
     const id = parseInt(req.params.Did)
     const { categoryId, name, price } = req.body
-    if (!categoryId || !name || !price) {
+    if (!categoryId || !name.trim() || !price.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
       return res.redirect(`/owner/beverages/${id}`)
     }
     try {
-      const drink = await Drink.findByPk(id, { raw: true })
+      const drink = await Drink.findByPk(id)
       if (!drink) {
         req.flash('danger_msg', '找不到該餐點相關資料')
         return res.redirect('/owner/beverages')
       }
-      const error = []
       const exsistedBeverage = await Drink.findOne({ where: { name } }, { raw: true })
-      if (!exsistedBeverage && (exsistedBeverage.id !== drink.id)) {
-        error.push('該餐點已登錄')
-        const admin = await User.findByPk(req.user.id, { raw: true })
-        const drinks = await Drink.findAll({
-          raw: true,
-          nest: true,
-          include: [Category],
-          order: [['categoryId']]
-        })
-        const categories = await Category.findAll({ raw: true, nest: true })
-        return res.render('owner/beverages', { categoryId, name, price, admin, drinks, categories, error })
+      if (exsistedBeverage && (exsistedBeverage.id !== drink.toJSON().id)) {
+        req.flash('danger_msg', '該餐點已登錄')
+        return res.redirect(`/owner/beverages/${id}`)
       }
       await drink.update({ categoryId, name, price })
       req.flash('success_msg', '餐點修改成功')
@@ -293,7 +286,7 @@ const ownerController = {
   },
   createBeverage: async (req, res) => {
     const { categoryId, name, price } = req.body
-    if (!categoryId || !name || !price) {
+    if (!categoryId || !name.trim() || !price.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
       return res.redirect(`/owner/beverages`)
     }
@@ -361,18 +354,18 @@ const ownerController = {
   patchCategoryData: async (req, res) => {
     const id = parseInt(req.params.Cid)
     const { name } = req.body
-    if (!name) {
+    if (!name.trim()) {
       req.flash('danger_msg', '欄位不得為空')
-      return res.render('owner/categories')
+      return res.redirect(`/owner/categories/${id}`)
     }
     try {
-      const category = await Category.findByPk(id, { raw: true })
+      const category = await Category.findByPk(id)
       if (!category) {
         req.flash('danger_msg', '找不到該類別相關資料')
         return res.redirect('/owner/categories')
       }
       const existedCategory = await Category.findOne({ where: { name } }, { raw: true })
-      if (existedCategory && (category.id !== existedCategory.id)) {
+      if (existedCategory && (category.toJSON().id !== existedCategory.id)) {
         req.flash('danger_msg', '該類別資料已建立')
         return res.redirect(`/owner/categories/${id}`)
       }
@@ -385,7 +378,7 @@ const ownerController = {
   },
   createCategory: async (req, res) => {
     const { name } = req.body
-    if (!name) {
+    if (!name.trim()) {
       req.flash('danger_msg', '欄位不得為空')
       return res.redirect('/owner/categories')
     }

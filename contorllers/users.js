@@ -6,6 +6,7 @@ const userController = {
   signin: (req, res) => {
     return res.redirect('/drinks')
   },
+  // 登出
   signout: (req, res, next) => {
     if (req.user.role === 'staff') {
       req.logout((err) => {

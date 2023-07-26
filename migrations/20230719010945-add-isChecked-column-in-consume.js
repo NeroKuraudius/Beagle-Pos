@@ -15,7 +15,6 @@ module.exports = {
       console.error(`Fail to adding column: ${err}`)
     }
   },
-
   async down(queryInterface, Sequelize) {
     try {
       await queryInterface.removeColumn('Consumes', 'order_id')

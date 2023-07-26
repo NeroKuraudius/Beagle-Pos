@@ -19,7 +19,7 @@ const app = express()
 const PORT = process.env.PORT || 3000
 
 // set templates
-app.engine('hbs', exphbs.engine({ helpers:hbsHelpers ,extname: '.hbs', defaultLayout: 'main' }))
+app.engine('hbs', exphbs.engine({ helpers: hbsHelpers, extname: '.hbs', defaultLayout: 'main' }))
 app.set('view engine', 'hbs')
 
 // import CSS

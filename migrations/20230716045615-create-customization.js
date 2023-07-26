@@ -17,8 +17,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      topping_price:{
-        allowNull:false,
+      topping_price: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       created_at: {

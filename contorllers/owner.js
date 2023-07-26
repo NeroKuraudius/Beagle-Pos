@@ -1,8 +1,6 @@
 const { User, Shift, Income, Order, Consume,
   Drink, Ice, Sugar, Topping, Category } = require('../models')
 const bcrypt = require('bcryptjs')
-const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize('pos', 'root', 'password', { host: '127.0.0.1', dialect: 'mysql' })
 
 const ownerController = {
   signinPage: (req, res) => {

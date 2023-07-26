@@ -19,9 +19,9 @@
   {{!-- setting madol --}}
   {{> front-setting-modal}}
   <div class="container m-5">
-    <h2 class="text-center text-light pt-4">
+    <h2 class="text-center text-light pt-4 ms-5">
       米格魯點餐系統
-      {{#if loginUser}}
+      {{#ifCond loginUser.role 'staff'}}
       <div style="float:right">
         {{#if backPage}}
         <a class="btn" href="/drinks" style="color:azure">
@@ -33,7 +33,17 @@
         </button>
         {{/if}}
       </div>
-      {{/if}}
+      {{/ifCond}}
+
+      {{#ifCond loginUser.role 'owner'}}
+      <div style="float:right">
+        <form class="setting-button-form mt-3" action="/signout" method="POST">
+          <button class="btn" type="submit">
+            <i class="fa-solid fa-right-from-bracket fa-lg" style="color:azure"></i>
+          </button>
+        </form>
+      </div>
+      {{/ifCond}}
     </h2>
     {{{body}}}
   </div>

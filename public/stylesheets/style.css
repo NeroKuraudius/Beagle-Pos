@@ -31,6 +31,18 @@ body {
   cursor: pointer;
 }
 
+.front-order-query:hover {
+  font-weight: bold;
+  color: black;
+  background-color: aliceblue;
+}
+
+.front-order-query.active {
+  font-weight: bold;
+  color: black;
+  background-color: aliceblue;
+}
+
 .menu .card:hover {
   box-shadow: 0px 0px 8px 1px moccasin
 }
@@ -206,7 +218,7 @@ body {
   background-color: aliceblue;
 }
 
-.consume-content.active{
+.consume-content.active {
   font-weight: bold;
   border: 2px solid aliceblue;
   color: black;
@@ -297,6 +309,6 @@ body {
   border-radius: 5px;
 }
 
-.beverages-table {
+/* .beverages-table {
   overflow-y: auto;
-}
+} */

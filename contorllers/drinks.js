@@ -1,6 +1,8 @@
 const { Category, Drink, Ice, Sugar, Topping,
   Consume, Customization, Order, User, Shift, Income } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
+const { Sequelize } = require('sequelize')
+const sequelize = new Sequelize('pos', 'root', 'password', { host: '127.0.0.1', dialect: 'mysql' })
 
 const drinkController = {
   // 前台操作首頁
@@ -53,6 +55,7 @@ const drinkController = {
       // 計算訂單總價
       let orderTotalPrice = 0
       consumesList.forEach(consume => orderTotalPrice += consume.totalPrice)
+      const orderTotalNum = consumesList.length
 
       return res.render('drinks', {
         categoryId,
@@ -64,6 +67,7 @@ const drinkController = {
         pagination,
         consumesList,
         orderTotalPrice,
+        orderTotalNum
       })
     } catch (err) {
       console.error(`Data search error: ${err}`)
@@ -82,10 +86,9 @@ const drinkController = {
         drinkName: drink,
         drinkIce: ice,
         drinkSugar: sugar,
-        drinkPrice: consumeDrink.toJSON().price,
+        drinkPrice: consumeDrink.price,
         userId: req.user.id
       })
-
       const consumeId = await newConsume.id
       const toppingNum = topping ? topping.length : null
       if (toppingNum > 1) {
@@ -111,23 +114,26 @@ const drinkController = {
     }
   },
   deleteDrink: async (req, res) => {
-    const { id } = req.params
+    const consumeId = parseInt(req.params.id)
+    const consume = await Consume.findByPk(consumeId)
+    if (!consume) {
+      console.error(`Didn't find the consume with id:${consumeId}`)
+      return res.redirect('/drinks')
+    }
+    const transaction = await sequelize.transaction()
     try {
-      const consume = await Consume.findByPk(id)
-      if (!consume) {
-        console.error(`Didn't find the consume with id:${id}`)
-        return res.redirect('/drinks')
-      }
-      const customization = await Customization.findAll({ where: { consumeId: id } })
-      if (consume && customization) {
-        await consume.destroy()
-        await Customization.destroy({ where: { consumeId: id } })
+      const customization = await Customization.findAll({ where: { consumeId } })
+      if (customization) {
+        await consume.destroy({ transaction })
+        await Customization.destroy({ where: { consumeId } }, { transaction })
+        await transaction.commit()
       } else {
         await consume.destroy()
       }
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.deleteDrink: ${err}`)
+      await transaction.rollback()
     }
   },
   checkoutDrinks: async (req, res) => {
@@ -142,10 +148,10 @@ const drinkController = {
         req.flash('danger_msg', '未選取任何餐點')
         return res.redirect('/drinks')
       }
-      const user = await User.findByPk(userId)
+      const user = await User.findByPk(userId, { raw: true })
       const newOrder = await Order.create({
         userId: userId,
-        shiftId: user.toJSON().shiftId,
+        shiftId: user.shiftId,
         quantity: consumes.length,
         totalPrice: req.body.orderTotalPrice
       })
@@ -157,9 +163,11 @@ const drinkController = {
     }
   },
   getOrders: async (req, res) => {
-    const { id } = req.params
+    const id = parseInt(req.params.id)
+    const backPage = true
     try {
       const user = await User.findOne({
+        raw: true,
         where: { id: req.user.id },
         include: Shift
       })
@@ -175,10 +183,10 @@ const drinkController = {
         totalQuantity += order.quantity
         totalPrice += order.totalPrice
       })
-      if (id === 0) return res.render('orders', { user: user.toJSON(), orders, totalQuantity, totalPrice })
+      if (id === 0) return res.render('orders', { user, orders, totalQuantity, totalPrice, backPage })
 
       const consumes = await Consume.findAll({
-        where: { order_id: id },
+        where: { orderId: id },
         include: [
           { model: Drink },
           { model: Ice },
@@ -202,12 +210,13 @@ const drinkController = {
         return consumeData
       })
 
-      return res.render('orders', { user: user.toJSON(), orders, totalQuantity, totalPrice, consumesList })
+      return res.render('orders', { user, orders, totalQuantity, totalPrice, consumesList, id, backPage })
     } catch (err) {
       console.error(`Error occurred on drinkController.getOrders: ${err}`)
     }
   },
   shiftChange: async (req, res) => {
+    const transaction = await sequelize.transaction()
     try {
       const orders = await Order.findAll({
         raw: true,
@@ -227,11 +236,13 @@ const drinkController = {
         income: totalIncome,
         userId: req.user.id
       })
-      await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList } })
+      await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList } }, { transaction })
+      await transaction.commit()
       req.flash('success_msg', '交班成功')
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.shiftChange: ${err}`)
+      await transaction.rollback()
     }
   }
 }

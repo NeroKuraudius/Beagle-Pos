@@ -23,10 +23,11 @@
     {{/each}}
     <form class="checkout-button" action="/drinks/checkout" method="POST">
       <div class="card orderTotalPrice mb-3">
-          <label style="display:block" for="orderTotalPrice">總金額：
-            <input type="text" class="orderTotalPriceValue" name="orderTotalPrice" size="3" value="{{orderTotalPrice}}"
-              readonly>
-          </label>
+        <p>總數量：<span style="float:right">{{orderTotalNum}}</span></p>
+        <label style="display:block" for="orderTotalPrice">總金額：
+          <input type="text" class="orderTotalPriceValue" name="orderTotalPrice" size="3" value="{{orderTotalPrice}}"
+            readonly>
+        </label>
         <button class="btn btn-outline-light mb-3" id="checkoutConfirmButton" type="submit"
           onclick="return confirm('確定要結帳嗎?')" style="min-width:120px;">結帳</button>
       </div>

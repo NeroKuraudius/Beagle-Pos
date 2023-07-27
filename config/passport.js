@@ -1,10 +1,10 @@
 const passport = require('passport')
-const localPassport = require('passport-local').Strategy
+const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
 const { User } = require('../models')
 
 // 前台登入
-passport.use('staffLogin', new localPassport({
+passport.use('staffLogin', new LocalStrategy({
   usernameField: 'account',
   passwordField: 'password',
   passReqToCallback: true
@@ -23,9 +23,11 @@ passport.use('staffLogin', new localPassport({
     cb(`Passport authenticated error: ${err}`)
   }
 }
-))
+)
+)
+
 // 後台登入
-passport.use('ownerLogin', new localPassport({
+passport.use('ownerLogin', new LocalStrategy({
   usernameField: 'account',
   passwordField: 'password',
   passReqToCallback: true

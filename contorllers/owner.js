@@ -18,7 +18,8 @@ const ownerController = {
         include: [{
           model: User,
           include: [Shift]
-        }]
+        }],
+        order:[['createdAt','DESC']]
       })
       return res.render('owner/incomes', { admin, incomes })
     } catch (err) {
@@ -35,12 +36,14 @@ const ownerController = {
         include: [{
           model: User,
           include: [Shift]
-        }]
+        }],
+        order:[['createdAt','DESC']]
       })
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { incomeId }
+        where: { incomeId },
+        order:[['createdAt','DESC']]
       })
       return res.render('owner/incomes', { admin, incomeId, incomes, orders })
     } catch (err) {
@@ -57,12 +60,14 @@ const ownerController = {
         include: [{
           model: User,
           include: [Shift]
-        }]
+        }],
+        order:[['createdAt','DESC']]
       })
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { incomeId: parseInt(Iid) }
+        where: { incomeId: parseInt(Iid) },
+        order:[['createdAt','DESC']]
       })
       const consumes = await Consume.findAll({
         where: { orderId: parseInt(Oid) },

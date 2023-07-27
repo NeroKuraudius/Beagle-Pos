@@ -38,7 +38,7 @@
       {{#ifCond loginUser.role 'owner'}}
       <div style="float:right">
         <form class="setting-button-form mt-3" action="/signout" method="POST">
-          <button class="btn" type="submit">
+          <button class="btn" type="submit" onclick="return confirm('確定要登出嗎?')">
             <i class="fa-solid fa-right-from-bracket fa-lg" style="color:azure"></i>
           </button>
         </form>

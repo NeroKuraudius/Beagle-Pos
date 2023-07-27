@@ -12,10 +12,10 @@
         <table class="table-hover staff-table">
           <thead>
             <tr style="text-align:center">
-              <th scope="col" style="width:25%">類別</th>
+              <th scope="col" style="width:30%">類別</th>
               <th scope="col" style="width:35%">名稱</th>
               <th scope="col" style="width:15%">價格</th>
-              <th scope="col" style="width:15%"></th>
+              <th scope="col" style="width:10%"></th>
               <th scope="col" style="width:10%"></th>
             </tr>
           </thead>
@@ -74,8 +74,8 @@
 
           <div class="beverage-data my-3">
             <label for="price" class="form-label me-5">價格*</label>
-            <input type="number" id="price" name="price" size="20" maxlength="3" placeholder="請輸入聯絡電話"
-              class="form-input" value="{{drink.price}}" required>
+            <input type="number" id="price" name="price" max="100" placeholder="請輸入聯絡電話" class="form-input"
+              value="{{drink.price}}" required>
           </div>
 
           <div class="btn-submit-wrapper">

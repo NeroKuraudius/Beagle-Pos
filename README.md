@@ -53,22 +53,16 @@ npm run start
 ※前後台分開登入，可點選右下角按鈕切換登入頁
 
 前台：(可任選一組)
-1. 
-帳號 superstar
-密碼 hoshimachi
-2. 
-帳號 toprichman
-密碼 greencar
-3. 
-帳號 einstein
-密碼 relativity
-4. 
-帳號 stark
-密碼 iamironman
+1. 帳號 superstar  密碼 hoshimachi
+
+2. 帳號 toprichman  密碼 greencar
+
+3. 帳號 einstein  密碼 relativity
+
+4. 帳號 stark  密碼 iamironman
 
 後台：
-帳號 nerodrinkshop
-密碼 20230712
+帳號 nerodrinkshop  密碼 20230712
 
 或自行註冊一組新帳號登入
 

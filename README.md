@@ -15,7 +15,7 @@ git clone 網址
 ```
 繼續在cmd中輸入指令
 ```js
-cd twitter-fullstack-2020
+cd point-of-sale
 ```
 進入本機資料夾後接著輸入
 ```js
@@ -49,7 +49,7 @@ npm run start
 
 [http://localhost:3000](http://localhost:3000)
 
-以預設帳號登入 
+可自行註冊，或直接以預設帳號登入
 ※前後台分開登入，可點選右下角按鈕切換登入頁
 
 前台：(可任選一組)

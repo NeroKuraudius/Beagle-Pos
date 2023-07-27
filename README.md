@@ -15,7 +15,7 @@ git clone 網址
 ```
 繼續在cmd中輸入指令
 ```js
-cd point-of-sale
+cd Beagle-Pos-System
 ```
 進入本機資料夾後接著輸入
 ```js
@@ -112,3 +112,19 @@ npm run start
 - ↪點選紅色叉叉按鈕可刪除該類別(類別下不得有飲品)
 
 2. 右上角按鈕為登出功能
+
+
+### 使用套件與版本
+- express: 4.18.2
+- express-handlebars: 7.0.7
+- express-session: 1.17.3
+- method-override: 3.0.0
+- connect-flash: 0.1.1
+- bcryptjs: 2.4.3
+- dayjs: 1.11.9
+- passport: 0.6.0
+- passport-local: 1.0.0
+- mysql2: 3.5.1
+- sequelize: 6.32.1
+- sequelize-cli: 6.6.1
+- dotenv: 16.3.1

@@ -1,6 +1,8 @@
 const { User, Shift, Income, Order, Consume,
   Drink, Ice, Sugar, Topping, Category } = require('../models')
 const bcrypt = require('bcryptjs')
+const { Sequelize } = require('sequelize')
+const sequelize = new Sequelize('pos', 'root', 'password', { host: '127.0.0.1', dialect: 'mysql' })
 
 const ownerController = {
   signinPage: (req, res) => {
@@ -19,7 +21,7 @@ const ownerController = {
           model: User,
           include: [Shift]
         }],
-        order:[['createdAt','DESC']]
+        order: [['createdAt', 'DESC']]
       })
       return res.render('owner/incomes', { admin, incomes })
     } catch (err) {
@@ -37,13 +39,13 @@ const ownerController = {
           model: User,
           include: [Shift]
         }],
-        order:[['createdAt','DESC']]
+        order: [['createdAt', 'DESC']]
       })
       const orders = await Order.findAll({
         raw: true,
         nest: true,
         where: { incomeId },
-        order:[['createdAt','DESC']]
+        order: [['createdAt', 'DESC']]
       })
       return res.render('owner/incomes', { admin, incomeId, incomes, orders })
     } catch (err) {
@@ -61,13 +63,13 @@ const ownerController = {
           model: User,
           include: [Shift]
         }],
-        order:[['createdAt','DESC']]
+        order: [['createdAt', 'DESC']]
       })
       const orders = await Order.findAll({
         raw: true,
         nest: true,
         where: { incomeId: parseInt(Iid) },
-        order:[['createdAt','DESC']]
+        order: [['createdAt', 'DESC']]
       })
       const consumes = await Consume.findAll({
         where: { orderId: parseInt(Oid) },
@@ -228,7 +230,7 @@ const ownerController = {
   getBeverages: async (req, res) => {
     try {
       const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true })
+      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
       const drinks = await Drink.findAll({
         raw: true,
         nest: true,
@@ -253,10 +255,11 @@ const ownerController = {
       const drinks = await Drink.findAll({
         raw: true,
         nest: true,
+        where: { isDeleted: false },
         include: [Category],
         order: [['categoryId']]
       })
-      const categories = await Category.findAll({ raw: true, nest: true })
+      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
       return res.render('owner/beverages', { admin, drink, drinks, categories })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getBeverageData: ${err}`)
@@ -302,10 +305,11 @@ const ownerController = {
         const drinks = await Drink.findAll({
           raw: true,
           nest: true,
+          where: { isDeleted: false },
           include: [Category],
           order: [['categoryId']]
         })
-        const categories = await Category.findAll({ raw: true, nest: true })
+        const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
         return res.render('owner/beverages', { categoryId, name, price, admin, drinks, categories, error })
       }
       await Drink.create({ categoryId, name, price })
@@ -323,8 +327,9 @@ const ownerController = {
         req.flash('danger_msg', '找不到該餐點相關資料')
         return res.redirect('/owner/beverages')
       }
-      await drink.update({ isDeleted: true })
-      req.flash('success_msg', '餐點刪除成功')
+      const name = drink.toJSON().name + '(已下架)'
+      await drink.update({ isDeleted: true, name })
+      req.flash('success_msg', '餐點下架成功')
       return res.redirect('/owner/beverages')
     } catch (err) {
       console.error(`Error occupied on ownerControll.deleteBeverage: ${err}`)
@@ -333,7 +338,7 @@ const ownerController = {
   getCategories: async (req, res) => {
     try {
       const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true })
+      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
       return res.render('owner/categories', { admin, categories })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getCategories: ${err}`)
@@ -348,7 +353,7 @@ const ownerController = {
         return res.redirect('/owner/categories')
       }
       const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true })
+      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
       return res.render('owner/categories', { admin, categories, category })
     } catch (err) {
       console.error(`Error occupied on ownerControll.getCategoryData: ${err}`)
@@ -400,22 +405,26 @@ const ownerController = {
   },
   deleteCategory: async (req, res) => {
     const id = parseInt(req.params.Cid)
+    const transaction = await sequelize.transaction()
     try {
       const category = await Category.findByPk(id)
       if (!category) {
         req.flash('danger_msg', '找不到該類別相關資料')
         return res.redirect('/owner/categories')
       }
-      const drinks = await Drink.findAll({ where: { categoryId: id } })
+      const drinks = await Drink.findAll({ where: { categoryId: id, isDeleted: false } })
       if (drinks.length !== 0) {
         req.flash('danger_msg', '該類別中尚有餐點')
         return res.redirect('/owner/categories')
       }
-      await category.destroy()
+      await Drink.update({ isRemoved: true }, { where: { categoryId: id } }, { transaction })
+      await category.destroy({ transaction })
+      await transaction.commit()
       req.flash('ssuccess_msg', '類別刪除成功')
       return res.redirect('/owner/categories')
     } catch (err) {
       console.error(`Error occupied on ownerControll.deleteCategory: ${err}`)
+      await transaction.rollback()
     }
   }
 }

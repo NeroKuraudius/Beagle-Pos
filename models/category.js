@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Category.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    isRemoved: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Category',

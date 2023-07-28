@@ -116,6 +116,27 @@ body {
   list-style-type: none;
 }
 
+.page-link{
+  background-color: transparent;
+  color:azure
+}
+
+.page-link:hover{
+  background-color: aliceblue;
+  color:black
+}
+
+.page-link.active{
+  border-color: aliceblue;
+  background-color: aliceblue;
+  color:black
+}
+
+.page-link.disabled{
+  background-color: transparent;
+  color:gray
+}
+
 .category-tabs .nav-link {
   color: azure;
 }
@@ -309,6 +330,6 @@ body {
   border-radius: 5px;
 }
 
-/* .beverages-table {
+.beverages-table {
   overflow-y: auto;
-} */
+}

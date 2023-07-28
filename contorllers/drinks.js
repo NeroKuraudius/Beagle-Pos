@@ -13,10 +13,11 @@ const drinkController = {
     const categoryId = parseInt(req.query.categoryId) || ''
     try {
       // 引用資料庫
-      const categories = await Category.findAll({ raw: true, nest: true })
-      const ices = await Ice.findAll({ raw: true, nest: true })
-      const sugars = await Sugar.findAll({ raw: true, nest: true })
-      const toppings = await Topping.findAll({ raw: true, nest: true })
+      const categories = await Category.findAll({
+        raw: true,
+        nest: true,
+        where: { isRemoved: false }
+      })
       const drinks = await Drink.findAndCountAll({
         raw: true,
         nest: true,
@@ -24,6 +25,10 @@ const drinkController = {
         limit,
         offset
       })
+      const ices = await Ice.findAll({ raw: true, nest: true })
+      const sugars = await Sugar.findAll({ raw: true, nest: true })
+      const toppings = await Topping.findAll({ raw: true, nest: true })
+
       const consumes = await Consume.findAll({
         where: { orderId: 0, userId: req.user.id },
         include: [
@@ -138,6 +143,7 @@ const drinkController = {
   },
   checkoutDrinks: async (req, res) => {
     const userId = req.user.id
+    const transaction = await sequelize.transaction()
     try {
       const consumes = await Consume.findAll({
         raw: true,
@@ -156,10 +162,12 @@ const drinkController = {
         totalPrice: req.body.orderTotalPrice
       })
       const consumesIdList = consumes.map(consume => { return consume.id })
-      await Consume.update({ orderId: newOrder.toJSON().id }, { where: { id: consumesIdList } })
+      await Consume.update({ orderId: newOrder.toJSON().id }, { where: { id: consumesIdList } }, { transaction })
+      await transaction.commit()
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error occurred on drinkController.checkoutDrink: ${err}`)
+      await transaction.rollback()
     }
   },
   getOrders: async (req, res) => {

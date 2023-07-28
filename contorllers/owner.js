@@ -405,7 +405,6 @@ const ownerController = {
   },
   deleteCategory: async (req, res) => {
     const id = parseInt(req.params.Cid)
-    const transaction = await sequelize.transaction()
     try {
       const category = await Category.findByPk(id)
       if (!category) {
@@ -417,14 +416,11 @@ const ownerController = {
         req.flash('danger_msg', '該類別中尚有餐點')
         return res.redirect('/owner/categories')
       }
-      await Drink.update({ isRemoved: true }, { where: { categoryId: id } }, { transaction })
-      await category.destroy({ transaction })
-      await transaction.commit()
+      await category.update({ isRemoved: true })
       req.flash('ssuccess_msg', '類別刪除成功')
       return res.redirect('/owner/categories')
     } catch (err) {
       console.error(`Error occupied on ownerControll.deleteCategory: ${err}`)
-      await transaction.rollback()
     }
   }
 }

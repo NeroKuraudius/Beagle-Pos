@@ -16,7 +16,7 @@ const authHelpers = require('./helpers/auth-helpers')
 const passport = require('./config/passport')
 
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
 
 // set templates
 app.engine('hbs', exphbs.engine({ helpers: hbsHelpers, extname: '.hbs', defaultLayout: 'main' }))

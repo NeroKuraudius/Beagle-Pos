@@ -4,6 +4,7 @@ const userController = {
     return res.render('front-login')
   },
   signin: (req, res) => {
+    req.flash('success_msg', '登入成功')
     return res.redirect('/drinks')
   },
   // 登出

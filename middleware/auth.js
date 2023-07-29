@@ -6,7 +6,7 @@ module.exports = {
       if (helpers.getUser(req).role === 'staff') {
         return next()
       } else {
-        return res.redirect('/operate')
+        return res.redirect('/signin')
       }
     }
     req.flash('danger_msg', '使用前請先登入')

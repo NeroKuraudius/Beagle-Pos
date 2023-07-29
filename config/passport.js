@@ -43,7 +43,8 @@ passport.use('ownerLogin', new LocalStrategy({
 
     return cb(null, user)
   } catch (err) {
-    cb(`Passport authenticated error: ${err}`)
+    console.error(`Passport ownerLogin authenticated error: ${err}`)
+    return cb(err)
   }
 }
 ))

@@ -1,25 +1,25 @@
 const express = require('express')
 const router = express.Router()
-const { authenticated } = require('../../middleware/auth')
 const drinkController = require('../../contorllers/drinks')
 
 
 // 查看訂單頁
-router.get('/orders/:id', authenticated, drinkController.getOrders)
+router.get('/orders/:id', drinkController.getOrders)
 
 // 交班
-router.post('/shift', authenticated, drinkController.shiftChange)
+router.post('/shift', drinkController.shiftChange)
 
 // 結帳
-router.post('/checkout', authenticated, drinkController.checkoutDrinks)
+router.post('/checkout', drinkController.checkoutDrinks)
 
 // 刪除訂單
-router.delete('/:id', authenticated, drinkController.deleteDrink)
+router.delete('/:id', drinkController.deleteDrink)
 
 // 新增訂單
-router.post('/', authenticated, drinkController.addDrink)
+router.post('/', drinkController.addDrink)
 
 // 首頁
-router.get('/', authenticated, drinkController.getDrinks)
+router.get('/', drinkController.getDrinks)
+
 
 module.exports = router

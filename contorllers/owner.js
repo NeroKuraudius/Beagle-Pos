@@ -9,6 +9,7 @@ const ownerController = {
     return res.render('back-login')
   },
   signin: (req, res) => {
+    req.flash('success_msg', '登入成功')
     return res.redirect('/owner/incomes')
   },
   getIncomes: async (req, res) => {
@@ -154,7 +155,6 @@ const ownerController = {
     }
   },
   patchStaffData: async (req, res) => {
-    const id = parseInt(req.params.Uid)
     const { name, phone, account, password, checkPassword } = req.body
     if (!name.trim() || !phone.trim() || !account.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
@@ -164,6 +164,7 @@ const ownerController = {
       req.flash('danger_msg', '兩次輸入的密碼不相符')
       return res.redirect(`/owner/staffs/${id}`)
     }
+    const id = parseInt(req.params.Uid)
     try {
       const usedAccount = await User.findOne({ where: { account } }, { raw: true })
       const editingUser = await User.findByPk(id, { raw: true })
@@ -266,12 +267,12 @@ const ownerController = {
     }
   },
   patchBeverageData: async (req, res) => {
-    const id = parseInt(req.params.Did)
     const { categoryId, name, price } = req.body
     if (!categoryId || !name.trim() || !price.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
       return res.redirect(`/owner/beverages/${id}`)
     }
+    const id = parseInt(req.params.Did)
     try {
       const drink = await Drink.findByPk(id)
       if (!drink) {
@@ -360,12 +361,12 @@ const ownerController = {
     }
   },
   patchCategoryData: async (req, res) => {
-    const id = parseInt(req.params.Cid)
     const { name } = req.body
     if (!name.trim()) {
       req.flash('danger_msg', '欄位不得為空')
       return res.redirect(`/owner/categories/${id}`)
     }
+    const id = parseInt(req.params.Cid)
     try {
       const category = await Category.findByPk(id)
       if (!category) {

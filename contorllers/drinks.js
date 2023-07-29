@@ -82,7 +82,7 @@ const drinkController = {
     const { drink, ice, sugar, topping } = req.body
     // 飲品不得為空
     if (!drink) {
-      req.flash('danger_msg', '未選取任何餐點')
+      req.flash('danger_msg', '未選取餐點')
       return res.redirect('/drinks')
     }
     try {
@@ -151,7 +151,7 @@ const drinkController = {
         where: { orderId: 0 },
       })
       if (consumes.length === 0) {
-        req.flash('danger_msg', '未選取任何餐點')
+        req.flash('danger_msg', '未選取餐點')
         return res.redirect('/drinks')
       }
       const user = await User.findByPk(userId, { raw: true })
@@ -231,6 +231,11 @@ const drinkController = {
         nest: true,
         where: { incomeId: 0 }
       })
+      if(orders.length===0){
+        req.flash('danger_msg','無交易不須交班')
+        return res.redirect('/drinks')
+      }
+
       let totalNum = 0
       let totalIncome = 0
       const ordersIdList = []

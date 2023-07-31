@@ -85,6 +85,7 @@ const drinkController = {
       req.flash('danger_msg', '未選取餐點')
       return res.redirect('/drinks')
     }
+    const transaction = await sequelize.transaction()
     try {
       const consumeDrink = await Drink.findByPk(drink, { raw: true })
       const newConsume = await Consume.create({
@@ -93,7 +94,7 @@ const drinkController = {
         drinkSugar: sugar,
         drinkPrice: consumeDrink.price,
         userId: req.user.id
-      })
+      }, { transaction })
       const consumeId = await newConsume.id
       const toppingNum = topping ? topping.length : null
       if (toppingNum > 1) {
@@ -103,7 +104,7 @@ const drinkController = {
             consumeId,
             toppingId: topping[i],
             toppingPrice: customizedToppings.toJSON().price
-          })
+          }, { transaction })
         }
       } else if (toppingNum === 1) {
         const customizedToppings = await Topping.findByPk(topping)
@@ -111,11 +112,13 @@ const drinkController = {
           consumeId,
           toppingId: topping,
           toppingPrice: customizedToppings.toJSON().price
-        })
+        }, { transaction })
       }
+      await transaction.commit()
       return res.redirect('/drinks')
     } catch (err) {
       console.error(`Error on drinkController.addDrink: ${err}`)
+      await transaction.rollback()
     }
   },
   deleteDrink: async (req, res) => {
@@ -160,7 +163,7 @@ const drinkController = {
         shiftId: user.shiftId,
         quantity: consumes.length,
         totalPrice: req.body.orderTotalPrice
-      })
+      }, { transaction })
       const consumesIdList = consumes.map(consume => { return consume.id })
       await Consume.update({ orderId: newOrder.toJSON().id }, { where: { id: consumesIdList } }, { transaction })
       await transaction.commit()
@@ -231,8 +234,8 @@ const drinkController = {
         nest: true,
         where: { incomeId: 0 }
       })
-      if(orders.length===0){
-        req.flash('danger_msg','無交易不須交班')
+      if (orders.length === 0) {
+        req.flash('danger_msg', '無交易不須交班')
         return res.redirect('/drinks')
       }
 
@@ -248,7 +251,7 @@ const drinkController = {
         quantity: totalNum,
         income: totalIncome,
         userId: req.user.id
-      })
+      }, { transaction })
       await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList } }, { transaction })
       await transaction.commit()
       req.flash('success_msg', '交班成功')

@@ -5,7 +5,6 @@
 
 ### ※事前準備
 ### 確認已安裝 [Node.js](https://nodejs.org/zh-tw/download) 與 [MySQL](https://dev.mysql.com/doc/)
-### 並在MySQL中建立名為`pos`的資料庫
 
 
 ### 1. 下載至本機並安裝套件

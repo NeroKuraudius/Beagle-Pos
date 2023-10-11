@@ -234,6 +234,41 @@ const drinksServices = {
       cb(err)
     }
   },
+  shiftChange: async (req, cb) => {
+    const transaction = await sequelize.transaction()
+    try {
+      const orders = await Order.findAll({
+        raw: true,
+        nest: true,
+        where: { incomeId: 0 }
+      })
+      if (orders.length === 0) {
+        const err = new Error('無交易不須交班')
+        err.status = 404
+        throw err
+      }
+
+      let totalNum = 0
+      let totalIncome = 0
+      const ordersIdList = []
+      orders.forEach(order => {
+        totalNum += order.quantity
+        totalIncome += order.totalPrice
+        ordersIdList.push(order.id)
+      })
+      const newIncome = await Income.create({
+        quantity: totalNum,
+        income: totalIncome,
+        userId: req.user.id
+      }, { transaction })
+      await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList } }, { transaction })
+      await transaction.commit()
+      return cb(null, { newIncome })
+    } catch (err) {
+      await transaction.rollback()
+      cb(err)
+    }
+  }
 }
 
 module.exports = drinksServices

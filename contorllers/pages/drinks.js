@@ -38,40 +38,16 @@ const drinkController = {
   getOrders: async (req, res, next) => {
     drinksServices.getOrders(req, (err, data) => err ? next(err) : res.render('orders', data))
   },
-  shiftChange: async (req, res) => {
-    const transaction = await sequelize.transaction()
-    try {
-      const orders = await Order.findAll({
-        raw: true,
-        nest: true,
-        where: { incomeId: 0 }
-      })
-      if (orders.length === 0) {
+  shiftChange: async (req, res, next) => {
+    drinksServices.shiftChange(req, (err, data) => {
+      if (err) {
         req.flash('danger_msg', '無交易不須交班')
         return res.redirect('/drinks')
       }
-
-      let totalNum = 0
-      let totalIncome = 0
-      const ordersIdList = []
-      orders.forEach(order => {
-        totalNum += order.quantity
-        totalIncome += order.totalPrice
-        ordersIdList.push(order.id)
-      })
-      const newIncome = await Income.create({
-        quantity: totalNum,
-        income: totalIncome,
-        userId: req.user.id
-      }, { transaction })
-      await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList } }, { transaction })
-      await transaction.commit()
+      req.session.shiftIncome = data
       req.flash('success_msg', '交班成功')
       return res.redirect('/drinks')
-    } catch (err) {
-      console.error(`Error occurred on drinkController.shiftChange: ${err}`)
-      await transaction.rollback()
-    }
+    })
   }
 }
 

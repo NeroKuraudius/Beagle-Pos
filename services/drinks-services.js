@@ -187,8 +187,14 @@ const drinksServices = {
     try {
       const user = await User.findOne({
         raw: true,
+        attributes: ['id', 'name'],
         where: { id: req.user.id },
-        include: Shift
+        include: [
+          {
+            model: Shift,
+            attributes: ['id', 'name']
+          }
+        ]
       })
       const orders = await Order.findAll({
         raw: true,
@@ -202,7 +208,7 @@ const drinksServices = {
         totalQuantity += order.quantity
         totalPrice += order.totalPrice
       })
-      if (id === 0) return res.render('orders', { user, orders, totalQuantity, totalPrice, backPage })
+      if (id === 0) return cb(null, { user, orders, totalQuantity, totalPrice, backPage })
 
       const consumes = await Consume.findAll({
         where: { orderId: id },
@@ -229,7 +235,7 @@ const drinksServices = {
         return consumeData
       })
 
-      return cd(null, { user, orders, totalQuantity, totalPrice, consumesList, id, backPage })
+      return cb(null, { user, orders, totalQuantity, totalPrice, consumesList, id, backPage })
     } catch (err) {
       cb(err)
     }

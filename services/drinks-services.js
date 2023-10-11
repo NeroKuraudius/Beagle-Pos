@@ -64,7 +64,7 @@ const drinksServices = {
       consumesList.forEach(consume => orderTotalPrice += consume.totalPrice)
       const orderTotalNum = consumesList.length
 
-      return cb(null,{
+      return cb(null, {
         data: {
           categoryId,
           categories,
@@ -81,7 +81,76 @@ const drinksServices = {
     } catch (err) {
       cb(err)
     }
-  }
+  },
+  addDrink: async (req, cb) => {
+    const { drink, ice, sugar, topping } = req.body
+    // 飲品不得為空
+    if (!drink) {
+      const err = new Error('未選取任何餐點')
+      err.status = 404
+      throw err
+    }
+    const transaction = await sequelize.transaction()
+    try {
+      const consumeDrink = await Drink.findByPk(drink, { raw: true })
+      const newConsume = await Consume.create({
+        drinkName: drink,
+        drinkIce: ice,
+        drinkSugar: sugar,
+        drinkPrice: consumeDrink.price,
+        userId: req.user.id
+      }, { transaction })
+      const consumeId = newConsume.id
+      const toppingNum = topping ? topping.length : null
+      if (toppingNum > 1) {
+        for (let i = 0; i < toppingNum; i++) {
+          const customizedToppings = await Topping.findByPk(topping[i])
+          await Customization.create({
+            consumeId,
+            toppingId: topping[i],
+            toppingPrice: customizedToppings.toJSON().price
+          }, { transaction })
+        }
+      } else if (toppingNum === 1) {
+        const customizedToppings = await Topping.findByPk(topping)
+        await Customization.create({
+          consumeId,
+          toppingId: topping,
+          toppingPrice: customizedToppings.toJSON().price
+        }, { transaction })
+      }
+      await transaction.commit()
+      return cb(null, { newConsume, customizedToppings })
+    } catch (err) {
+      await transaction.rollback()
+      cb(err)
+    }
+  },
+  deleteDrink: async (req, cb) => {
+    const consumeId = parseInt(req.params.id)
+    const consume = await Consume.findByPk(consumeId)
+    if (!consume) {
+      const err = new Error('查無該筆訂單')
+      err.status = 404
+      throw err
+    }
+    const deletedCosume = consume
+    const transaction = await sequelize.transaction()
+    try {
+      const customization = await Customization.findAll({ where: { consumeId } })
+      if (customization) {
+        await consume.destroy({ transaction })
+        await Customization.destroy({ where: { consumeId } }, { transaction })
+        await transaction.commit()
+      } else {
+        await consume.destroy()
+      }
+      return cb(null, { deletedCosume, consumeToppings: customization })
+    } catch (err) {
+      await transaction.rollback()
+      cb(err)
+    }
+  },
 }
 
 module.exports = drinksServices

@@ -5,71 +5,23 @@ const drinkController = {
   getDrinks: async (req, res, next) => {
     drinksServices.getDrinks(req, (err, data) => err ? next(err) : res.render('drinks', data))
   },
-  addDrink: async (req, res) => {
-    const { drink, ice, sugar, topping } = req.body
-    // 飲品不得為空
-    if (!drink) {
-      req.flash('danger_msg', '未選取餐點')
-      return res.redirect('/drinks')
-    }
-    const transaction = await sequelize.transaction()
-    try {
-      const consumeDrink = await Drink.findByPk(drink, { raw: true })
-      const newConsume = await Consume.create({
-        drinkName: drink,
-        drinkIce: ice,
-        drinkSugar: sugar,
-        drinkPrice: consumeDrink.price,
-        userId: req.user.id
-      }, { transaction })
-      const consumeId = await newConsume.id
-      const toppingNum = topping ? topping.length : null
-      if (toppingNum > 1) {
-        for (let i = 0; i < toppingNum; i++) {
-          const customizedToppings = await Topping.findByPk(topping[i])
-          await Customization.create({
-            consumeId,
-            toppingId: topping[i],
-            toppingPrice: customizedToppings.toJSON().price
-          }, { transaction })
-        }
-      } else if (toppingNum === 1) {
-        const customizedToppings = await Topping.findByPk(topping)
-        await Customization.create({
-          consumeId,
-          toppingId: topping,
-          toppingPrice: customizedToppings.toJSON().price
-        }, { transaction })
+  addDrink: async (req, res, next) => {
+    drinksServices.addDrink(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', '未選取餐點')
+        return res.redirect('/drinks')
       }
-      await transaction.commit()
+      req.session.addDrinkData = data
       return res.redirect('/drinks')
-    } catch (err) {
-      console.error(`Error on drinkController.addDrink: ${err}`)
-      await transaction.rollback()
-    }
+    })
   },
-  deleteDrink: async (req, res) => {
-    const consumeId = parseInt(req.params.id)
-    const consume = await Consume.findByPk(consumeId)
-    if (!consume) {
-      console.error(`Didn't find the consume with id:${consumeId}`)
+  deleteDrink: async (req, res, next) => {
+    if (err) {
+      req.flash('danger_msg', '查無該筆訂單')
       return res.redirect('/drinks')
     }
-    const transaction = await sequelize.transaction()
-    try {
-      const customization = await Customization.findAll({ where: { consumeId } })
-      if (customization) {
-        await consume.destroy({ transaction })
-        await Customization.destroy({ where: { consumeId } }, { transaction })
-        await transaction.commit()
-      } else {
-        await consume.destroy()
-      }
-      return res.redirect('/drinks')
-    } catch (err) {
-      console.error(`Error occurred on drinkController.deleteDrink: ${err}`)
-      await transaction.rollback()
-    }
+    req.session.deletedConsumeData = data
+    return res.redirect('/drinks')
   },
   checkoutDrinks: async (req, res) => {
     const userId = req.user.id

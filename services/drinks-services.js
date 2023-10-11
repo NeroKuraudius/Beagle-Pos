@@ -151,6 +151,89 @@ const drinksServices = {
       cb(err)
     }
   },
+  checkoutDrinks: async (req, cb) => {
+    const userId = req.user.id
+    const transaction = await sequelize.transaction()
+    try {
+      const consumes = await Consume.findAll({
+        raw: true,
+        nest: true,
+        where: { orderId: 0 },
+      })
+      if (consumes.length === 0) {
+        const err = new Error('未選取任何餐點')
+        err.status = 404
+        throw err
+      }
+      const user = await User.findByPk(userId, { raw: true })
+      const newOrder = await Order.create({
+        userId: userId,
+        shiftId: user.shiftId,
+        quantity: consumes.length,
+        totalPrice: req.body.orderTotalPrice
+      }, { transaction })
+      const consumesIdList = consumes.map(consume => { return consume.id })
+      await Consume.update({ orderId: newOrder.toJSON().id }, { where: { id: consumesIdList } }, { transaction })
+      await transaction.commit()
+      return cb(null, { newOrder })
+    } catch (err) {
+      await transaction.rollback()
+      cb(err)
+    }
+  },
+  getOrders: async (req, cb) => {
+    const id = parseInt(req.params.id)
+    const backPage = true
+    try {
+      const user = await User.findOne({
+        raw: true,
+        where: { id: req.user.id },
+        include: Shift
+      })
+      const orders = await Order.findAll({
+        raw: true,
+        nest: true,
+        where: { incomeId: 0 },
+        order: [['createdAt', 'DESC']]
+      })
+      let totalQuantity = 0
+      let totalPrice = 0
+      orders.forEach(order => {
+        totalQuantity += order.quantity
+        totalPrice += order.totalPrice
+      })
+      if (id === 0) return res.render('orders', { user, orders, totalQuantity, totalPrice, backPage })
+
+      const consumes = await Consume.findAll({
+        where: { orderId: id },
+        include: [
+          { model: Drink },
+          { model: Ice },
+          { model: Sugar },
+          { model: Topping, as: 'addToppings' }
+        ]
+      })
+      const consumesList = consumes.map(consume => {
+        const { Drink, Ice, Sugar, addToppings, ...consumeData } = consume.toJSON()
+
+        const toppingsNameList = addToppings.map(topping => { return topping.name })
+        const toppingsPriceList = addToppings.map(topping => { return topping.price })
+        let toppingsPrice = 0
+        toppingsPriceList.forEach(price => toppingsPrice += price);
+
+        consumeData.drinkName = Drink.name
+        consumeData.iceName = Ice.name
+        consumeData.sugarName = Sugar.name
+        consumeData.allToppings = toppingsNameList
+        consumeData.totalPrice = toppingsPrice + Drink.price
+        return consumeData
+      })
+
+      return cd(null, { user, orders, totalQuantity, totalPrice, consumesList, id, backPage })
+    } catch (err) {
+      cb(err)
+    }
+  },
 }
 
 module.exports = drinksServices

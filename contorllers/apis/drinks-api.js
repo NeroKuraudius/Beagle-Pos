@@ -11,6 +11,12 @@ const drinkController = {
   deleteDrink: async (req, res, next) => {
     drinksServices.deleteDrink(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
+  checkoutDrinks: async (req, res, next) => {
+    drinksServices.checkoutDrinks(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+  },
+  getOrders: async (req, res, next) => {
+    drinksServices.getOrders(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+  },
 }
 
 module.exports = drinkController

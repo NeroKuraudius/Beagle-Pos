@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const passport = require('../../config/passport')
-const { authenticatedOwner } = require('../../middleware/auth')
-const ownerController = require('../../contorllers/owner')
+const passport = require('../../../config/passport')
+const { authenticatedOwner } = require('../../../middleware/auth')
+const ownerController = require('../../../contorllers/pages/owner')
 
 // 後臺登入
 router.get('/signin', ownerController.signinPage)

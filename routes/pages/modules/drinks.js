@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const drinkController = require('../../contorllers/drinks')
+const drinkController = require('../../../contorllers/pages/drinks')
 
 
 // 查看訂單頁

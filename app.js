@@ -6,11 +6,11 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
-const session = require('express-session')
+const session = require('cookie-session')
 const flash = require('connect-flash')
 
 // routes
-const routes = require('./routes')
+const { apis, pages } = require('./routes')
 const hbsHelpers = require('./helpers/handlebars-helpers')
 const authHelpers = require('./helpers/auth-helpers')
 const passport = require('./config/passport')
@@ -45,7 +45,8 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(routes)
+app.use('/api', apis)
+app.use(pages)
 
 app.listen(PORT, () => console.log(`App execute on port:${PORT}!`))
 

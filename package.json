@@ -1,8 +1,12 @@
 {
   "name": "point-of-sale",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "main": "app.js",
+  "engines":{
+    "node":"18.17.0"
+  },
   "scripts": {
+    "prestart": "npx sequelize db:seed:undo:all && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all",
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
@@ -16,7 +20,7 @@
     "express-session": "^1.17.3",
     "method-override": "^3.0.0",
     "mysql2": "^3.5.1",
-    "passport": "^0.6.0",
+    "passport": "^0.5.0",
     "passport-local": "^1.0.0",
     "sequelize": "^6.32.1",
     "sequelize-cli": "^6.6.1"

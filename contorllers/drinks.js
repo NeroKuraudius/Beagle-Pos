@@ -2,7 +2,7 @@ const { Category, Drink, Ice, Sugar, Topping,
   Consume, Customization, Order, User, Shift, Income } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize('pos', 'root', 'password', { host: '127.0.0.1', dialect: 'mysql' })
+const sequelize = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
 
 const drinkController = {
   // 前台操作首頁

@@ -10,17 +10,13 @@ const userController = {
   // 登出
   signout: (req, res, next) => {
     if (req.user.role === 'staff') {
-      req.logout((err) => {
-        if (err) return next(err)
-        req.flash('success_msg', '您已成功登出')
-        return res.redirect('/signin')
-      })
+      req.logout()
+      req.flash('success_msg', '您已成功登出')
+      return res.redirect('/signin')
     } else {
-      req.logout((err) => {
-        if (err) return next(err)
-        req.flash('success_msg', '您已成功登出')
-        return res.redirect('/owner/signin')
-      })
+      req.logout()
+      req.flash('success_msg', '您已成功登出')
+      return res.redirect('/owner/signin')
     }
   }
 }

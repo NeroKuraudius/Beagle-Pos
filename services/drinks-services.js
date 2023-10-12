@@ -2,7 +2,7 @@ const { Category, Drink, Ice, Sugar, Topping,
   Consume, Customization, Order, User, Shift, Income } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
+const sequelize = new Sequelize('pos', 'root', 'z8642052', { host: process.env.HOST, dialect: 'mysql' })
 
 const drinksServices = {
   // 前台操作首頁
@@ -118,7 +118,7 @@ const drinksServices = {
         }, { transaction })
       }
       await transaction.commit()
-      return cb(null, { newConsume, customizedToppings })
+      return cb(null, { newConsume })
     } catch (err) {
       await transaction.rollback()
       cb(err)

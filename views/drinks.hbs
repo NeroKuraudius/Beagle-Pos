@@ -2,7 +2,7 @@
 <div class="row">
   <!--     訂單區 -->
   <div class="col-md-4 p-4">
-    {{#each data.consumesList}}
+    {{#each consumesList}}
     <div class="card mb-3 consume-card">
       <div class="card-body pt-3 pr-3">
         <form action="/drinks/{{this.id}}?_method=DELETE" method="POST">
@@ -23,9 +23,9 @@
     {{/each}}
     <form class="checkout-button" action="/drinks/checkout" method="POST">
       <div class="card orderTotalPrice mb-3">
-        <p>總數量：<span style="float:right">{{data.orderTotalNum}}</span></p>
+        <p>總數量：<span style="float:right">{{orderTotalNum}}</span></p>
         <label style="display:block" for="orderTotalPrice">總金額：
-          <input type="text" class="orderTotalPriceValue" name="orderTotalPrice" size="3" value="{{data.orderTotalPrice}}"
+          <input type="text" class="orderTotalPriceValue" name="orderTotalPrice" size="3" value="{{orderTotalPrice}}"
             readonly>
         </label>
         <button class="btn btn-outline-light mb-3" id="checkoutConfirmButton" type="submit"
@@ -40,11 +40,11 @@
         {{!-- 飲料類別 --}}
         <ul class="navbar nav-tabs category-tabs">
           <li class="nav-item">
-            <a class="nav-link {{#ifCond data.categoryId ''}}active{{/ifCond}}" href="?categoryId=">全部</a>
+            <a class="nav-link {{#ifCond categoryId ''}}active{{/ifCond}}" href="?categoryId=">全部</a>
           </li>
-          {{#each data.categories}}
+          {{#each categories}}
           <li class="nav-item">
-            <a class="nav-link {{#ifCond ../data.categoryId this.id}}active{{/ifCond}}"
+            <a class="nav-link {{#ifCond ../categoryId this.id}}active{{/ifCond}}"
               href="?categoryId={{this.id}}">{{this.name}}</a>
           </li>
           {{/each}}
@@ -52,7 +52,7 @@
 
         {{!-- 飲料區 --}}
         <div class="card-deck mb-3">
-          {{#each data.drinks}}
+          {{#each drinks}}
           <div class="card text-center order-area">
             <label class="card-body px-2">
               <h5 class="card-title">{{this.name}} ${{this.price}}</h5>
@@ -66,21 +66,21 @@
         <nav class="drinks-pagination mt-5" aria-label="page navigation">
           <ul class="pagination">
             <li class="page-item">
-              <a class="page-link {{#ifCond data.pagination.current 1}}disabled{{/ifCond}}" href="?categoryId={{data.categoryId}}&page={{data.pagination.prev}}" aria-label="Previous">
+              <a class="page-link {{#ifCond pagination.current 1}}disabled{{/ifCond}}" href="?categoryId={{categoryId}}&page={{pagination.prev}}" aria-label="Previous">
                 <span aria-hidden="true" style="font-weight:bolder">&laquo;</span>
               </a>
             </li>
-            {{#each data.pagination.pages}}
-            {{#ifCond this ../data.pagination.current}}
+            {{#each pagination.pages}}
+            {{#ifCond this ../pagination.current}}
             <li class="page-item"><a class="page-link active" href="#">{{this}}</a></li>
             {{else}}
             <li class="page-item">
-              <a class="page-link" href="?categoryId={{../data.categoryId}}&page={{this}}">{{this}}</a>
+              <a class="page-link" href="?categoryId={{../categoryId}}&page={{this}}">{{this}}</a>
             </li>
             {{/ifCond}}
             {{/each}}
             <li class="page-item">
-              <a class="page-link {{#ifCond data.pagination.current data.pagination.totalPage}}disabled{{/ifCond}}" href="?categoryId={{data.categoryId}}&page={{data.pagination.next}}" aria-label="Next">
+              <a class="page-link {{#ifCond pagination.current pagination.totalPage}}disabled{{/ifCond}}" href="?categoryId={{categoryId}}&page={{pagination.next}}" aria-label="Next">
                 <span aria-hidden="true" style="font-weight:bolder">&raquo;</span>
               </a>
             </li>
@@ -92,7 +92,7 @@
         <div>
           <label class="d-block text-light">冰塊</label>
           <div class="btn-group btn-group-toggle mb-2" data-toggle="buttons">
-            {{#each data.ices}}
+            {{#each ices}}
             {{#ifCond this.name '熱飲'}}
             <label class="btn btn-outline-danger">
               <input type="radio" name="ice" value="{{this.id}}" />{{this.name}}
@@ -109,7 +109,7 @@
         <div>
           <label class="d-block text-light">甜度</label>
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            {{#each data.sugars}}
+            {{#each sugars}}
             <label class="btn btn-outline-info {{#ifCond this.name '正常'}}active{{/ifCond}}">
               <input type="radio" name="sugar" value="{{this.id}}" {{#ifCond this.name '正常'
                 }}checked{{/ifCond}} />{{this.name}}
@@ -123,7 +123,7 @@
         <div class="topping10 me-5">
           <label class="d-block text-light">配料(+$10)</label>
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            {{#each data.toppings}}
+            {{#each toppings}}
             {{#ifCond this.price 10}}
             <label class="btn btn-outline-warning">
               <input type="checkbox" name="topping" value="{{this.id}}" />{{this.name}}
@@ -136,7 +136,7 @@
         <div class="topping15">
           <label class="d-block text-light">配料(+$15)</label>
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            {{#each data.toppings}}
+            {{#each toppings}}
             {{#ifCond this.price 15}}
             <label class="btn btn-outline-warning">
               <input type="checkbox" name="topping" value="{{this.id}}" />{{this.name}}

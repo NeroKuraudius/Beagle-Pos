@@ -65,18 +65,16 @@ const drinksServices = {
       const orderTotalNum = consumesList.length
 
       return cb(null, {
-        data: {
-          categoryId,
-          categories,
-          ices,
-          sugars,
-          toppings,
-          drinks: drinks.rows,
-          pagination,
-          consumesList,
-          orderTotalPrice,
-          orderTotalNum
-        }
+        categoryId,
+        categories,
+        ices,
+        sugars,
+        toppings,
+        drinks: drinks.rows,
+        pagination,
+        consumesList,
+        orderTotalPrice,
+        orderTotalNum
       })
     } catch (err) {
       cb(err)

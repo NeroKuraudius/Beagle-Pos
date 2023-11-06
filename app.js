@@ -30,6 +30,7 @@ app.use(session({ secret: process.env.SECRET, resave: false, saveUninitialized: 
 
 // use body-parser
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
 // set passport
 app.use(passport.initialize())
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
   next()
 })
 
+// set routes
 app.use('/api', apis)
 app.use(pages)
 

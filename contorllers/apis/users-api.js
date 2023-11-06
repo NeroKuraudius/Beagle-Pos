@@ -4,19 +4,22 @@ const jwt = require('jsonwebtoken')
 
 const userController = {
   signin: async (req, res, next) => {
-    // const { account, password } = req.body
+    const { account, password } = req.body
     try {
-      // const user = await User.findOne({ where: { account }, raw: true })
+      const user = await User.findOne({ where: { account }, raw: true })
+      if (!user) throw new Error('Incorrect account or password.')
+      const userMatch = await bcrypt.compare(password, user.password)
+      if (!userMatch) throw new Error('Incorrect account or password.')
 
-      // const userMatch = await bcrypt.compare(password, user.password)
-      // if (!userMatch) throw new Error('Incorrect account or password.')
+      delete user.password
 
-      // delete user.password
-      const loginUser = req.user.toJSON()
-      const token = jwt.sign(req.user, process.env.SECRET, { expiresIn: '3d' })
+      const token = jwt.sign(user, process.env.SECRET, { expiresIn: '3d' })
       return res.json({
         status: 'success',
-        data: { loginUser, token }
+        data: {
+          token,
+          loginUser: user
+        }
       })
     } catch (err) {
       next(err)

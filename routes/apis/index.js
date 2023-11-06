@@ -12,6 +12,9 @@ router.use('/drinks', drinks)
 // 管理員路由
 router.use('/owner', owner)
 
+// 登入
+router.post('/signin', passport.authenticate('staffLogin', { session: false }), userController.signin)
+
 // Error處理
 router.use('/', apiErrorHandler)
 

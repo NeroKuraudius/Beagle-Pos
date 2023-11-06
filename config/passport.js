@@ -59,7 +59,7 @@ passport.use('ownerLogin', new LocalStrategy({
 ))
 
 // JWT
-passport.use(new JWTStrategy(jwtOptions, async (payload, cb) => {
+passport.use('apiLogin', new JWTStrategy(jwtOptions, async (payload, cb) => {
   try {
     const user = await User.findByPk(payload.id)
     return cb(null, user)

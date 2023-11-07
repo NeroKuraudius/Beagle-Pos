@@ -18,7 +18,7 @@ const drinkController = {
     drinksServices.getOrders(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
   shiftChange: async (req, res, next) => {
-    drinksServices.getOrders(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+    drinksServices.shiftChange(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   }
 }
 

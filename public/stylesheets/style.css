@@ -116,25 +116,25 @@ body {
   list-style-type: none;
 }
 
-.page-link{
+.page-link {
   background-color: transparent;
-  color:azure
+  color: azure
 }
 
-.page-link:hover{
+.page-link:hover {
   background-color: aliceblue;
-  color:black
+  color: black
 }
 
-.page-link.active{
+.page-link.active {
   border-color: aliceblue;
   background-color: aliceblue;
-  color:black
+  color: black
 }
 
-.page-link.disabled{
+.page-link.disabled {
   background-color: transparent;
-  color:gray
+  color: gray
 }
 
 .category-tabs .nav-link {
@@ -173,6 +173,7 @@ body {
   border-radius: 3px;
   float: right;
   text-align: right;
+  outline: none;
 }
 
 .modal {

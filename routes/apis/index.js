@@ -12,11 +12,11 @@ const { authenticated } = require('../../middleware/api-auth')
 const { apiErrorHandler } = require('../../middleware/error-handler')
 
 
-// 首頁路由
-router.use('/drinks', authenticated, drinks)
-
 // 管理員路由
 router.use('/owner', owner)
+
+// 首頁路由
+router.use('/drinks', authenticated, drinks)
 
 // 登入
 router.post('/signin', userController.signin)

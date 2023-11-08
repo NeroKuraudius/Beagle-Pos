@@ -1,26 +1,117 @@
-const ownerServices = require('../../services/owner-services')
+const { User, Shift, Income, Order, Consume,
+  Drink, Ice, Sugar, Topping, Category } = require('../models')
+const bcrypt = require('bcryptjs')
+const { Sequelize } = require('sequelize')
+const sequelize = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
 
-const ownerController = {
-  signinPage: (req, res) => {
-    return res.render('back-login')
+const ownerServices = {
+  getIncomes: async (req, cb) => {
+    try {
+      const admin = await User.findByPk(req.user.id, { raw: true })
+      const incomes = await Income.findAll({
+        raw: true,
+        nest: true,
+        include: [{
+          model: User,
+          include: [Shift]
+        }],
+        order: [['createdAt', 'DESC']]
+      })
+      return cb(null, { admin, incomes })
+    } catch (err) {
+      cb(err)
+    }
   },
-  signin: (req, res) => {
-    req.flash('success_msg', '登入成功')
-    return res.redirect('/owner/incomes')
+  getOrders: async (req, cb) => {
+    const incomeId = parseInt(req.params.Iid)
+    try {
+      const admin = await User.findByPk(req.user.id, { raw: true })
+      const incomes = await Income.findAll({
+        raw: true,
+        nest: true,
+        include: [{
+          model: User,
+          include: [Shift]
+        }],
+        order: [['createdAt', 'DESC']]
+      })
+      const orders = await Order.findAll({
+        raw: true,
+        nest: true,
+        where: { incomeId },
+        order: [['createdAt', 'DESC']]
+      })
+      return cb(null, { admin, incomeId, incomes, orders })
+    } catch (err) {
+      cb(err)
+    }
   },
-  getIncomes: async (req, res) => {
-    ownerServices.getIncomes(req, (err, data) => err ? next(err) : res.render('owner/incomes', data))
+  getConsumes: async (req, cb) => {
+    const { Iid, Oid } = req.params
+    try {
+      const admin = await User.findByPk(req.user.id, { raw: true })
+      const incomes = await Income.findAll({
+        raw: true,
+        nest: true,
+        include: [{
+          model: User,
+          include: [Shift]
+        }],
+        order: [['createdAt', 'DESC']]
+      })
+      const orders = await Order.findAll({
+        raw: true,
+        nest: true,
+        where: { incomeId: parseInt(Iid) },
+        order: [['createdAt', 'DESC']]
+      })
+      const consumes = await Consume.findAll({
+        where: { orderId: parseInt(Oid) },
+        include: [
+          { model: Drink },
+          { model: Ice },
+          { model: Sugar },
+          { model: Topping, as: 'addToppings' }
+        ]
+      })
+      const consumesList = consumes.map(consume => {
+        const { Drink, Ice, Sugar, addToppings, ...consumeData } = consume.toJSON()
+
+        const toppingsNameList = addToppings.map(topping => { return topping.name })
+        const toppingsPriceList = addToppings.map(topping => { return topping.price })
+        let toppingsPrice = 0
+        toppingsPriceList.forEach(price => toppingsPrice += price);
+
+        consumeData.drinkName = Drink.name
+        consumeData.iceName = Ice.name
+        consumeData.sugarName = Sugar.name
+        consumeData.allToppings = toppingsNameList
+        consumeData.totalPrice = toppingsPrice + Drink.price
+        return consumeData
+      })
+      return cb(null, {
+        admin, incomes, orders, consumes: consumesList,
+        incomeId: parseInt(Iid), orderId: parseInt(Oid)
+      })
+    } catch (err) {
+      cb(err)
+    }
   },
-  getOrders: async (req, res) => {
-    ownerServices.getOrders(req, (err, data) => err ? next(err) : res.render('owner/incomes', data))
+  getStaffs: async (req, cb) => {
+    try {
+      const admin = await User.findByPk(req.user.id, { raw: true })
+      const users = await User.findAll({
+        raw: true,
+        nest: true,
+        where: { role: 'staff' },
+        include: [Shift]
+      })
+      return cb(null, { users, admin })
+    } catch (err) {
+      cb(err)
+    }
   },
-  getConsumes: async (req, res) => {
-    ownerServices.getConsumes(req, (err, data) => err ? next(err) : res.render('owner/incomes', data))
-  },
-  getStaffs: async (req, res) => {
-    ownerServices.getStaffs(req, (err, data) => err ? next(err) : res.render('owner/staffs', data))
-  },
-  putStaff: async (req, res) => {
+  putStaff: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
       const user = await User.findByPk(id)
@@ -40,7 +131,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.putStaff: ${err}`)
     }
   },
-  getStaffData: async (req, res) => {
+  getStaffData: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
       const users = await User.findAll({
@@ -56,7 +147,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.getStaffData: ${err}`)
     }
   },
-  patchStaffData: async (req, res) => {
+  patchStaffData: async (req, cb) => {
     const { name, phone, account, password, checkPassword } = req.body
     if (!name.trim() || !phone.trim() || !account.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
@@ -82,7 +173,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.patchStaffData: ${err}`)
     }
   },
-  deleteStaff: async (req, res) => {
+  deleteStaff: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
       const user = await User.findByPk(id)
@@ -98,7 +189,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.deleteStaff: ${err}`)
     }
   },
-  createStaff: async (req, res) => {
+  createStaff: async (req, cb) => {
     const { name, phone, account, password, checkPassword, shiftId } = req.body
     if (!name.trim() || !phone.trim() || !account.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
@@ -130,7 +221,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.createStaff: ${err}`)
     }
   },
-  getBeverages: async (req, res) => {
+  getBeverages: async (req, cb) => {
     try {
       const admin = await User.findByPk(req.user.id, { raw: true })
       const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
@@ -146,7 +237,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.getBeverages: ${err}`)
     }
   },
-  getBeverageData: async (req, res) => {
+  getBeverageData: async (req, cb) => {
     const id = parseInt(req.params.Did)
     try {
       const drink = await Drink.findByPk(id, { raw: true })
@@ -168,7 +259,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.getBeverageData: ${err}`)
     }
   },
-  patchBeverageData: async (req, res) => {
+  patchBeverageData: async (req, cb) => {
     const { categoryId, name, price } = req.body
     if (!categoryId || !name.trim() || !price.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
@@ -193,7 +284,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
     }
   },
-  createBeverage: async (req, res) => {
+  createBeverage: async (req, cb) => {
     const { categoryId, name, price } = req.body
     if (!categoryId || !name.trim() || !price.trim()) {
       req.flash('danger_msg', '所有欄位皆為必填')
@@ -222,7 +313,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.createBeverage: ${err}`)
     }
   },
-  deleteBeverage: async (req, res) => {
+  deleteBeverage: async (req, cb) => {
     const id = parseInt(req.params.Did)
     try {
       const drink = await Drink.findByPk(id)
@@ -238,7 +329,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.deleteBeverage: ${err}`)
     }
   },
-  getCategories: async (req, res) => {
+  getCategories: async (req, cb) => {
     try {
       const admin = await User.findByPk(req.user.id, { raw: true })
       const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
@@ -247,7 +338,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.getCategories: ${err}`)
     }
   },
-  getCategoryData: async (req, res) => {
+  getCategoryData: async (req, cb) => {
     const id = parseInt(req.params.Cid)
     try {
       const category = await Category.findByPk(id, { raw: true })
@@ -262,7 +353,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.getCategoryData: ${err}`)
     }
   },
-  patchCategoryData: async (req, res) => {
+  patchCategoryData: async (req, cb) => {
     const { name } = req.body
     if (!name.trim()) {
       req.flash('danger_msg', '欄位不得為空')
@@ -287,7 +378,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.patchCategoryData: ${err}`)
     }
   },
-  createCategory: async (req, res) => {
+  createCategory: async (req, cb) => {
     const { name } = req.body
     if (!name.trim()) {
       req.flash('danger_msg', '欄位不得為空')
@@ -306,7 +397,7 @@ const ownerController = {
       console.error(`Error occupied on ownerControll.createCategory: ${err}`)
     }
   },
-  deleteCategory: async (req, res) => {
+  deleteCategory: async (req, cb) => {
     const id = parseInt(req.params.Cid)
     try {
       const category = await Category.findByPk(id)
@@ -328,4 +419,4 @@ const ownerController = {
   }
 }
 
-module.exports = ownerController
+module.exports = ownerServices

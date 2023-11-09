@@ -21,114 +21,55 @@ const ownerController = {
     ownerServices.getStaffs(req, (err, data) => err ? next(err) : res.render('owner/staffs', data))
   },
   putStaff: async (req, res) => {
-    const id = parseInt(req.params.Uid)
-    try {
-      const user = await User.findByPk(id)
-      if (!user) {
+    ownerServices.putStaff(req, (err, data) => {
+      if (err) {
         req.flash('danger_msg', '查無該員工資料')
         return res.redirect('/owner/staffs')
       }
-
-      if (user.toJSON().shiftId === 1) {
-        await user.update({ shiftId: 2 })
-      } else {
-        await user.update({ shiftId: 1 })
-      }
+      req.session.putStaffData = data
       req.flash('success_msg', '班別轉換成功')
-      return res.redirect('/owner/staffs')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.putStaff: ${err}`)
-    }
+      return res.redirect('/owner/drinks')
+    })
   },
   getStaffData: async (req, res) => {
-    const id = parseInt(req.params.Uid)
-    try {
-      const users = await User.findAll({
-        raw: true,
-        nest: true,
-        where: { role: 'staff' },
-        include: [Shift]
-      })
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const staff = await User.findByPk(id, { raw: true })
-      return res.render('owner/staffs', { users, admin, staff })
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.getStaffData: ${err}`)
-    }
+    ownerServices.getStaffData(req, (err, data) => err ? next(err) : res.render('owner/staffs'))
   },
-  patchStaffData: async (req, res) => {
-    const { name, phone, account, password, checkPassword } = req.body
-    if (!name.trim() || !phone.trim() || !account.trim()) {
-      req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/staffs/${id}`)
-    }
-    if (password !== checkPassword) {
-      req.flash('danger_msg', '兩次輸入的密碼不相符')
-      return res.redirect(`/owner/staffs/${id}`)
-    }
-    const id = parseInt(req.params.Uid)
-    try {
-      const usedAccount = await User.findOne({ where: { account } }, { raw: true })
-      const editingUser = await User.findByPk(id, { raw: true })
-      if (usedAccount && (usedAccount.id !== editingUser.id)) {
-        req.flash('danger_msg', '該帳號已被使用')
-        return res.redirect(`/owner/staffs/${id}`)
+  patchStaffData: async (req, res) => {  // error handle 不確定
+    ownerServices.putStaff(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
+        return res.redirect('/owner/staffs')
       }
-      const hash = await bcrypt.hash(password, 12)
-      await User.update({ name, phone, account, password: hash }, { where: { id } })
-      req.flash('success_msg', '資料更新成功')
-      return res.redirect(`/owner/staffs/${id}`)
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.patchStaffData: ${err}`)
-    }
+      req.session.patchStaffData = data
+      req.flash('success_msg', '班別轉換成功')
+      return res.redirect('/owner/staffs')
+    })
   },
   deleteStaff: async (req, res) => {
-    const id = parseInt(req.params.Uid)
-    try {
-      const user = await User.findByPk(id)
-      if (!user) {
+    ownerServices.putStaff(req, (err, data) => {
+      if (err) {
         req.flash('danger_msg', '查無該員工資料')
         return res.redirect('/owner/staffs')
       }
-      const name = user.toJSON().name + '(已離職)'
-      await user.update({ role: 'quitted', name })
+      req.session.deleteStaffData = data
       req.flash('success_msg', '已移除該員工')
       return res.redirect('/owner/staffs')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.deleteStaff: ${err}`)
-    }
+    })
   },
   createStaff: async (req, res) => {
-    const { name, phone, account, password, checkPassword, shiftId } = req.body
-    if (!name.trim() || !phone.trim() || !account.trim()) {
-      req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect('/owner/staffs')
-    }
-    if (password !== checkPassword) {
-      req.flash('danger_msg', '兩次輸入的密碼不相符')
-      return res.redirect(`/owner/staffs/${id}`)
-    }
-    try {
-      const userdAccount = await User.findOne({ where: { account } })
-      const error = []
-      if (userdAccount) {
-        const users = await User.findAll({
-          raw: true,
-          nest: true,
-          where: { role: 'staff' },
-          include: [Shift]
-        })
-        error.push('該帳號已被使用')
-        const admin = await User.findByPk(req.user.id, { raw: true })
-        return res.render('owner/staffs', { error, users, name, phone, account, password, checkPassword, shiftId, admin })
+    ownerServices.putStaff(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
+        return res.redirect('/owner/staffs')
       }
-      const hash = await bcrypt.hash(password, 12)
-      await User.create({ name, phone, account, shiftId, password: hash, role: 'staff' })
-      req.flash('success_msg', '資料建立成功')
-      return res.redirect('/owner/staffs')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.createStaff: ${err}`)
-    }
+      req.session.createStaffData = data
+      if (data.error.length !== 0) {
+        return res.redirect('/owner/staffs')
+      } else {
+        req.flash('success_msg', '資料建立成功')
+        return res.redirect('/owner/staffs')
+      }
+    })
   },
   getBeverages: async (req, res) => {
     try {

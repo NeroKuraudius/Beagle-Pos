@@ -52,7 +52,8 @@ const ownerController = {
     ownerServices.deleteStaff(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
   createStaff: async (req, res) => {
-    ownerServices.createStaff(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+    ownerServices.createStaff(req, (err, data) =>
+      err ? next(err) : data.error.length ? res.json({ status: 'error', message: '該帳號已被使用' }) : res.json({ status: 'success', data }))
   },
   getBeverages: async (req, res) => {
     ownerServices.getBeverages(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))

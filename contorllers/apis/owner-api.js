@@ -65,7 +65,9 @@ const ownerController = {
     ownerServices.patchBeverageData(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
   createBeverage: async (req, res) => {
-    ownerServices.createBeverage(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+    ownerServices.createBeverage(req, (err, data) => {
+      err ? next(err) : data.error.length ? res.json({ status: 'error', message: '該餐點已登錄' }) : res.json({ status: 'success', data })
+    })
   },
   deleteBeverage: async (req, res) => {
     ownerServices.deleteBeverage(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))

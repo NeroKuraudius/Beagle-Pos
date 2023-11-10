@@ -64,6 +64,7 @@ const ownerController = {
       }
       req.session.createStaffData = data
       if (data.error.length !== 0) {
+        req.flash('danger_msg', `${data.error[0]}`)
         return res.redirect('/owner/staffs')
       } else {
         req.flash('success_msg', '資料建立成功')
@@ -72,112 +73,54 @@ const ownerController = {
     })
   },
   getBeverages: async (req, res) => {
-    try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
-      const drinks = await Drink.findAll({
-        raw: true,
-        nest: true,
-        where: { isDeleted: false },
-        include: [Category],
-        order: [['categoryId']]
-      })
-      return res.render('owner/beverages', { admin, drinks, categories })
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.getBeverages: ${err}`)
-    }
+    ownerServices.getBeverages(req, (err, data) => err ? next(err) : res.render('owner/beverages', data))
   },
   getBeverageData: async (req, res) => {
-    const id = parseInt(req.params.Did)
-    try {
-      const drink = await Drink.findByPk(id, { raw: true })
-      if (!drink) {
-        req.flash('danger_msg', '找不到該餐點相關資料')
+    ownerServices.getBeverageData(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
         return res.redirect('/owner/beverages')
       }
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const drinks = await Drink.findAll({
-        raw: true,
-        nest: true,
-        where: { isDeleted: false },
-        include: [Category],
-        order: [['categoryId']]
-      })
-      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
-      return res.render('owner/beverages', { admin, drink, drinks, categories })
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.getBeverageData: ${err}`)
-    }
+      return res.render('owner/beverages', { data })
+    })
   },
   patchBeverageData: async (req, res) => {
-    const { categoryId, name, price } = req.body
-    if (!categoryId || !name.trim() || !price.trim()) {
-      req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/beverages/${id}`)
-    }
-    const id = parseInt(req.params.Did)
-    try {
-      const drink = await Drink.findByPk(id)
-      if (!drink) {
-        req.flash('danger_msg', '找不到該餐點相關資料')
+    ownerServices.patchBeverageData(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
         return res.redirect('/owner/beverages')
       }
-      const exsistedBeverage = await Drink.findOne({ where: { name } }, { raw: true })
-      if (exsistedBeverage && (exsistedBeverage.id !== drink.toJSON().id)) {
-        req.flash('danger_msg', '該餐點已登錄')
-        return res.redirect(`/owner/beverages/${id}`)
-      }
-      await drink.update({ categoryId, name, price })
+      req.session.patchDrinkData = data
       req.flash('success_msg', '餐點修改成功')
       return res.redirect('/owner/beverages')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
-    }
+    })
   },
   createBeverage: async (req, res) => {
-    const { categoryId, name, price } = req.body
-    if (!categoryId || !name.trim() || !price.trim()) {
-      req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/beverages`)
-    }
-    try {
-      const error = []
-      const exsistedBeverage = await Drink.findOne({ where: { name } })
-      if (exsistedBeverage) {
-        error.push('該餐點已登錄')
-        const admin = await User.findByPk(req.user.id, { raw: true })
-        const drinks = await Drink.findAll({
-          raw: true,
-          nest: true,
-          where: { isDeleted: false },
-          include: [Category],
-          order: [['categoryId']]
-        })
-        const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
-        return res.render('owner/beverages', { categoryId, name, price, admin, drinks, categories, error })
-      }
-      await Drink.create({ categoryId, name, price })
-      req.flash('success_msg', '餐點新增成功')
-      return res.redirect('/owner/beverages')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.createBeverage: ${err}`)
-    }
-  },
-  deleteBeverage: async (req, res) => {
-    const id = parseInt(req.params.Did)
-    try {
-      const drink = await Drink.findByPk(id)
-      if (!drink) {
-        req.flash('danger_msg', '找不到該餐點相關資料')
+    ownerServices.createBeverage(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
         return res.redirect('/owner/beverages')
       }
-      const name = drink.toJSON().name + '(已下架)'
-      await drink.update({ isDeleted: true, name })
+      req.session.createDrinkData = data
+      if (data.error.length !== 0) {
+        req.flash('danger_msg', `${data.error[0]}`)
+        return res.redirect('/owner/beverages')
+      } else {
+        req.flash('success_msg', '資料建立成功')
+        return res.redirect('/owner/beverages')
+      }
+    })
+  },
+  deleteBeverage: async (req, res) => {
+    ownerServices.deleteBeverage(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
+        return res.redirect('/owner/beverages')
+      }
+      req.session.deleteBeverageData = data
       req.flash('success_msg', '餐點下架成功')
       return res.redirect('/owner/beverages')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.deleteBeverage: ${err}`)
-    }
+    })
   },
   getCategories: async (req, res) => {
     try {

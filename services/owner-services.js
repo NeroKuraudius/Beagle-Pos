@@ -197,20 +197,20 @@ const ownerServices = {
   createStaff: async (req, cb) => {
     const { name, phone, account, password, checkPassword, shiftId } = req.body
     if (!name.trim() || !phone.trim() || !account.trim()) {
-      const err = new Error()
-      err.status = 404
-      err.message = '所有欄位皆為必填'
-      throw err
+      const error = new Error()
+      error.status = 404
+      error.message = '所有欄位皆為必填'
+      throw error
     }
     if (password !== checkPassword) {
-      const err = new Error()
-      err.status = 404
-      err.message = '兩次輸入的密碼不相符'
-      throw err
+      const error = new Error()
+      error.status = 404
+      error.message = '兩次輸入的密碼不相符'
+      throw error
     }
     try {
       const userdAccount = await User.findOne({ where: { account } })
-      const error = []
+      const errorMsg = []
       if (userdAccount) {
         const users = await User.findAll({
           raw: true,
@@ -218,9 +218,9 @@ const ownerServices = {
           where: { role: 'staff' },
           include: [Shift]
         })
-        err.push('該帳號已被使用')
+        errorMsg.push('該帳號已被使用')
         const admin = await User.findByPk(req.user.id, { raw: true })
-        return cb(null, { error, users, name, phone, account, password, checkPassword, shiftId, admin })
+        return cb(null, { error: errorMsg, users, name, phone, account, password, checkPassword, shiftId, admin })
       }
       const hash = await bcrypt.hash(password, 12)
       const newUser = await User.create({ name, phone, account, shiftId, password: hash, role: 'staff' })
@@ -240,9 +240,9 @@ const ownerServices = {
         include: [Category],
         order: [['categoryId']]
       })
-      return res.render('owner/beverages', { admin, drinks, categories })
+      return cb(null, { admin, drinks, categories })
     } catch (err) {
-      console.error(`Error occupied on ownerControll.getBeverages: ${err}`)
+      cb(err)
     }
   },
   getBeverageData: async (req, cb) => {
@@ -250,8 +250,10 @@ const ownerServices = {
     try {
       const drink = await Drink.findByPk(id, { raw: true })
       if (!drink) {
-        req.flash('danger_msg', '找不到該餐點相關資料')
-        return res.redirect('/owner/beverages')
+        const error = new Error()
+        error.status = 404
+        error.message = '找不到該餐點相關資料'
+        throw error
       }
       const admin = await User.findByPk(req.user.id, { raw: true })
       const drinks = await Drink.findAll({
@@ -262,47 +264,54 @@ const ownerServices = {
         order: [['categoryId']]
       })
       const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
-      return res.render('owner/beverages', { admin, drink, drinks, categories })
+      return cb(null, { admin, drink, drinks, categories })
     } catch (err) {
-      console.error(`Error occupied on ownerControll.getBeverageData: ${err}`)
+      cb(err)
     }
   },
   patchBeverageData: async (req, cb) => {
     const { categoryId, name, price } = req.body
     if (!categoryId || !name.trim() || !price.trim()) {
-      req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/beverages/${id}`)
+      const error = new Error()
+      error.status = 404
+      error.message = '所有欄位皆為必填'
+      throw error
     }
     const id = parseInt(req.params.Did)
     try {
       const drink = await Drink.findByPk(id)
       if (!drink) {
-        req.flash('danger_msg', '找不到該餐點相關資料')
-        return res.redirect('/owner/beverages')
+        const error = new Error()
+        error.status = 404
+        error.message = '找不到該餐點相關資料'
+        throw error
       }
       const exsistedBeverage = await Drink.findOne({ where: { name } }, { raw: true })
       if (exsistedBeverage && (exsistedBeverage.id !== drink.toJSON().id)) {
-        req.flash('danger_msg', '該餐點已登錄')
-        return res.redirect(`/owner/beverages/${id}`)
+        const error = new Error()
+        error.status = 404
+        error.message = '該餐點已登錄'
+        throw error
       }
-      await drink.update({ categoryId, name, price })
-      req.flash('success_msg', '餐點修改成功')
-      return res.redirect('/owner/beverages')
+      const updatedDrink = await drink.update({ categoryId, name, price })
+      return cb(null, { updatedDrink })
     } catch (err) {
-      console.error(`Error occupied on ownerControll.patchBeverageData: ${err}`)
+      cb(err)
     }
   },
   createBeverage: async (req, cb) => {
     const { categoryId, name, price } = req.body
     if (!categoryId || !name.trim() || !price.trim()) {
-      req.flash('danger_msg', '所有欄位皆為必填')
-      return res.redirect(`/owner/beverages`)
+      const error = new Error()
+      error.status = 404
+      error.message = '所有欄位皆為必填'
+      throw error
     }
     try {
-      const error = []
+      const errorMsg = []
       const exsistedBeverage = await Drink.findOne({ where: { name } })
       if (exsistedBeverage) {
-        error.push('該餐點已登錄')
+        errorMsg.push('該餐點已登錄')
         const admin = await User.findByPk(req.user.id, { raw: true })
         const drinks = await Drink.findAll({
           raw: true,
@@ -312,13 +321,12 @@ const ownerServices = {
           order: [['categoryId']]
         })
         const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
-        return res.render('owner/beverages', { categoryId, name, price, admin, drinks, categories, error })
+        return cb(null, { categoryId, name, price, admin, drinks, categories, error: errorMsg })
       }
-      await Drink.create({ categoryId, name, price })
-      req.flash('success_msg', '餐點新增成功')
-      return res.redirect('/owner/beverages')
+      const newDrink = await Drink.create({ categoryId, name, price })
+      return cb(null, { newDrink })
     } catch (err) {
-      console.error(`Error occupied on ownerControll.createBeverage: ${err}`)
+      cb(err)
     }
   },
   deleteBeverage: async (req, cb) => {
@@ -326,15 +334,16 @@ const ownerServices = {
     try {
       const drink = await Drink.findByPk(id)
       if (!drink) {
-        req.flash('danger_msg', '找不到該餐點相關資料')
-        return res.redirect('/owner/beverages')
+        const error = new Error()
+        error.status = 404
+        error.message = '找不到該餐點相關資料'
+        throw error
       }
       const name = drink.toJSON().name + '(已下架)'
-      await drink.update({ isDeleted: true, name })
-      req.flash('success_msg', '餐點下架成功')
-      return res.redirect('/owner/beverages')
+      const deleteDrink = await drink.update({ isDeleted: true, name })
+      return cb(null, { deleteDrink })
     } catch (err) {
-      console.error(`Error occupied on ownerControll.deleteBeverage: ${err}`)
+      cb(err)
     }
   },
   getCategories: async (req, cb) => {

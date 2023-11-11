@@ -72,6 +72,9 @@ const ownerController = {
   deleteBeverage: async (req, res) => {
     ownerServices.deleteBeverage(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
+  getCategories: async (req, res) => {
+    ownerServices.getCategories(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
+  },
   getCategoryData: async (req, res) => {
     ownerServices.getCategoryData(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },

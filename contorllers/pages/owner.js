@@ -123,92 +123,43 @@ const ownerController = {
     })
   },
   getCategories: async (req, res) => {
-    try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
-      return res.render('owner/categories', { admin, categories })
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.getCategories: ${err}`)
-    }
+    ownerServices.getCategories(req, (err, data) => err ? next(err) : res.render('owner/categories', data))
   },
   getCategoryData: async (req, res) => {
-    const id = parseInt(req.params.Cid)
-    try {
-      const category = await Category.findByPk(id, { raw: true })
-      if (!category) {
-        req.flash('danger_msg', '找不到該類別相關資料')
-        return res.redirect('/owner/categories')
-      }
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
-      return res.render('owner/categories', { admin, categories, category })
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.getCategoryData: ${err}`)
-    }
+    ownerServices.getCategoryData(req, (err, data) => err ? next(err) : res.render('owner/categories', data))
   },
   patchCategoryData: async (req, res) => {
-    const { name } = req.body
-    if (!name.trim()) {
-      req.flash('danger_msg', '欄位不得為空')
-      return res.redirect(`/owner/categories/${id}`)
-    }
-    const id = parseInt(req.params.Cid)
-    try {
-      const category = await Category.findByPk(id)
-      if (!category) {
-        req.flash('danger_msg', '找不到該類別相關資料')
-        return res.redirect('/owner/categories')
+    ownerServices.patchCategoryData(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
+        return res.redirect('/owner/beverages')
       }
-      const existedCategory = await Category.findOne({ where: { name } }, { raw: true })
-      if (existedCategory && (category.toJSON().id !== existedCategory.id)) {
-        req.flash('danger_msg', '該類別資料已建立')
-        return res.redirect(`/owner/categories/${id}`)
-      }
-      await category.update({ name })
-      req.flash('success_msg', '類別資料修改成功')
-      return res.redirect('/owner/categories')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.patchCategoryData: ${err}`)
-    }
+      req.session.patchCategoryData = data
+      req.flash('success_msg', '餐點修改成功')
+      return res.redirect('/owner/beverages')
+    })
   },
   createCategory: async (req, res) => {
-    const { name } = req.body
-    if (!name.trim()) {
-      req.flash('danger_msg', '欄位不得為空')
-      return res.redirect('/owner/categories')
-    }
-    try {
-      const existedCategory = await Category.findOne({ where: { name } })
-      if (existedCategory) {
-        req.flash('danger_msg', '該類別資料已建立')
-        return res.redirect(`/owner/categories`)
+    ownerServices.createCategory(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
+        return res.redirect('/owner/categories')
       }
-      await Category.create({ name })
-      req.flash('success_msg', '類別新增成功')
+      req.session.createCategoryData = data
+      req.flash('success_msg', '類別建立成功')
       return res.redirect('/owner/categories')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.createCategory: ${err}`)
-    }
+    })
   },
   deleteCategory: async (req, res) => {
-    const id = parseInt(req.params.Cid)
-    try {
-      const category = await Category.findByPk(id)
-      if (!category) {
-        req.flash('danger_msg', '找不到該類別相關資料')
+    ownerServices.deleteCategory(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
         return res.redirect('/owner/categories')
       }
-      const drinks = await Drink.findAll({ where: { categoryId: id, isDeleted: false } })
-      if (drinks.length !== 0) {
-        req.flash('danger_msg', '該類別中尚有餐點')
-        return res.redirect('/owner/categories')
-      }
-      await category.update({ isRemoved: true })
-      req.flash('ssuccess_msg', '類別刪除成功')
+      req.session.deleteCategoryData = data
+      req.flash('success_msg', '類別刪除成功')
       return res.redirect('/owner/categories')
-    } catch (err) {
-      console.error(`Error occupied on ownerControll.deleteCategory: ${err}`)
-    }
+    })
   }
 }
 

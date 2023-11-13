@@ -2,7 +2,7 @@ const { Category, Drink, Ice, Sugar, Topping,
   Consume, Customization, Order, User, Shift, Income } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize('pos', 'root', 'z8642052', { host: process.env.HOST, dialect: 'mysql' })
+const sequelize = new Sequelize('pos', 'root', 'z8642052', { dialect: 'mysql' })
 
 const drinksServices = {
   // 前台操作首頁
@@ -82,14 +82,15 @@ const drinksServices = {
   },
   addDrink: async (req, cb) => {
     const { drink, ice, sugar, topping } = req.body
-    // 飲品不得為空
-    if (!drink) {
-      const err = new Error('未選取任何餐點')
-      err.status = 404
-      throw err
-    }
     const transaction = await sequelize.transaction()
     try {
+      // 飲品不得為空
+      if (!drink) {
+        const err = new Error('未選取任何餐點')
+        err.status = 404
+        throw err
+      }
+
       const consumeDrink = await Drink.findByPk(drink, { raw: true })
       const newConsume = await Consume.create({
         drinkName: drink,
@@ -121,20 +122,20 @@ const drinksServices = {
       return cb(null, { newConsume })
     } catch (err) {
       await transaction.rollback()
-      cb(err)
+      return cb(err)
     }
   },
   deleteDrink: async (req, cb) => {
     const consumeId = parseInt(req.params.id)
-    const consume = await Consume.findByPk(consumeId)
-    if (!consume) {
-      const err = new Error('查無該筆訂單')
-      err.status = 404
-      throw err
-    }
-    const deletedCosume = consume
     const transaction = await sequelize.transaction()
     try {
+      const consume = await Consume.findByPk(consumeId)
+      if (!consume) {
+        const err = new Error('查無該筆訂單')
+        err.status = 404
+        throw err
+      }
+      const deletedCosume = consume
       const customization = await Customization.findAll({ where: { consumeId } })
       if (customization) {
         await consume.destroy({ transaction })
@@ -246,7 +247,7 @@ const drinksServices = {
         nest: true,
         where: { incomeId: 0 }
       })
-      if (orders.length === 0) {
+      if (!orders.length) {
         const err = new Error('無交易不須交班')
         err.status = 404
         throw err
@@ -270,7 +271,7 @@ const drinksServices = {
       return cb(null, { newIncome })
     } catch (err) {
       await transaction.rollback()
-      cb(err)
+      return cb(err)
     }
   }
 }

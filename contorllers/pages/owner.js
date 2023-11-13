@@ -28,25 +28,41 @@ const ownerController = {
       }
       req.session.putStaffData = data
       req.flash('success_msg', '班別轉換成功')
-      return res.redirect('/owner/drinks')
+      return res.redirect('/owner/staffs')
     })
   },
   getStaffData: async (req, res) => {
-    ownerServices.getStaffData(req, (err, data) => err ? next(err) : res.render('owner/staffs'))
+    ownerServices.getStaffData(req, (err, data) => err ? next(err) : res.render('owner/staffs', data))
   },
-  patchStaffData: async (req, res) => {  // error handle 不確定
-    ownerServices.putStaff(req, (err, data) => {
+  patchStaffData: async (req, res) => {
+    ownerServices.patchStaffData(req, (err, data) => {
       if (err) {
         req.flash('danger_msg', `${err.message}`)
         return res.redirect('/owner/staffs')
       }
       req.session.patchStaffData = data
-      req.flash('success_msg', '班別轉換成功')
+      req.flash('success_msg', '資料修改成功')
       return res.redirect('/owner/staffs')
     })
   },
+  createStaff: async (req, res) => {
+    ownerServices.createStaff(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', `${err.message}`)
+        return res.redirect('/owner/staffs')
+      }
+      req.session.createStaffData = data
+      if (data.errorMsg.length !== 0) {
+        req.flash('danger_msg', `${data.errorMsg[0]}`)
+        return res.render('owner/staffs', data)
+      } else {
+        req.flash('success_msg', '資料建立成功')
+        return res.redirect('/owner/staffs')
+      }
+    })
+  },
   deleteStaff: async (req, res) => {
-    ownerServices.putStaff(req, (err, data) => {
+    ownerServices.deleteStaff(req, (err, data) => {
       if (err) {
         req.flash('danger_msg', '查無該員工資料')
         return res.redirect('/owner/staffs')
@@ -56,32 +72,16 @@ const ownerController = {
       return res.redirect('/owner/staffs')
     })
   },
-  createStaff: async (req, res) => {
-    ownerServices.putStaff(req, (err, data) => {
-      if (err) {
-        req.flash('danger_msg', `${err.message}`)
-        return res.redirect('/owner/staffs')
-      }
-      req.session.createStaffData = data
-      if (data.error.length !== 0) {
-        req.flash('danger_msg', `${data.error[0]}`)
-        return res.redirect('/owner/staffs')
-      } else {
-        req.flash('success_msg', '資料建立成功')
-        return res.redirect('/owner/staffs')
-      }
-    })
-  },
   getBeverages: async (req, res) => {
     ownerServices.getBeverages(req, (err, data) => err ? next(err) : res.render('owner/beverages', data))
   },
   getBeverageData: async (req, res) => {
     ownerServices.getBeverageData(req, (err, data) => {
       if (err) {
-        req.flash('danger_msg', `${err.message}`)
+        req.flash('danger_msg', '找不到該餐點相關資料')
         return res.redirect('/owner/beverages')
       }
-      return res.render('owner/beverages', { data })
+      return res.render('owner/beverages', data)
     })
   },
   patchBeverageData: async (req, res) => {
@@ -102,14 +102,10 @@ const ownerController = {
         return res.redirect('/owner/beverages')
       }
       req.session.createDrinkData = data
-      if (data.error.length !== 0) {
-        req.flash('danger_msg', `${data.error[0]}`)
-        return res.redirect('/owner/beverages')
-      } else {
-        req.flash('success_msg', '資料建立成功')
-        return res.redirect('/owner/beverages')
-      }
-    })
+      req.flash('success_msg', '資料建立成功')
+      return res.redirect('/owner/beverages')
+    }
+    )
   },
   deleteBeverage: async (req, res) => {
     ownerServices.deleteBeverage(req, (err, data) => {
@@ -126,17 +122,23 @@ const ownerController = {
     ownerServices.getCategories(req, (err, data) => err ? next(err) : res.render('owner/categories', data))
   },
   getCategoryData: async (req, res) => {
-    ownerServices.getCategoryData(req, (err, data) => err ? next(err) : res.render('owner/categories', data))
+    ownerServices.getCategoryData(req, (err, data) => {
+      if (err) {
+        req.flash('danger_msg', '找不到此項類別')
+        return res.redirect('/owner/categories')
+      }
+      res.render('owner/categories', data)
+    })
   },
   patchCategoryData: async (req, res) => {
     ownerServices.patchCategoryData(req, (err, data) => {
       if (err) {
         req.flash('danger_msg', `${err.message}`)
-        return res.redirect('/owner/beverages')
+        return res.redirect('/owner/categories')
       }
       req.session.patchCategoryData = data
       req.flash('success_msg', '餐點修改成功')
-      return res.redirect('/owner/beverages')
+      return res.redirect('/owner/categories')
     })
   },
   createCategory: async (req, res) => {

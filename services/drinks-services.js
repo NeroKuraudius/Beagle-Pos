@@ -2,7 +2,8 @@ const { Category, Drink, Ice, Sugar, Topping,
   Consume, Customization, Order, User, Shift, Income } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
 const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
+const sequelize = new Sequelize('pos', 'root', 'z8642052', { host: '127.0.0.1', dialect: 'mysql' })
+// const sequelize = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
 
 const drinksServices = {
   // 前台操作首頁
@@ -33,6 +34,7 @@ const drinksServices = {
 
       const consumes = await Consume.findAll({
         where: { orderId: 0, userId: req.user.id },
+        attributes: ['id', 'drinkName', 'drinkIce', 'drinkSugar', 'drinkPrice'],
         include: [
           { model: Drink },
           { model: Ice },
@@ -53,8 +55,8 @@ const drinksServices = {
         toppingsPriceList.forEach(price => toppingsPrice += price);
 
         consumeData.drinkName = Drink.name
-        consumeData.iceName = Ice.name
-        consumeData.sugarName = Sugar.name
+        consumeData.drinkIce = Ice.name
+        consumeData.drinkSugar = Sugar.name
         consumeData.allToppings = toppingsNameList
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData
@@ -199,6 +201,7 @@ const drinksServices = {
         raw: true,
         nest: true,
         where: { incomeId: 0 },
+        attributes: ['id', 'quantity', 'totalPrice', 'createdAt'],
         order: [['createdAt', 'DESC']]
       })
       let totalQuantity = 0
@@ -211,6 +214,7 @@ const drinksServices = {
 
       const consumes = await Consume.findAll({
         where: { orderId: id },
+        attributes: ['id', 'drinkName', 'drinkIce', 'drinkSugar', 'drinkPrice'],
         include: [
           { model: Drink },
           { model: Ice },
@@ -227,8 +231,8 @@ const drinksServices = {
         toppingsPriceList.forEach(price => toppingsPrice += price);
 
         consumeData.drinkName = Drink.name
-        consumeData.iceName = Ice.name
-        consumeData.sugarName = Sugar.name
+        consumeData.drinkIce = Ice.name
+        consumeData.drinkSugar = Sugar.name
         consumeData.allToppings = toppingsNameList
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData

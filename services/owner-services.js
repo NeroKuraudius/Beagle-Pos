@@ -2,7 +2,8 @@ const { User, Shift, Income, Order, Consume,
   Drink, Ice, Sugar, Topping, Category } = require('../models')
 const bcrypt = require('bcryptjs')
 const { Sequelize } = require('sequelize')
-const sequelize = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
+const sequelize = new Sequelize('pos', 'root', 'z8642052', { host: '127.0.0.1', dialect: 'mysql' })
+// const sequelize = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
 
 const ownerServices = {
   getIncomes: async (req, cb) => {

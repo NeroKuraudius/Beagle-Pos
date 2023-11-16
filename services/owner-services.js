@@ -8,15 +8,16 @@ const sequelize = new Sequelize('pos', 'root', 'z8642052', { host: '127.0.0.1', 
 const ownerServices = {
   getIncomes: async (req, cb) => {
     try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       const incomes = await Income.findAll({
-        raw: true,
-        nest: true,
+        attributes: ['id', 'quantity', 'income', 'createdAt'],
         include: [{
           model: User,
-          include: [Shift]
+          attributes: ['name'],
+          include: [{ model: Shift, attributes: ['name'] }]
         }],
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        raw: true, nest: true,
       })
       return cb(null, { admin, incomes })
     } catch (err) {
@@ -26,21 +27,22 @@ const ownerServices = {
   getOrders: async (req, cb) => {
     const incomeId = parseInt(req.params.Iid)
     try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       const incomes = await Income.findAll({
-        raw: true,
-        nest: true,
+        attributes: ['id', 'quantity', 'income', 'createdAt'],
         include: [{
           model: User,
-          include: [Shift]
+          attributes: ['name'],
+          include: [{ model: Shift, attributes: ['name'] }]
         }],
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        raw: true, nest: true,
       })
       const orders = await Order.findAll({
-        raw: true,
-        nest: true,
+        attributes: ['id', 'quantity', 'totalPrice', 'incomeId', 'createdAt'],
         where: { incomeId },
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        raw: true, nest: true
       })
       return cb(null, { admin, incomeId, incomes, orders })
     } catch (err) {
@@ -50,24 +52,26 @@ const ownerServices = {
   getConsumes: async (req, cb) => {
     const { Iid, Oid } = req.params
     try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       const incomes = await Income.findAll({
-        raw: true,
-        nest: true,
+        attributes: ['id', 'quantity', 'income', 'createdAt'],
         include: [{
           model: User,
-          include: [Shift]
+          attributes: ['name'],
+          include: [{ model: Shift, attributes: ['name'] }]
         }],
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        raw: true, nest: true,
       })
       const orders = await Order.findAll({
-        raw: true,
-        nest: true,
+        attributes: ['id', 'quantity', 'totalPrice', 'incomeId', 'createdAt'],
         where: { incomeId: parseInt(Iid) },
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        raw: true, nest: true
       })
       const consumes = await Consume.findAll({
         where: { orderId: parseInt(Oid) },
+        attributes: ['drinkName', 'drinkIce', 'drinkSugar'],
         include: [
           { model: Drink },
           { model: Ice },
@@ -75,6 +79,7 @@ const ownerServices = {
           { model: Topping, as: 'addToppings' }
         ]
       })
+
       const consumesList = consumes.map(consume => {
         const { Drink, Ice, Sugar, addToppings, ...consumeData } = consume.toJSON()
 
@@ -84,8 +89,8 @@ const ownerServices = {
         toppingsPriceList.forEach(price => toppingsPrice += price);
 
         consumeData.drinkName = Drink.name
-        consumeData.iceName = Ice.name
-        consumeData.sugarName = Sugar.name
+        consumeData.drinkIce = Ice.name
+        consumeData.drinkSugar = Sugar.name
         consumeData.allToppings = toppingsNameList
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData

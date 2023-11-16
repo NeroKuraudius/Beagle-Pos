@@ -11,8 +11,8 @@ router.post('/signin', ownerController.signin)
 
 // 後臺管理訂單
 router.get('/incomes/:Iid/:Oid', authenticatedOwner, ownerController.getConsumes)
-router.get('/incomes/:Iid', authenticatedOwner, ownerController.getOrders)
-router.get('/incomes', authenticatedOwner, ownerController.getIncomes)
+router.get('/incomes/:Iid', authenticatedOwner, ownerController.getOrders) //done
+router.get('/incomes', authenticatedOwner, ownerController.getIncomes)  //done
 
 // 後臺管理人員
 router.post('/staffs/create', authenticatedOwner, ownerController.createStaff)

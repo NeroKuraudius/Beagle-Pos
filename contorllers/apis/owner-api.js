@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const ownerController = {
-  signin: async (req, res) => {
+  signin: async (req, res, next) => {
     const { account, password } = req.body
     try {
       const user = await User.findOne({ where: { account }, raw: true })
@@ -27,44 +27,44 @@ const ownerController = {
       next(err)
     }
   },
-  getIncomes: async (req, res) => {
+  getIncomes: async (req, res, next) => {
     ownerServices.getIncomes(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  getOrders: async (req, res) => {
+  getOrders: async (req, res, next) => {
     ownerServices.getOrders(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  getConsumes: async (req, res) => {
+  getConsumes: async (req, res, next) => {
     ownerServices.getConsumes(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  getStaffs: async (req, res) => {
+  getStaffs: async (req, res, next) => {
     ownerServices.getStaffs(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  putStaff: async (req, res) => {
+  putStaff: async (req, res, next) => {
     ownerServices.putStaff(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  getStaffData: async (req, res) => {
+  getStaffData: async (req, res, next) => {
     ownerServices.getStaffData(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  patchStaffData: async (req, res) => {
+  patchStaffData: async (req, res, next) => {
     ownerServices.patchStaffData(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  deleteStaff: async (req, res) => {
+  deleteStaff: async (req, res, next) => {
     ownerServices.deleteStaff(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  createStaff: async (req, res) => {
+  createStaff: async (req, res, next) => {
     ownerServices.createStaff(req, (err, data) =>
       err ? next(err) : data.error.length ? res.json({ status: 'error', message: '該帳號已被使用' }) : res.json({ status: 'success', data }))
   },
-  getBeverages: async (req, res) => {
+  getBeverages: async (req, res, next) => {
     ownerServices.getBeverages(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  getBeverageData: async (req, res) => {
+  getBeverageData: async (req, res, next) => {
     ownerServices.getBeverageData(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  patchBeverageData: async (req, res) => {
+  patchBeverageData: async (req, res, next) => {
     ownerServices.patchBeverageData(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
   },
-  createBeverage: async (req, res) => {
+  createBeverage: async (req, res, next) => {
     ownerServices.createBeverage(req, (err, data) => {
       err ? next(err) : data.error.length ? res.json({ status: 'error', message: '該餐點已登錄' }) : res.json({ status: 'success', data })
     })

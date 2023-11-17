@@ -44,7 +44,7 @@ const ownerServices = {
         order: [['createdAt', 'DESC']],
         raw: true, nest: true
       })
-      return cb(null, { admin, incomeId, incomes, orders })
+      return cb(null, { admin, incomes, incomeId, orders })
     } catch (err) {
       return cb(err)
     }
@@ -96,8 +96,8 @@ const ownerServices = {
         return consumeData
       })
       return cb(null, {
-        admin, incomes, orders, consumes: consumesList,
-        incomeId: parseInt(Iid), orderId: parseInt(Oid)
+        admin, incomes, incomeId: parseInt(Iid),
+        orders, orderId: parseInt(Oid), consumes: consumesList
       })
     } catch (err) {
       return cb(err)
@@ -105,12 +105,12 @@ const ownerServices = {
   },
   getStaffs: async (req, cb) => {
     try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       const users = await User.findAll({
-        raw: true,
-        nest: true,
         where: { role: 'staff' },
-        include: [Shift]
+        attributes: ['id', 'name'],
+        include: [{ model: Shift, attributes: ['name'] }],
+        raw: true, nest: true
       })
       return cb(null, { users, admin })
     } catch (err) {
@@ -129,11 +129,11 @@ const ownerServices = {
 
       let shiftChangedUser
       if (user.toJSON().shiftId === 1) {
-        shiftChangedUser = await user.update({ shiftId: 2 })
+        await user.update({ shiftId: 2 })
       } else {
-        shiftChangedUser = await user.update({ shiftId: 1 })
+        await user.update({ shiftId: 1 })
       }
-      return cb(null, { shiftChangedUser })
+      return cb(null)
     } catch (err) {
       return cb(err)
     }
@@ -141,15 +141,15 @@ const ownerServices = {
   getStaffData: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       const users = await User.findAll({
-        raw: true,
-        nest: true,
         where: { role: 'staff' },
-        include: [Shift]
+        attributes: ['id', 'name'],
+        include: [{ model: Shift, attributes: ['name'] }],
+        raw: true, nest: true
       })
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const staff = await User.findByPk(id, { raw: true })
-      return cb(null, { users, admin, staff })
+      const staff = await User.findOne({ where: { id }, attributes: ['name', 'phone', 'account'], raw: true })
+      return cb(null, { admin, users, staff })
     } catch (err) {
       return cb(err)
     }
@@ -168,6 +168,7 @@ const ownerServices = {
         err.status = 404
         throw err
       }
+
       const usedAccount = await User.findOne({ where: { account } }, { raw: true })
       const editingUser = await User.findByPk(id, { raw: true })
       if (usedAccount && (usedAccount.id !== editingUser.id)) {
@@ -176,8 +177,8 @@ const ownerServices = {
         throw err
       }
       const hash = await bcrypt.hash(password, 12)
-      const updatedUser = await User.update({ name, phone, account, password: hash }, { where: { id } })
-      return cb(null, { updatedUser })
+      await User.update({ name, phone, account, password: hash }, { where: { id } })
+      return cb(null)
     } catch (err) {
       return cb(err)
     }
@@ -200,17 +201,21 @@ const ownerServices = {
       const errorMsg = []
       if (userdAccount) {
         const users = await User.findAll({
-          raw: true,
-          nest: true,
           where: { role: 'staff' },
-          include: [Shift]
+          attributes: ['id', 'name'],
+          include: [{ model: Shift, attributes: ['name'] }],
+          raw: true, nest: true
         })
         errorMsg.push('該帳號已被使用')
-        const admin = await User.findByPk(req.user.id, { raw: true })
-        return cb(null, { errorMsg, users, name, phone, account, password, checkPassword, shiftId, admin })
+        const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+        return cb(null, { errorMsg, admin, users, name, phone, account, password, checkPassword, shiftId })
       }
+
       const hash = await bcrypt.hash(password, 12)
-      const newUser = await User.create({ name, phone, account, shiftId, password: hash, role: 'staff' })
+      let newUser = await User.create({ name, phone, account, shiftId, password: hash, role: 'staff' })
+      newUser = newUser.toJSON()
+      delete newUser.password
+
       return cb(null, { errorMsg, newUser })
     } catch (err) {
       return cb(err)
@@ -225,8 +230,17 @@ const ownerServices = {
         err.status = 404
         throw err
       }
+      if (user.toJSON().name.includes('(已離職)')) {
+        const err = new Error('該員工已離職')
+        err.status = 404
+        throw err
+      }
+
       const name = user.toJSON().name + '(已離職)'
-      const deletedUser = await user.update({ role: 'quitted', name })
+      let deletedUser = await user.update({ role: 'quitted', name })
+      deletedUser = deletedUser.toJSON()
+      delete deletedUser.password
+
       return cb(null, { deletedUser })
     } catch (err) {
       return cb(err)

@@ -8,7 +8,7 @@ const userController = {
     return res.redirect('/drinks')
   },
   // 登出
-  signout: (req, res, next) => {
+  signout: (req, res) => {
     if (req.user.role === 'staff') {
       req.logout()
       req.flash('success_msg', '您已成功登出')

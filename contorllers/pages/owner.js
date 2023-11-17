@@ -53,7 +53,6 @@ const ownerController = {
       }
       req.session.createStaffData = data
       if (data.errorMsg.length !== 0) {
-        req.flash('danger_msg', `${data.errorMsg[0]}`)
         return res.render('owner/staffs', data)
       } else {
         req.flash('success_msg', '資料建立成功')

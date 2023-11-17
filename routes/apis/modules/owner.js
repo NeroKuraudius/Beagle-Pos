@@ -15,12 +15,12 @@ router.get('/incomes/:Iid', authenticatedOwner, ownerController.getOrders)
 router.get('/incomes', authenticatedOwner, ownerController.getIncomes)
 
 // 後臺管理人員
-router.get('/staffs/:Uid', authenticatedOwner, ownerController.getStaffData) //done
-router.patch('/staffs/:Uid', authenticatedOwner, ownerController.patchStaffData) //done
-router.put('/staffs/:Uid', authenticatedOwner, ownerController.putStaff) //done
-router.delete('/staffs/:Uid', authenticatedOwner, ownerController.deleteStaff) //
-router.get('/staffs', authenticatedOwner, ownerController.getStaffs) //done
-router.post('/staffs', authenticatedOwner, ownerController.createStaff) //done
+router.get('/staffs/:Uid', authenticatedOwner, ownerController.getStaffData)
+router.patch('/staffs/:Uid', authenticatedOwner, ownerController.patchStaffData)
+router.put('/staffs/:Uid', authenticatedOwner, ownerController.putStaff)
+router.delete('/staffs/:Uid', authenticatedOwner, ownerController.deleteStaff)
+router.get('/staffs', authenticatedOwner, ownerController.getStaffs)
+router.post('/staffs', authenticatedOwner, ownerController.createStaff)
 
 // 後臺管理餐點
 router.get('/beverages/:Did', authenticatedOwner, ownerController.getBeverageData)

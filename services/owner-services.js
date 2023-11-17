@@ -141,6 +141,13 @@ const ownerServices = {
   getStaffData: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
+      const staff = await User.findOne({ where: { id }, attributes: ['name', 'phone', 'account'], raw: true })
+      if (!staff || staff.name.includes('(已離職)')) {
+        const err = new Error('找不到該員工資料')
+        err.status = 404
+        throw err
+      }
+
       const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       const users = await User.findAll({
         where: { role: 'staff' },
@@ -148,7 +155,6 @@ const ownerServices = {
         include: [{ model: Shift, attributes: ['name'] }],
         raw: true, nest: true
       })
-      const staff = await User.findOne({ where: { id }, attributes: ['name', 'phone', 'account'], raw: true })
       return cb(null, { admin, users, staff })
     } catch (err) {
       return cb(err)
@@ -186,7 +192,7 @@ const ownerServices = {
   createStaff: async (req, cb) => {
     const { name, phone, account, password, checkPassword, shiftId } = req.body
     try {
-      if (!name.trim() || !phone.trim() || !account.trim() || !password.trim() || !checkPassword.trim()) {
+      if (!name.trim() || !phone.trim() || !account.trim() || !shiftId || !password.trim() || !checkPassword.trim()) {
         const err = new Error('所有欄位皆為必填')
         err.status = 404
         throw err
@@ -208,7 +214,7 @@ const ownerServices = {
         })
         errorMsg.push('該帳號已被使用')
         const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
-        return cb(null, { errorMsg, admin, users, name, phone, account, password, checkPassword, shiftId })
+        return cb(null, { errorMsg, admin, users, name, phone, account })
       }
 
       const hash = await bcrypt.hash(password, 12)
@@ -248,14 +254,14 @@ const ownerServices = {
   },
   getBeverages: async (req, cb) => {
     try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+      const categories = await Category.findAll({ where: { isRemoved: false }, attributes: ['name'], raw: true, nest: true })
       const drinks = await Drink.findAll({
-        raw: true,
-        nest: true,
         where: { isDeleted: false },
-        include: [Category],
-        order: [['categoryId']]
+        attributes: ['id', 'name', 'price'],
+        include: [{ model: Category, attributes: ['name'] }],
+        order: [['categoryId']],
+        raw: true, nest: true
       })
       return cb(null, { admin, drinks, categories })
     } catch (err) {
@@ -265,19 +271,25 @@ const ownerServices = {
   getBeverageData: async (req, cb) => {
     const id = parseInt(req.params.Did)
     try {
-      const drink = await Drink.findByPk(id, { raw: true })
-      if (!drink) {
+      const drink = await Drink.findOne({
+        where: { id },
+        attributes: ['name', 'price', 'categoryId'],
+        include: [{ model: Category, attributes: ['name'] }],
+        raw: true
+      })
+      if (!drink || drink.name.includes('(已下架)')) {
         const err = new Error('找不到該餐點相關資料')
         err.status = 404
         throw err
       }
-      const admin = await User.findByPk(req.user.id, { raw: true })
+
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       const drinks = await Drink.findAll({
-        raw: true,
-        nest: true,
         where: { isDeleted: false },
-        include: [Category],
-        order: [['categoryId']]
+        attributes: ['id', 'name', 'price'],
+        include: [{ model: Category, attributes: ['name'] }],
+        order: [['categoryId']],
+        raw: true, nest: true
       })
       const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
       return cb(null, { admin, drink, drinks, categories })
@@ -307,8 +319,8 @@ const ownerServices = {
         error.status = 404
         throw error
       }
-      const updatedDrink = await drink.update({ categoryId, name, price })
-      return cb(null, { updatedDrink })
+      await drink.update({ categoryId, name, price })
+      return cb(null)
     } catch (err) {
       return cb(err)
     }
@@ -330,7 +342,7 @@ const ownerServices = {
       }
 
       const newDrink = await Drink.create({ categoryId, name, price })
-      return cb(null, { errorMsg, newDrink })
+      return cb(null, { newDrink })
     } catch (err) {
       return cb(err)
     }
@@ -339,7 +351,7 @@ const ownerServices = {
     const id = parseInt(req.params.Did)
     try {
       const drink = await Drink.findByPk(id)
-      if (!drink) {
+      if (!drink || drink.toJSON().name.includes('(已下架)')) {
         const error = new Error('找不到該餐點相關資料')
         error.status = 404
         throw error

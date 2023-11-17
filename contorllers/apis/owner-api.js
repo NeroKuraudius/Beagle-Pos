@@ -67,25 +67,25 @@ const ownerController = {
   },
   createBeverage: async (req, res, next) => {
     ownerServices.createBeverage(req, (err, data) => {
-      err ? next(err) : data.error.length ? res.json({ status: 400, message: '該餐點已登錄' }) : res.json({ status: 200, message: 'success', data })
+      err ? next(err) : data.error?.length ? res.json({ status: 400, message: `${data.error.message}` }) : res.json({ status: 200, message: 'success', data })
     })
   },
-  deleteBeverage: async (req, res) => {
+  deleteBeverage: async (req, res, next) => {
     ownerServices.deleteBeverage(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
-  getCategories: async (req, res) => {
+  getCategories: async (req, res, next) => {
     ownerServices.getCategories(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
-  getCategoryData: async (req, res) => {
+  getCategoryData: async (req, res, next) => {
     ownerServices.getCategoryData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
-  patchCategoryData: async (req, res) => {
+  patchCategoryData: async (req, res, next) => {
     ownerServices.patchCategoryData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
   },
-  createCategory: async (req, res) => {
+  createCategory: async (req, res, next) => {
     ownerServices.createCategory(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
-  deleteCategory: async (req, res) => {
+  deleteCategory: async (req, res, next) => {
     ownerServices.deleteCategory(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   }
 }

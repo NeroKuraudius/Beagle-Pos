@@ -366,8 +366,8 @@ const ownerServices = {
   },
   getCategories: async (req, cb) => {
     try {
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+      const categories = await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true })
       return cb(null, { admin, categories })
     } catch (err) {
       return cb(err)
@@ -376,14 +376,14 @@ const ownerServices = {
   getCategoryData: async (req, cb) => {
     const id = parseInt(req.params.Cid)
     try {
-      const category = await Category.findByPk(id, { raw: true })
+      const category = await Category.findOne({ where: { id }, attributes: ['id', 'name'], raw: true })
       if (!category) {
         const error = new Error('找不到此項類別')
         error.status = 404
         throw error
       }
-      const admin = await User.findByPk(req.user.id, { raw: true })
-      const categories = await Category.findAll({ raw: true, nest: true, where: { isRemoved: false } })
+      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+      const categories = await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true })
       return cb(null, { admin, categories, category })
     } catch (err) {
       return cb(err)
@@ -411,8 +411,8 @@ const ownerServices = {
         error.status = 404
         throw error
       }
-      const updatedCategory = await category.update({ name })
-      return cb(null, { updatedCategory })
+      await category.update({ name })
+      return cb(null)
     } catch (err) {
       return cb(err)
     }

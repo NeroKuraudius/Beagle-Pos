@@ -30,10 +30,10 @@ router.get('/beverages', authenticatedOwner, ownerController.getBeverages)
 router.post('/beverages', authenticatedOwner, ownerController.createBeverage)
 
 // 後臺管理類別
-router.get('/categories/:Cid', authenticatedOwner, ownerController.getCategoryData)
+router.get('/categories/:Cid', authenticatedOwner, ownerController.getCategoryData) //
 router.patch('/categories/:Cid', authenticatedOwner, ownerController.patchCategoryData)
 router.delete('/categories/:Cid', authenticatedOwner, ownerController.deleteCategory)
-router.get('/categories', authenticatedOwner, ownerController.getCategories)
+router.get('/categories', authenticatedOwner, ownerController.getCategories) //done
 router.post('/categories', authenticatedOwner, ownerController.createCategory)
 
 module.exports = router

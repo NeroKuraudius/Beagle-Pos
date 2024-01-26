@@ -1,4 +1,4 @@
-# Beagle Pos System
+# Beagle Pos
 ![/public/stylesheets/icons/beagle-index.jpg](https://github.com/NeroKuraudius/Beagle-Pos-System/blob/main/public/icon/beagle-index.jpg?raw=true)
 
 ## 安裝與使用

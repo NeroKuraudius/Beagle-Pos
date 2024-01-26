@@ -4,7 +4,7 @@
 ## 安裝與使用
 
 ### ※事前準備
-### 確認已安裝 [Node.js](https://nodejs.org/zh-tw/download) 與 [MySQL](https://dev.mysql.com/doc/)
+### 確認已安裝 [Node.js](https://nodejs.org/en) 與 [MySQL](https://dev.mysql.com/doc/)
 
 
 ### 1. 下載至本機並安裝套件

@@ -14,7 +14,7 @@ git clone 網址
 ```
 繼續在cmd中輸入指令
 ```js
-cd Beagle-Pos-System
+cd Beagle-Pos
 ```
 進入本機資料夾後接著輸入
 ```js

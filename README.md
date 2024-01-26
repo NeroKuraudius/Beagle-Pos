@@ -105,7 +105,7 @@ npm run start
 
 2. 右上角按鈕為登出功能
 
-### 5. [Demo](https://beagle-pos-system-sat0.onrender.com)
+### 5. [Demo](https://beagle-pos.onrender.com)
 
 
 ### 使用套件與版本

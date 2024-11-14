@@ -1,7 +1,7 @@
 {
   "development": {
-    "username": "root",
-    "password": "z8642052",
+    "db_username": "root",
+    "password": "viewlead888",
     "database": "pos",
     "host": "127.0.0.1",
     "dialect": "mysql"

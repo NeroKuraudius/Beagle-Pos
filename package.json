@@ -1,9 +1,9 @@
 {
-  "name": "point-of-sale",
+  "name": "Beagle Point-Of-Sale",
   "version": "2.0.0",
   "main": "app.js",
   "engines": {
-    "node": "18.17.0"
+    "node": ">=18"
   },
   "scripts": {
     "prestart": "npx sequelize db:seed:undo:all && npx sequelize db:migrate:undo:all && npx sequelize db:migrate && npx sequelize db:seed:all ",

@@ -199,7 +199,7 @@ const drinksServices = {
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { incomeId: 0 },
+        where: { incomeId: 0 , userId: req.user.id},
         attributes: ['id', 'quantity', 'totalPrice', 'createdAt'],
         order: [['createdAt', 'DESC']]
       })
@@ -243,12 +243,13 @@ const drinksServices = {
     }
   },
   shiftChange: async (req, cb) => {
+    const { id } = req.user
     const transaction = await sequelize.transaction()
     try {
       const orders = await Order.findAll({
         raw: true,
         nest: true,
-        where: { incomeId: 0 }
+        where: { incomeId: 0 , userId : id}
       })
       if (!orders.length) {
         const err = new Error('無交易不須交班')

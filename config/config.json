@@ -7,10 +7,10 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "ugqrgmvpzgzvaakj",
-    "password": "vDlEgfqROKYq2oXx4kCP",
-    "database": "bjqjxogbkeap2hztrhv1",
-    "host": "bjqjxogbkeap2hztrhv1-mysql.services.clever-cloud.com",
+    "username": "SKIP",
+    "password": "SKIP",
+    "database": "SKIP",
+    "host": "SKIP",
     "dialect": "mysql"
   }
 }

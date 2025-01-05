@@ -7,7 +7,7 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "SKIP",
+    "db_username": "SKIP",
     "password": "SKIP",
     "database": "SKIP",
     "host": "SKIP",

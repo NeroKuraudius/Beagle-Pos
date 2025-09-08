@@ -1,18 +1,17 @@
 const { Category, Drink, Ice, Sugar, Topping,
   Consume, Customization, Order, User, Shift, Income } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helpers')
+
 const { Sequelize } = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
 
 const drinksServices = {
-  // 前台操作首頁
   getDrinks: async (req, cb) => {
     const limit = 5
     const page = parseInt(req.query.page) || 1
     const offset = getOffset(limit, page)
     const categoryId = parseInt(req.query.categoryId) || ''
     try {
-      // 引用資料庫
       const categories = await Category.findAll({
         raw: true,
         nest: true,
@@ -81,106 +80,138 @@ const drinksServices = {
       cb(err)
     }
   },
+
   addDrink: async (req, cb) => {
     const { drink, ice, sugar, topping } = req.body
-    const transaction = await sequelize.transaction()
     try {
-      // 飲品不得為空
       if (!drink) {
         const err = new Error('未選取任何餐點')
-        err.status = 404
+        err.status = 400
         throw err
       }
 
-      const consumeDrink = await Drink.findByPk(drink, { raw: true })
-      const newConsume = await Consume.create({
-        drinkName: drink,
-        drinkIce: ice,
-        drinkSugar: sugar,
-        drinkPrice: consumeDrink.price,
-        userId: req.user.id
-      }, { transaction })
-      const consumeId = newConsume.id
-      const toppingNum = topping ? topping.length : null
-      if (toppingNum > 1) {
-        for (let i = 0; i < toppingNum; i++) {
-          const customizedToppings = await Topping.findByPk(topping[i])
-          await Customization.create({
-            consumeId,
-            toppingId: topping[i],
-            toppingPrice: customizedToppings.toJSON().price
-          }, { transaction })
+      const result = await sequelize.transaction(async(t)=>{
+        const consumeDrink = await Drink.findByPk(drink, { raw: true, transaction: t })
+        if (!consumeDrink) {
+          const err = new Error('找不到指定的飲品')
+          err.status = 404
+          throw err
         }
-      } else if (toppingNum === 1) {
-        const customizedToppings = await Topping.findByPk(topping)
-        await Customization.create({
-          consumeId,
-          toppingId: topping,
-          toppingPrice: customizedToppings.toJSON().price
-        }, { transaction })
-      }
-      await transaction.commit()
-      return cb(null, { newConsume })
+
+        const newConsume = await Consume.create({
+          drinkName: drink,
+          drinkIce: ice,
+          drinkSugar: sugar,
+          drinkPrice: consumeDrink.price,
+          userId: req.user.id
+          }, 
+          { transaction: t }
+        )
+
+        if (topping && topping.length > 0){
+          const toppingIds = [].concat(topping)
+
+          const toppingsData = await Topping.findAll({
+            where: { id: toppingIds },
+            raw: true,
+            transaction: t
+          })
+          if (toppingsData.length !== toppingIds.length) {
+            const err = new Error('包含無效的配料選項')
+            err.status = 400
+            throw err
+          }
+
+          const customizationData = toppingsData.map(tData => (
+            {
+            consumeId: newConsume.id,
+            toppingId: tData.id,
+            toppingPrice: tData.price,
+            }
+          ))
+
+          await Customization.bulkCreate(customizationData, { transaction: t })
+        }
+        return { newConsume }
+      })
+      
+      return cb(null, result)
     } catch (err) {
-      await transaction.rollback()
+      if (!err.status) err.status = 500
       return cb(err)
     }
   },
+
   deleteDrink: async (req, cb) => {
     const consumeId = parseInt(req.params.id)
-    const transaction = await sequelize.transaction()
     try {
-      const consume = await Consume.findByPk(consumeId)
-      if (!consume) {
-        const err = new Error('查無該筆訂單')
-        err.status = 404
-        throw err
-      }
-      const deletedCosume = consume
-      const customization = await Customization.findAll({ where: { consumeId } })
-      if (customization) {
-        await consume.destroy({ transaction })
-        await Customization.destroy({ where: { consumeId } }, { transaction })
-        await transaction.commit()
-      } else {
-        await consume.destroy()
-      }
-      return cb(null, { deletedCosume, consumeToppings: customization })
+      const result = await sequelize.transaction(async(t)=>{
+        const consume = await Consume.findByPk(consumeId, { transaction: t })
+        if (!consume) {
+          const err = new Error('查無該筆訂單')
+          err.status = 404
+          throw err
+        }
+
+        const deletedCosume = consume
+        const customization = await Customization.findAll({ where: { consumeId }, transaction: t })
+        if (customization) {
+          await consume.destroy({ transaction: t })
+          await Customization.destroy({ where: { consumeId }, transaction: t })
+        } else {
+          await consume.destroy()
+        }
+
+        return { deletedCosume, consumeToppings: customization }
+      })
+      
+      return cb(null, result)
     } catch (err) {
-      await transaction.rollback()
+      if (!err.status) err.status = 500
       cb(err)
     }
   },
+
   checkoutDrinks: async (req, cb) => {
     const userId = req.user.id
-    const transaction = await sequelize.transaction()
     try {
-      const consumes = await Consume.findAll({
-        raw: true,
-        nest: true,
-        where: { orderId: 0 },
+      const result = await sequelize.transaction(async(t)=>{
+        const consumes = await Consume.findAll({
+          raw: true,
+          nest: true,
+          where: { orderId: 0 },
+          transaction: t
+        })
+
+        if (consumes.length === 0) {
+          const err = new Error('未選取任何餐點')
+          err.status = 404
+          throw err
+        }
+
+        const user = await User.findByPk(userId, { raw: true, transaction: t })
+        const newOrder = await Order.create({
+          userId: userId,
+          shiftId: user.shiftId,
+          quantity: consumes.length,
+          totalPrice: req.body.orderTotalPrice
+        }, { transaction: t })
+
+        const consumesIdList = consumes.map(consume => { return consume.id })
+        await Consume.update(
+          { orderId: newOrder.toJSON().id }, 
+          { where: { id: consumesIdList }, transaction: t }
+        )
+        return { newOrder }
       })
-      if (consumes.length === 0) {
-        const err = new Error('未選取任何餐點')
-        err.status = 404
-        throw err
-      }
-      const user = await User.findByPk(userId, { raw: true })
-      const newOrder = await Order.create({
-        userId: userId,
-        shiftId: user.shiftId,
-        quantity: consumes.length,
-        totalPrice: req.body.orderTotalPrice
-      }, { transaction })
-      const consumesIdList = consumes.map(consume => { return consume.id })
-      await Consume.update({ orderId: newOrder.toJSON().id }, { where: { id: consumesIdList } }, { transaction })
-      await transaction.commit()
-      return cb(null, { newOrder })
+      
+      return cb(null, result)
     } catch (err) {
-      await transaction.rollback()
+      if (!err.status) err.status = 500
       cb(err)
     }
   },
+
   getOrders: async (req, cb) => {
     const id = parseInt(req.params.id)
     const backPage = true
@@ -242,39 +273,44 @@ const drinksServices = {
       cb(err)
     }
   },
+
   shiftChange: async (req, cb) => {
     const { id } = req.user
-    const transaction = await sequelize.transaction()
     try {
-      const orders = await Order.findAll({
-        raw: true,
-        nest: true,
-        where: { incomeId: 0 , userId : id}
-      })
-      if (!orders.length) {
-        const err = new Error('無交易不須交班')
-        err.status = 404
-        throw err
-      }
+      const transaction = await sequelize.transaction(async(t)=>{
+        const orders = await Order.findAll({
+          raw: true,
+          nest: true,
+          where: { incomeId: 0 , userId : id },
+          transaction: t
+        })
+        if (!orders.length) {
+          const err = new Error('無交易不須交班')
+          err.status = 400
+          throw err
+        }
 
-      let totalNum = 0
-      let totalIncome = 0
-      const ordersIdList = []
-      orders.forEach(order => {
-        totalNum += order.quantity
-        totalIncome += order.totalPrice
-        ordersIdList.push(order.id)
+        let totalNum = 0
+        let totalIncome = 0
+        const ordersIdList = []
+        orders.forEach(order => {
+          totalNum += order.quantity
+          totalIncome += order.totalPrice
+          ordersIdList.push(order.id)
+        })
+        const newIncome = await Income.create({
+          quantity: totalNum,
+          income: totalIncome,
+          userId: req.user.id
+        }, { transaction: t })
+        await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList }, transaction: t })
+
+        return { newIncome }
       })
-      const newIncome = await Income.create({
-        quantity: totalNum,
-        income: totalIncome,
-        userId: req.user.id
-      }, { transaction })
-      await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList } }, { transaction })
-      await transaction.commit()
-      return cb(null, { newIncome })
+
+      return cb(null, result)
     } catch (err) {
-      await transaction.rollback()
+      if (!err.status) err.status = 500
       return cb(err)
     }
   }

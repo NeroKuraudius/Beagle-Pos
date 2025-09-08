@@ -1,10 +1,14 @@
 const ownerServices = require('../../services/owner/owner-services')
+const personnelServices = require('../../services/owner/personnel-services')
+const productServices = require('../../services/owner/product-service')
+const categoryServices = require('../../services/owner/category-service')
 
 const { User } = require('../../models')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const ownerController = {
+  // 管理者
   signin: async (req, res, next) => {
     const { account, password } = req.body
     try {
@@ -37,56 +41,62 @@ const ownerController = {
   getConsumes: async (req, res, next) => {
     ownerServices.getConsumes(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
+
+  // 人事
   getStaffs: async (req, res, next) => {
-    ownerServices.getStaffs(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    personnelServices.getStaffs(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
   putStaff: async (req, res, next) => {
-    ownerServices.putStaff(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
+    personnelServices.putStaff(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
   },
   getStaffData: async (req, res, next) => {
-    ownerServices.getStaffData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    personnelServices.getStaffData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
   patchStaffData: async (req, res, next) => {
-    ownerServices.patchStaffData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
+    personnelServices.patchStaffData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
   },
   createStaff: async (req, res, next) => {
-    ownerServices.createStaff(req, (err, data) =>
+    personnelServices.createStaff(req, (err, data) =>
       err ? next(err) : data.error?.length ? res.json({ status: 400, message: '該帳號已被使用' }) : res.json({ status: 200, message: 'success', data }))
   },
   deleteStaff: async (req, res, next) => {
-    ownerServices.deleteStaff(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    personnelServices.deleteStaff(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
+
+  // 商品
   getBeverages: async (req, res, next) => {
-    ownerServices.getBeverages(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    productServices.getBeverages(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
   getBeverageData: async (req, res, next) => {
-    ownerServices.getBeverageData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    productServices.getBeverageData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
   patchBeverageData: async (req, res, next) => {
-    ownerServices.patchBeverageData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
+    productServices.patchBeverageData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
   },
   createBeverage: async (req, res, next) => {
-    ownerServices.createBeverage(req, (err, data) => {
+    productServices.createBeverage(req, (err, data) => {
       err ? next(err) : data.error?.length ? res.json({ status: 400, message: `${data.error.message}` }) : res.json({ status: 200, message: 'success', data })
     })
   },
   deleteBeverage: async (req, res, next) => {
-    ownerServices.deleteBeverage(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    productServices.deleteBeverage(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
+
+  // 分類
   getCategories: async (req, res, next) => {
-    ownerServices.getCategories(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    categoryServices.getCategories(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
   getCategoryData: async (req, res, next) => {
-    ownerServices.getCategoryData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    categoryServices.getCategoryData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
   patchCategoryData: async (req, res, next) => {
-    ownerServices.patchCategoryData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
+    categoryServices.patchCategoryData(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success' }))
   },
   createCategory: async (req, res, next) => {
-    ownerServices.createCategory(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    categoryServices.createCategory(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   },
   deleteCategory: async (req, res, next) => {
-    ownerServices.deleteCategory(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
+    categoryServices.deleteCategory(req, (err, data) => err ? next(err) : res.json({ status: 200, message: 'success', data }))
   }
 }
 

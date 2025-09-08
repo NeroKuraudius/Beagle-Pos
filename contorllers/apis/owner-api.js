@@ -1,4 +1,4 @@
-const ownerServices = require('../../services/owner-services')
+const ownerServices = require('../../services/owner/owner-services')
 
 const { User } = require('../../models')
 const bcrypt = require('bcryptjs')

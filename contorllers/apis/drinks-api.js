@@ -1,4 +1,4 @@
-const drinksServices = require('../../services/drinks-services')
+const drinksServices = require('../../services/staff/drinks-services')
 
 const drinkController = {
   // 前台操作首頁

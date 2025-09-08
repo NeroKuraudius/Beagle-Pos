@@ -1,6 +1,6 @@
 const { Category, Drink, Ice, Sugar, Topping,
-  Consume, Customization, Order, User, Shift, Income } = require('../models')
-const { getOffset, getPagination } = require('../helpers/pagination-helpers')
+  Consume, Customization, Order, User, Shift, Income } = require('../../models')
+const { getOffset, getPagination } = require('../../helpers/pagination-helpers')
 
 const { Sequelize } = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })

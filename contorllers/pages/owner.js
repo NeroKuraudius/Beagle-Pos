@@ -1,4 +1,4 @@
-const ownerServices = require('../../services/owner-services')
+const ownerServices = require('../../services/owner/owner-services')
 
 const ownerController = {
   signinPage: (req, res, next) => {

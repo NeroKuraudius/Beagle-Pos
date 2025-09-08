@@ -1,5 +1,5 @@
 const { User, Shift, Income, Order, Consume,
-  Drink, Ice, Sugar, Topping, Category } = require('../models')
+  Drink, Ice, Sugar, Topping, Category } = require('../../models')
 const bcrypt = require('bcryptjs')
 const { Sequelize } = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
@@ -16,13 +16,14 @@ const ownerServices = {
           include: [{ model: Shift, attributes: ['name'] }]
         }],
         order: [['createdAt', 'DESC']],
-        raw: true, nest: true,
+        raw: true, nest: true
       })
       return cb(null, { admin, incomes })
     } catch (err) {
       return cb(err)
     }
   },
+
   getOrders: async (req, cb) => {
     const incomeId = parseInt(req.params.Iid)
     try {
@@ -35,7 +36,7 @@ const ownerServices = {
           include: [{ model: Shift, attributes: ['name'] }]
         }],
         order: [['createdAt', 'DESC']],
-        raw: true, nest: true,
+        raw: true, nest: true
       })
       const orders = await Order.findAll({
         attributes: ['id', 'quantity', 'totalPrice', 'incomeId', 'createdAt'],
@@ -48,6 +49,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   getConsumes: async (req, cb) => {
     const { Iid, Oid } = req.params
     try {
@@ -60,7 +62,7 @@ const ownerServices = {
           include: [{ model: Shift, attributes: ['name'] }]
         }],
         order: [['createdAt', 'DESC']],
-        raw: true, nest: true,
+        raw: true, nest: true
       })
       const orders = await Order.findAll({
         attributes: ['id', 'quantity', 'totalPrice', 'incomeId', 'createdAt'],
@@ -102,6 +104,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   getStaffs: async (req, cb) => {
     try {
       const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
@@ -116,6 +119,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   putStaff: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
@@ -126,7 +130,6 @@ const ownerServices = {
         throw err
       }
 
-      let shiftChangedUser
       if (user.toJSON().shiftId === 1) {
         await user.update({ shiftId: 2 })
       } else {
@@ -137,6 +140,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   getStaffData: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
@@ -159,6 +163,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   patchStaffData: async (req, cb) => {
     const { name, phone, account, password, checkPassword } = req.body
     const id = parseInt(req.params.Uid)
@@ -188,6 +193,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   createStaff: async (req, cb) => {
     const { name, phone, account, password, checkPassword, shiftId } = req.body
     try {
@@ -226,6 +232,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   deleteStaff: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
@@ -251,6 +258,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   getBeverages: async (req, cb) => {
     try {
       const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
@@ -267,6 +275,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   getBeverageData: async (req, cb) => {
     const id = parseInt(req.params.Did)
     try {
@@ -296,6 +305,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   patchBeverageData: async (req, cb) => {
     const { categoryId, name, price } = req.body
     const id = parseInt(req.params.Did)
@@ -324,6 +334,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   createBeverage: async (req, cb) => {
     const { categoryId, name, price } = req.body
     try {
@@ -346,6 +357,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   deleteBeverage: async (req, cb) => {
     const id = parseInt(req.params.Did)
     try {
@@ -363,6 +375,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   getCategories: async (req, cb) => {
     try {
       const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
@@ -372,6 +385,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   getCategoryData: async (req, cb) => {
     const id = parseInt(req.params.Cid)
     try {
@@ -388,6 +402,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   patchCategoryData: async (req, cb) => {
     const { name } = req.body
     const id = parseInt(req.params.Cid)
@@ -416,6 +431,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   createCategory: async (req, cb) => {
     const { name } = req.body
     try {
@@ -437,6 +453,7 @@ const ownerServices = {
       return cb(err)
     }
   },
+
   deleteCategory: async (req, cb) => {
     const id = parseInt(req.params.Cid)
     try {

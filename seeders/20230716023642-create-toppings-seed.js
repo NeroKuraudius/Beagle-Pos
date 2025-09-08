@@ -47,9 +47,18 @@ module.exports = {
         updated_at: new Date()
       }
     ]
+    
     try {
-      await queryInterface.bulkInsert('Toppings', toppings, {})
-      console.log('Toppings seed created successfully!')
+      const Topping = require('../models/topping')
+      const toppingData1 = await Topping.findOne({ where: { name: '寒天' }})
+      const toppingData2 = await Topping.findOne({ where: { name: '布丁' }})
+
+      if(toppingData1 && toppingData2){
+        console.log("Toppings seed skipped 'cause data exist.")
+      }else{
+        await queryInterface.bulkInsert('Toppings', toppings, {})
+        console.log('Toppings seed created successfully!')
+      }
     } catch (err) {
       console.error(`Toppings seed creat error: ${err}`)
     }

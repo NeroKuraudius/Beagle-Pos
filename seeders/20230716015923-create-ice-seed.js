@@ -30,9 +30,18 @@ module.exports = {
         updated_at: new Date()
       },
     ]
+    
     try {
-      await queryInterface.bulkInsert('Ices', ices, {})
-      console.log('Ices seed created successfully!')
+      const Ice = require('../models/ice')
+      const iceData1 = await Ice.findOne({ where: { name: '微冰' }})
+      const iceData2 = await Ice.findOne({ where: { name: '正常' }})
+
+      if (iceData1 && iceData2){
+        console.log("Ices seed skipped 'cause data exist.")
+      }else{
+        await queryInterface.bulkInsert('Ices', ices, {})
+        console.log('Ices seed created successfully!')
+      }
     } catch (err) {
       console.error(`Ices seed create error: ${err}`)
     }

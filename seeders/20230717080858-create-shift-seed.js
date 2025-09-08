@@ -20,9 +20,17 @@ module.exports = {
         updated_at: new Date()
       }
     ]
+    
     try {
-      await queryInterface.bulkInsert('Shifts', shifts, {})
-      console.log('Shifts seed created successfully!')
+      const Shift = require('../models/shift')
+      const shiftData = await Shift.findOne({ where: { name: '老闆' }})
+
+      if (shiftData){
+        console.log("Shifts seed skipped 'cause data exist.")
+      }else{
+        await queryInterface.bulkInsert('Shifts', shifts, {})
+        console.log('Shifts seed created successfully!')
+      }
     } catch (err) {
       console.error(`Shifts seed creat error: ${err}`)
     }

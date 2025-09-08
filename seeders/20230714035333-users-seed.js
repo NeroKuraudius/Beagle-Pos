@@ -57,8 +57,18 @@ module.exports = {
           updated_at: new Date()
         }
       ]
-      await queryInterface.bulkInsert('Users', users, {})
-      console.log('Users seed created successfully!')
+
+      const User = require('../models/user')
+      const userData1 = await User.findOne({ where: { name: 'Stella' } })
+      const userData2 = await User.findOne({ where: { account: 'einstein' } })
+      const userData3 = await User.findOne({ where: { role: 'owner' } })
+
+      if(userData1 && userData2 && userData3){
+        console.log("Users seed skipped 'cause data exist.")
+      }else{
+        await queryInterface.bulkInsert('Users', users, {})
+        console.log('Users seed created successfully!')
+      }
     } catch (err) {
       console.error('Users seed error:', err)
     }

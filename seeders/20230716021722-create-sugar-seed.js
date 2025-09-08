@@ -30,9 +30,18 @@ module.exports = {
         updated_at: new Date()
       },
     ]
+    
     try {
-      await queryInterface.bulkInsert('Sugars', sugars, {})
-      console.log('Sugars seed created successfully!')
+      const Sugar = require('../models/sugar')
+      const sugarData1 = await Sugar.findOne({ where: { name: '無糖' }})
+      const sugarData2 = await Sugar.findOne({ where: { name: '少糖' }})
+
+      if (sugarData1 && sugarData2){
+        console.log("Sugars seed skipped 'cause data exist.")
+      }else{
+        await queryInterface.bulkInsert('Sugars', sugars, {})
+        console.log('Sugars seed created successfully!')
+      }
     } catch (err) {
       console.error(`Sugars seed create error: ${err}`)
     }

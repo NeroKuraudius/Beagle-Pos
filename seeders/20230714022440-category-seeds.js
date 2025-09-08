@@ -25,9 +25,18 @@ module.exports = {
         updated_at: new Date()
       }
     ]
+    
     try {
-      await queryInterface.bulkInsert('Categories', menuNav, {})
-      console.log(`Categories seed created successfully!`)
+      const Category = require('../models/category')
+      const categoryData1 = await Category.findOne({ where: { name: '香濃醇乳' }})
+      const categoryData2 = await Category.findOne({ where: { name: '現榨鮮果' }})
+
+      if(categoryData1 && categoryData2){
+        console.log("Categories seed skipped 'cause data exist.")
+      }else{
+        await queryInterface.bulkInsert('Categories', menuNav, {})
+        console.log(`Categories seed created successfully!`)
+      }
     } catch (err) {
       console.error(`Categories seed error: ${err}`)
     }

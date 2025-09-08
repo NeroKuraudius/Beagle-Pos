@@ -34,9 +34,19 @@ module.exports = {
       { name: '番茄冰梅', price: 45, category_id: 4, created_at: new Date(), updated_at: new Date() },
       { name: '蘋果冰茶', price: 50, category_id: 4, created_at: new Date(), updated_at: new Date() },
     ]
+    
     try {
-      await queryInterface.bulkInsert('Drinks', menu, {})
-      console.log('Drinks seed created successfully!')
+      const Drink = require('../models/drink')
+      const drinkData1 = await Drink.findOne({ where: { name: '高山烏龍' }})
+      const drinkData2 = await Drink.findOne({ where: { name: '相思拿鐵' }})
+      const drinkData3 = await Drink.findOne({ where: { name: '葡萄柚綠' }})
+
+      if (drinkData1 && drinkData2 && drinkData3){
+        console.log("Drinks seed skipped 'cause data exist.")
+      }else{
+        await queryInterface.bulkInsert('Drinks', menu, {})
+        console.log('Drinks seed created successfully!')
+      }
     } catch (err) {
       console.error(`Drinks seed create error: ${err}`)
     }

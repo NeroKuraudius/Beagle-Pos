@@ -12,37 +12,37 @@ const drinksServices = {
     const offset = getOffset(limit, page)
     const categoryId = parseInt(req.query.categoryId) || ''
     try {
-      const categories = await Category.findAll({
-        raw: true,
-        nest: true,
-        attributes: ['id', 'name'],
-        where: { isRemoved: false }
-      })
-      const drinks = await Drink.findAndCountAll({
-        raw: true,
-        nest: true,
-        attributes: ['id', 'name', 'price'],
-        where: { ...categoryId ? { categoryId } : {}, isDeleted: false },
-        limit,
-        offset
-      })
-      const ices = await Ice.findAll({ raw: true, nest: true, attributes: ['id', 'name'] })
-      const sugars = await Sugar.findAll({ raw: true, nest: true, attributes: ['id', 'name'] })
-      const toppings = await Topping.findAll({ raw: true, nest: true, attributes: ['id', 'name', 'price'] })
+      const [ categories, drinks, ices, sugars, toppings, consumes ] = await Promise.all([
+        Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true }),
 
-      const consumes = await Consume.findAll({
-        where: { orderId: 0, userId: req.user.id },
-        attributes: ['id', 'drinkName', 'drinkIce', 'drinkSugar', 'drinkPrice'],
-        include: [
-          { model: Drink },
-          { model: Ice },
-          { model: Sugar },
-          { model: Topping, as: 'addToppings' }
-        ]
-      })
+        Drink.findAndCountAll({ 
+          where: { ...categoryId ? { categoryId } : {}, isDeleted: false },
+          attributes: ['id', 'name', 'price'],
+          limit, offset,
+          raw: true
+        }),
+
+        Ice.findAll({ attributes: ['id', 'name'], raw: true }),
+
+        Sugar.findAll({ attributes: ['id', 'name'], raw: true }),
+
+        Topping.findAll({ attributes: ['id', 'name', 'price'], raw: true }),
+
+        Consume.findAll({
+          where: { orderId: 0, userId: req.user.id },
+          attributes: ['id', 'drinkName', 'drinkIce', 'drinkSugar', 'drinkPrice'],
+          include: [
+            { model: Drink },
+            { model: Ice },
+            { model: Sugar },
+            { model: Topping, as: 'addToppings' }
+          ]
+        })
+      ])
 
       // 創建分頁器
       const pagination = getPagination(limit, page, drinks.count)
+
       // 創造訂單列表
       const consumesList = consumes.map(consume => {
         const { Drink, Ice, Sugar, addToppings, ...consumeData } = consume.toJSON()
@@ -59,6 +59,7 @@ const drinksServices = {
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData
       })
+
       // 計算訂單總價
       let orderTotalPrice = 0
       consumesList.forEach(consume => orderTotalPrice += consume.totalPrice)
@@ -177,15 +178,14 @@ const drinksServices = {
     try {
       const result = await sequelize.transaction(async(t)=>{
         const consumes = await Consume.findAll({
-          raw: true,
-          nest: true,
           where: { orderId: 0 },
+          raw: true,
           transaction: t
         })
 
         if (consumes.length === 0) {
           const err = new Error('未選取任何餐點')
-          err.status = 404
+          err.status = 400
           throw err
         }
 
@@ -216,24 +216,28 @@ const drinksServices = {
     const id = parseInt(req.params.id)
     const backPage = true
     try {
-      const user = await User.findOne({
-        raw: true,
-        attributes: ['id', 'name'],
-        where: { id: req.user.id },
-        include: [
-          {
-            model: Shift,
-            attributes: ['id', 'name']
-          }
-        ]
-      })
-      const orders = await Order.findAll({
-        raw: true,
-        nest: true,
-        where: { incomeId: 0 , userId: req.user.id},
-        attributes: ['id', 'quantity', 'totalPrice', 'createdAt'],
-        order: [['createdAt', 'DESC']]
-      })
+      const [ user, orders ] = await Promise.all([
+        User.findOne({
+          where: { id: req.user.id },
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: Shift,
+              attributes: ['id', 'name']
+            },
+          ],
+          raw: true, nest: true
+        }),
+
+        Order.findAll({
+          where: { incomeId: 0 , userId: req.user.id },
+          attributes: ['id', 'quantity', 'totalPrice', 'createdAt'],
+          order: [['createdAt', 'DESC']],
+          raw: true
+        })
+      ])
+
+      
       let totalQuantity = 0
       let totalPrice = 0
       orders.forEach(order => {
@@ -279,9 +283,8 @@ const drinksServices = {
     try {
       const result = await sequelize.transaction(async(t)=>{
         const orders = await Order.findAll({
-          raw: true,
-          nest: true,
           where: { incomeId: 0 , userId : id },
+          raw: true,
           transaction: t
         })
         if (!orders.length) {
@@ -298,11 +301,13 @@ const drinksServices = {
           totalIncome += order.totalPrice
           ordersIdList.push(order.id)
         })
+
         const newIncome = await Income.create({
           quantity: totalNum,
           income: totalIncome,
           userId: req.user.id
         }, { transaction: t })
+        
         await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList }, transaction: t })
 
         return { newIncome }

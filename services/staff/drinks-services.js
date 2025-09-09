@@ -12,7 +12,7 @@ const drinksServices = {
     const offset = getOffset(limit, page)
     const categoryId = parseInt(req.query.categoryId) || ''
     try {
-      const [ drinks, consumes ] = await Promise.all([
+      const [ drinks, consumes, ices, sugars, toppings, categories ] = await Promise.all([
         Drink.findAndCountAll({ 
           where: { ...categoryId ? { categoryId } : {}, isDeleted: false },
           attributes: ['id', 'name', 'price'],
@@ -29,13 +29,16 @@ const drinksServices = {
             { model: Sugar },
             { model: Topping, as: 'addToppings' }
           ]
-        })
-      ])
+        }),
 
-      const categories = await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true })
-      const ices = await Ice.findAll({ attributes: ['id', 'name'], raw: true })
-      const sugars = await Sugar.findAll({ attributes: ['id', 'name'], raw: true })
-      const toppings = await Topping.findAll({ attributes: ['id', 'name', 'price'], raw: true })
+        Ice.findAll({ attributes: ['id', 'name'], raw: true }),
+
+        Sugar.findAll({ attributes: ['id', 'name'], raw: true }),
+
+        Topping.findAll({ attributes: ['id', 'name', 'price'], raw: true }),
+
+        Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true })
+      ])
 
       // 創建分頁器
       const pagination = getPagination(limit, page, drinks.count)

@@ -6,8 +6,9 @@ const categoryServices = {
   getCategories: async (req, cb) => {
     try {
       const [ categories, admin ] = await Promise.all([
-        await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true }),
-        await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+        Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true }),
+
+        User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       ])
 
       return cb(null, { categories, admin })
@@ -27,8 +28,9 @@ const categoryServices = {
       }
 
       const [ categories, admin ] = await Promise.all([
-        await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true }),
-        await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+        Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true }),
+
+        User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
       ])
 
       return cb(null, { category, categories, admin })
@@ -57,12 +59,20 @@ const categoryServices = {
           throw error
         }
 
-        const existedCategory = await Category.findOne({ where: { name: trimName }, raw: true, transaction: t })
-        if (existedCategory && (category.toJSON().id !== existedCategory.id)) {
+        const existingCategoryWithName = await Category.findOne({
+            where: {
+                name: trimName,
+                id: { [Op.ne]: id } // Op.ne: Not equal (不等於)
+            },
+            attributes: ['id'],
+            transaction: t
+        })
+        if (existingCategoryWithName) {
           const error = new Error('該類別已存在')
           error.status = 400
           throw error
         }
+
         await category.update({ name: trimName }, { transaction: t })
       })
       return cb(null)
@@ -82,7 +92,7 @@ const categoryServices = {
       }
 
       const result = await sequelize.transaction(async(t)=>{
-        const existedCategory = await Category.findOne({ where: { name: trimName }, transaction: t })
+        const existedCategory = await Category.findOne({ where: { name: trimName }, attributes:['id'], transaction: t })
         if (existedCategory) {
           const error = new Error('該類別已存在')
           error.status = 400

@@ -86,6 +86,7 @@ const productServices = {
                 name: trimName,
                 id: { [Op.ne]: id } // Op.ne: Not equal (不等於)
             },
+            attributes: ['id'],
             transaction: t
         })
         if (existingBeverageWithName) {

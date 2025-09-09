@@ -7,8 +7,9 @@ const personnelServices = {
   getStaffs: async (req, cb) => {
     try {
       const [ admin, users ] = await Promise.all([
-        await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true }),
-        await User.findAll({
+        User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true }),
+        
+        User.findAll({
           where: { role: 'staff' },
           attributes: ['id', 'name'],
           include: [{ model: Shift, attributes: ['name'] }],
@@ -16,7 +17,7 @@ const personnelServices = {
         })
       ])
 
-      return cb(null, { users, admin })
+      return cb(null, { admin, users })
     } catch (err) {
       return cb(err)
     }
@@ -58,8 +59,9 @@ const personnelServices = {
       }
 
       const [ admin, users ] = await Promise.all([
-        await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true }),
-        await User.findAll({
+        User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true }),
+
+        User.findAll({
           where: { role: 'staff' },
           attributes: ['id', 'name'],
           include: [{ model: Shift, attributes: ['name'] }],
@@ -75,7 +77,7 @@ const personnelServices = {
 
   patchStaffData: async (req, cb) => {
     const { name, phone, account, password, checkPassword } = req.body
-    const [ trimName, trimPhone, trimAccount, trimPwd, trimCheckPsw ] = [ name.trim(), phone.trim(), account.trim(), password.trim(), checkPassword.trim() ]
+    const [ trimName, trimPhone, trimAccount, trimPwd, trimCheckPwd ] = [ name.trim(), phone.trim(), account.trim(), password.trim(), checkPassword.trim() ]
     const id = parseInt(req.params.Uid)
     try {
       if (!trimName || !trimPhone || !trimAccount) {
@@ -83,7 +85,7 @@ const personnelServices = {
         err.status = 400
         throw err
       }
-      if (trimPwd !== trimCheckPsw) {
+      if (trimPwd !== trimCheckPwd) {
         const err = new Error('密碼不一致')
         err.status = 400
         throw err
@@ -95,6 +97,7 @@ const personnelServices = {
                 account: trimAccount,
                 id: { [Op.ne]: id } // Op.ne: Not equal (不等於)
             },
+            attributes: ['id'],
             transaction: t
         })
         if (existingUserWithAccount) {

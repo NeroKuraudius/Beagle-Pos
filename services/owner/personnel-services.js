@@ -1,4 +1,4 @@
-const { User } = require('../../models')
+const { User, Shift } = require('../../models')
 const bcrypt = require('bcryptjs')
 const { Sequelize } = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USERNAME, process.env.PASSWORD, { host: process.env.HOST, dialect: 'mysql' })
@@ -43,7 +43,7 @@ const personnelServices = {
   getStaffData: async (req, cb) => {
     const id = parseInt(req.params.Uid)
     try {
-      const staff = await User.findOne({ where: { id }, attributes: ['name', 'phone', 'account'], raw: true })
+      const staff = await User.findOne({ where: { id }, attributes: ['id', 'name', 'phone', 'account'], raw: true })
       if (!staff || staff.name.includes('(已離職)')) {
         const err = new Error('找不到該員工資料')
         err.status = 404

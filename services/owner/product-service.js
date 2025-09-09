@@ -25,7 +25,7 @@ const productServices = {
     try {
       const drink = await Drink.findOne({
         where: { id },
-        attributes: ['name', 'price', 'categoryId'],
+        attributes: ['id', 'name', 'price', 'categoryId'],
         include: [{ model: Category, attributes: ['name'] }],
         raw: true
       })
@@ -66,7 +66,7 @@ const productServices = {
         error.status = 404
         throw error
       }
-      const exsistedBeverage = await Drink.findOne({ where: { name } }, { raw: true })
+      const exsistedBeverage = await Drink.findOne({ where: { name }, raw: true })
       if (exsistedBeverage && (exsistedBeverage.id !== drink.toJSON().id)) {
         const error = new Error('該餐點已登錄')
         error.status = 404

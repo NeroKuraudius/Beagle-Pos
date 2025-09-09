@@ -277,7 +277,7 @@ const drinksServices = {
   shiftChange: async (req, cb) => {
     const { id } = req.user
     try {
-      const transaction = await sequelize.transaction(async(t)=>{
+      const result = await sequelize.transaction(async(t)=>{
         const orders = await Order.findAll({
           raw: true,
           nest: true,

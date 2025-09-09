@@ -8,6 +8,7 @@ const drinkController = {
   addDrink: async (req, res, next) => {
     drinksServices.addDrink(req, (err, data) => {
       if (err) {
+        console.log('##### error:', JSON.stringify(err,null,2))
         req.flash('danger_msg', '未選取任何餐點')
         return res.redirect('/drinks')
       }

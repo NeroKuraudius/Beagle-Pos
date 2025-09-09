@@ -12,21 +12,13 @@ const drinksServices = {
     const offset = getOffset(limit, page)
     const categoryId = parseInt(req.query.categoryId) || ''
     try {
-      const [ categories, drinks, ices, sugars, toppings, consumes ] = await Promise.all([
-        Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true }),
-
+      const [ drinks, consumes ] = await Promise.all([
         Drink.findAndCountAll({ 
           where: { ...categoryId ? { categoryId } : {}, isDeleted: false },
           attributes: ['id', 'name', 'price'],
           limit, offset,
           raw: true
         }),
-
-        Ice.findAll({ attributes: ['id', 'name'], raw: true }),
-
-        Sugar.findAll({ attributes: ['id', 'name'], raw: true }),
-
-        Topping.findAll({ attributes: ['id', 'name', 'price'], raw: true }),
 
         Consume.findAll({
           where: { orderId: 0, userId: req.user.id },
@@ -39,6 +31,11 @@ const drinksServices = {
           ]
         })
       ])
+
+      const categories = await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true })
+      const ices = await Ice.findAll({ attributes: ['id', 'name'], raw: true })
+      const sugars = await Sugar.findAll({ attributes: ['id', 'name'], raw: true })
+      const toppings = await Topping.findAll({ attributes: ['id', 'name', 'price'], raw: true })
 
       // 創建分頁器
       const pagination = getPagination(limit, page, drinks.count)
@@ -307,7 +304,7 @@ const drinksServices = {
           income: totalIncome,
           userId: req.user.id
         }, { transaction: t })
-        
+
         await Order.update({ incomeId: newIncome.toJSON().id }, { where: { id: ordersIdList }, transaction: t })
 
         return { newIncome }

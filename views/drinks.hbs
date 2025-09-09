@@ -5,7 +5,7 @@
     {{#each consumesList}}
     <div class="card mb-3 consume-card">
       <div class="card-body pt-3 pr-3">
-        <form action="/drinks/{{this.id}}?_method=DELETE" method="POST">
+        <form action="/drinks/{{this.id}}?_method=DELETE" method="POST" onclick="return confirm('確定移除嗎?')">
           <div class="text-right">
             <button class="btn" type="submit" id="drinkDelete" style="color:azure">×</button>
           </div>

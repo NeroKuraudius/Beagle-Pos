@@ -5,8 +5,18 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const process = require('process');
 const basename = path.basename(__filename);
-const config = { host: process.env.HOST, dialect: 'mysql' }
 const db = {};
+const config = { 
+  host: process.env.HOST, 
+  dialect: 'mysql',
+  pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+      } 
+  }
+
 
 let sequelize;
 if (config.use_env_variable) {

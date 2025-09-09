@@ -5,9 +5,12 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USERNAME, p
 const categoryServices = {
   getCategories: async (req, cb) => {
     try {
-      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
-      const categories = await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true })
-      return cb(null, { admin, categories })
+      const [ categories, admin ] = await Promise.all([
+        await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true }),
+        await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+      ])
+
+      return cb(null, { categories, admin })
     } catch (err) {
       return cb(err)
     }
@@ -22,37 +25,46 @@ const categoryServices = {
         error.status = 404
         throw error
       }
-      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
-      const categories = await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true })
-      return cb(null, { admin, categories, category })
+
+      const [ categories, admin ] = await Promise.all([
+        await Category.findAll({ where: { isRemoved: false }, attributes: ['id', 'name'], raw: true, nest: true }),
+        await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
+      ])
+
+      return cb(null, { category, categories, admin })
     } catch (err) {
       return cb(err)
     }
   },
 
   patchCategoryData: async (req, cb) => {
-    const { name } = req.body
     const id = parseInt(req.params.Cid)
+
+    const { name } = req.body
+    const trimName = name.trim()
     try {
-      if (!name.trim()) {
+      if (!trimName) {
         const error = new Error('欄位不得為空')
-        error.status = 404
+        error.status = 400
         throw error
       }
 
-      const category = await Category.findByPk(id)
-      if (!category) {
-        const error = new Error('找不到該類別相關資料')
-        error.status = 404
-        throw error
-      }
-      const existedCategory = await Category.findOne({ where: { name } }, { raw: true })
-      if (existedCategory && (category.toJSON().id !== existedCategory.id)) {
-        const error = new Error('該類別已存在')
-        error.status = 404
-        throw error
-      }
-      await category.update({ name })
+      const result = await sequelize.transaction(async(t)=>{
+        const category = await Category.findByPk(id, { transaction: t })
+        if (!category) {
+          const error = new Error('找不到該類別相關資料')
+          error.status = 404
+          throw error
+        }
+
+        const existedCategory = await Category.findOne({ where: { name: trimName }, raw: true, transaction: t })
+        if (existedCategory && (category.toJSON().id !== existedCategory.id)) {
+          const error = new Error('該類別已存在')
+          error.status = 400
+          throw error
+        }
+        await category.update({ name: trimName }, { transaction: t })
+      })
       return cb(null)
     } catch (err) {
       return cb(err)
@@ -61,21 +73,27 @@ const categoryServices = {
 
   createCategory: async (req, cb) => {
     const { name } = req.body
+    const trimName = name.trim()
     try {
-      if (!name.trim()) {
+      if (!trimName) {
         const error = new Error('欄位不得為空')
-        error.status = 404
+        error.status = 400
         throw error
       }
 
-      const existedCategory = await Category.findOne({ where: { name } })
-      if (existedCategory) {
-        const error = new Error('該類別已存在')
-        error.status = 404
-        throw error
-      }
-      const newCategory = await Category.create({ name })
-      return cb(null, { newCategory })
+      const result = await sequelize.transaction(async(t)=>{
+        const existedCategory = await Category.findOne({ where: { name: trimName }, transaction: t })
+        if (existedCategory) {
+          const error = new Error('該類別已存在')
+          error.status = 400
+          throw error
+        }
+
+        const newCategory = await Category.create({ name: trimName }, { transaction: t })
+        return { newCategory }
+      })
+      
+      return cb(null, result)
     } catch (err) {
       return cb(err)
     }
@@ -84,20 +102,26 @@ const categoryServices = {
   deleteCategory: async (req, cb) => {
     const id = parseInt(req.params.Cid)
     try {
-      const category = await Category.findByPk(id)
-      if (!category) {
-        const error = new Error('找不到該類別相關資料')
-        error.status = 404
-        throw error
-      }
-      const drinks = await Drink.findAll({ where: { categoryId: id, isDeleted: false } })
-      if (drinks.length !== 0) {
-        const error = new Error('該類別中尚有餐點')
-        error.status = 404
-        throw error
-      }
-      const deleteCategory = await category.update({ isRemoved: true })
-      return cb(null, { deleteCategory })
+      const result = await sequelize.transaction(async(t)=>{
+        const category = await Category.findByPk(id, { transaction: t })
+        if (!category) {
+          const error = new Error('找不到該類別相關資料')
+          error.status = 404
+          throw error
+        }
+
+        const drinksCount = await Drink.count({ where: { categoryId: id, isDeleted: false }, transaction: t })
+        if (drinksCount > 0) {
+          const error = new Error('該類別中尚有餐點')
+          error.status = 400
+          throw error
+        }
+
+        const deleteCategory = await category.update({ isRemoved: true }, { transaction: t })
+        return { deleteCategory }
+      }) 
+      
+      return cb(null, result)
     } catch (err) {
       return cb(err)
     }

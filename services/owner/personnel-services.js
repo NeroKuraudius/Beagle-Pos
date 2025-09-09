@@ -104,7 +104,7 @@ const personnelServices = {
         }
 
         const hash = await bcrypt.hash(password, 12)
-        await User.update({ name, phone, account, password: hash }, { where: { id }, transaction: t })
+        await User.update({ name: trimName, phone: trimPhone, account: trimAccount, password: hash }, { where: { id }, transaction: t })
       })
       
       return cb(null)
@@ -131,7 +131,7 @@ const personnelServices = {
       }
 
       const result = await sequelize.transaction(async(t)=>{
-        const userdAccount = await User.findOne({ where: { account }, transaction: t })
+        const userdAccount = await User.findOne({ where: { account }, attributes: ['id'], transaction: t })
 
         const errorMsg = []
         if (userdAccount) {
@@ -147,7 +147,12 @@ const personnelServices = {
         }
 
         const hash = await bcrypt.hash(password, 12)
-        let newUser = await User.create({ name, phone, account, shiftId, password: hash, role: 'staff' }, { transaction: t })
+        let newUser = await User.create({ 
+          name: trimName, phone: trimPhone, 
+          account: trimAccount, shiftId, 
+          password: hash, role: 'staff' 
+        }, { transaction: t })
+        
         newUser = newUser.toJSON()
         delete newUser.password
 

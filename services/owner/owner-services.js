@@ -6,17 +6,8 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.DB_USERNAME, p
 const ownerServices = {
   getIncomes: async (req, cb) => {
     try {
-      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
-      const incomes = await Income.findAll({
-        attributes: ['id', 'quantity', 'income', 'createdAt'],
-        include: [{
-          model: User,
-          attributes: ['name'],
-          include: [{ model: Shift, attributes: ['name'] }]
-        }],
-        order: [['createdAt', 'DESC']],
-        raw: true, nest: true
-      })
+      const { admin, incomes, orders, consumes } = await getTrades(req.user.id)
+
       return cb(null, { admin, incomes })
     } catch (err) {
       return cb(err)
@@ -26,24 +17,9 @@ const ownerServices = {
   getOrders: async (req, cb) => {
     const incomeId = parseInt(req.params.Iid)
     try {
-      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
-      const incomes = await Income.findAll({
-        attributes: ['id', 'quantity', 'income', 'createdAt'],
-        include: [{
-          model: User,
-          attributes: ['name'],
-          include: [{ model: Shift, attributes: ['name'] }]
-        }],
-        order: [['createdAt', 'DESC']],
-        raw: true, nest: true
-      })
-      const orders = await Order.findAll({
-        attributes: ['id', 'quantity', 'totalPrice', 'incomeId', 'createdAt'],
-        where: { incomeId },
-        order: [['createdAt', 'DESC']],
-        raw: true, nest: true
-      })
-      return cb(null, { admin, incomes, incomeId, orders })
+      const { admin, incomes, orders, consumes } = await getTrades(req.user.id, incomeId)
+
+      return cb(null, { incomeId, admin, incomes, orders })
     } catch (err) {
       return cb(err)
     }
@@ -51,34 +27,9 @@ const ownerServices = {
 
   getConsumes: async (req, cb) => {
     const { Iid, Oid } = req.params
+    const [ incomeId, orderId ] = [ parseInt(Iid), parseInt(Oid) ]
     try {
-      const admin = await User.findOne({ where: { id: req.user.id }, attributes: ['name'], raw: true })
-      const incomes = await Income.findAll({
-        attributes: ['id', 'quantity', 'income', 'createdAt'],
-        include: [{
-          model: User,
-          attributes: ['name'],
-          include: [{ model: Shift, attributes: ['name'] }]
-        }],
-        order: [['createdAt', 'DESC']],
-        raw: true, nest: true
-      })
-      const orders = await Order.findAll({
-        attributes: ['id', 'quantity', 'totalPrice', 'incomeId', 'createdAt'],
-        where: { incomeId: parseInt(Iid) },
-        order: [['createdAt', 'DESC']],
-        raw: true, nest: true
-      })
-      const consumes = await Consume.findAll({
-        where: { orderId: parseInt(Oid) },
-        attributes: ['drinkName', 'drinkIce', 'drinkSugar'],
-        include: [
-          { model: Drink },
-          { model: Ice },
-          { model: Sugar },
-          { model: Topping, as: 'addToppings' }
-        ]
-      })
+      const { admin, incomes, orders, consumes } = await getTrades(req.user.id, incomeId, orderId)
 
       const consumesList = consumes.map(consume => {
         const { Drink, Ice, Sugar, addToppings, ...consumeData } = consume.toJSON()
@@ -95,14 +46,51 @@ const ownerServices = {
         consumeData.totalPrice = toppingsPrice + Drink.price
         return consumeData
       })
-      return cb(null, {
-        admin, incomes, incomeId: parseInt(Iid),
-        orders, orderId: parseInt(Oid), consumes: consumesList
-      })
+
+      return cb(null, { incomeId, orderId, admin, incomes, orders, consumes: consumesList })
     } catch (err) {
       return cb(err)
     }
   }  
 }
+
+/* ============================== DB query ============================== */
+async function getTrades(userId, incomeId=null, orderId=null) {
+  const [ admin, incomes, orders, consumes ] = await Promise.all([
+        User.findOne({ where: { id: userId }, attributes: ['name'], raw: true }),
+
+        Income.findAll({
+          attributes: ['id', 'quantity', 'income', 'createdAt'],
+          include: [{
+            model: User,
+            attributes: ['name'],
+            include: [{ model: Shift, attributes: ['name'] }]
+          }],
+          order: [['createdAt', 'DESC']],
+          raw: true, nest: true
+        }),
+
+        incomeId ? Order.findAll({
+        attributes: ['id', 'quantity', 'totalPrice', 'incomeId', 'createdAt'],
+        where: { incomeId },
+        order: [['createdAt', 'DESC']],
+        raw: true, nest: true
+      }) : Promise.resolve(null),
+
+        orderId ? Consume.findAll({
+          where: { orderId },
+          attributes: ['drinkName', 'drinkIce', 'drinkSugar'],
+          include: [
+            { model: Drink },
+            { model: Ice },
+            { model: Sugar },
+            { model: Topping, as: 'addToppings' }
+          ]
+        }) : Promise.resolve(null)
+      ])
+
+  return { admin, incomes, orders, consumes }
+}
+/* ============================== DB query ============================== */
 
 module.exports = ownerServices
